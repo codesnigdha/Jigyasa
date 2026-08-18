@@ -2,69 +2,47 @@ import axios from "axios";
 
 const API_URL = "http://127.0.0.1:8000/api/users";
 
-/*
-========================================
-REGISTER USER
-========================================
-*/
+const api = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+});
+
+// =====================================================
+// REGISTER
+// =====================================================
+
 export const registerUser = async (userData) => {
-  const response = await axios.post(`${API_URL}/register`, userData);
+  const response = await api.post("/register", userData);
 
   return response.data;
 };
 
-/*
-========================================
-LOGIN USER
-========================================
-*/
+// =====================================================
+// LOGIN
+// =====================================================
+
 export const loginUser = async (credentials) => {
-  const response = await axios.post(`${API_URL}/login`, credentials);
+  const response = await api.post("/login", credentials);
 
   return response.data;
 };
 
-/*
-========================================
-GET CURRENT AUTHENTICATED USER
-========================================
-*/
-export const getCurrentUser = async (token) => {
-  const response = await axios.get(`${API_URL}/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+// =====================================================
+// CURRENT USER
+// =====================================================
+
+export const getCurrentUser = async () => {
+  const response = await api.get("/session");
+
+  return response.data.user;
+};
+
+// =====================================================
+// LOGOUT
+// =====================================================
+
+export const logoutUser = async () => {
+  const response = await api.post("/logout");
 
   return response.data;
-};
-
-/*
-========================================
-GET STORED TOKEN
-========================================
-*/
-export const getToken = () => {
-  return localStorage.getItem("access_token");
-};
-
-/*
-========================================
-GET STORED USER
-========================================
-*/
-export const getStoredUser = () => {
-  const user = localStorage.getItem("user");
-
-  return user ? JSON.parse(user) : null;
-};
-
-/*
-========================================
-LOGOUT USER
-========================================
-*/
-export const logoutUser = () => {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("user");
 };

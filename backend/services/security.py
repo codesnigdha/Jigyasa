@@ -1,24 +1,70 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi import Depends, HTTPException, Request
+from sqlalchemy.orm import Session
 
-from backend.services.jwt import verify_access_token
+from backend.database import SessionLocal
+from backend.models.user import User
+from backend.services.jwt import decode_access_token
 
 
-security = HTTPBearer()
+def get_db():
+    db = SessionLocal()
+
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def get_optional_current_user(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    # =====================================================
+    # GET JWT FROM COOKIE
+    # =====================================================
+
+    token = request.cookies.get("access_token")
+
+    if not token:
+        return None
+
+    # =====================================================
+    # VERIFY JWT
+    # =====================================================
+
+    payload = decode_access_token(token)
+
+    if not payload:
+        return None
+
+    # =====================================================
+    # GET USER ID
+    # =====================================================
+
+    user_id = payload.get("sub")
+
+    if not user_id:
+        return None
+
+    # =====================================================
+    # GET USER FROM DATABASE
+    # =====================================================
+
+    try:
+        user = db.query(User).filter(User.id == int(user_id)).first()
+    except (TypeError, ValueError):
+        return None
+
+    return user
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    user: User | None = Depends(get_optional_current_user),
 ):
-    token = credentials.credentials
-
-    payload = verify_access_token(token)
-
-    if not payload:
+    if not user:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid or expired token",
-            headers={"WWW-Authenticate": "Bearer"},
+            status_code=401,
+            detail="Not authenticated",
         )
 
-    return payload
+    return user

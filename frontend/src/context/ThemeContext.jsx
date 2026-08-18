@@ -3,28 +3,24 @@ import { createContext, useContext, useEffect, useState } from "react";
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("jigyasa_theme") || "light";
-  });
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    document.body.setAttribute("data-theme", theme);
-
-    localStorage.setItem("jigyasa_theme", theme);
-  }, [theme]);
+    document.documentElement.setAttribute(
+      "data-theme",
+      isDark ? "dark" : "light",
+    );
+  }, [isDark]);
 
   const toggleTheme = () => {
-    setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
+    setIsDark((previousTheme) => !previousTheme);
   };
 
   return (
     <ThemeContext.Provider
       value={{
-        theme,
-        setTheme,
+        isDark,
         toggleTheme,
-        isDark: theme === "dark",
       }}
     >
       {children}
@@ -32,6 +28,14 @@ export function ThemeProvider({ children }) {
   );
 }
 
+// Context hooks intentionally share this module with their provider.
+// eslint-disable-next-line react-refresh/only-export-components
 export function useTheme() {
-  return useContext(ThemeContext);
+  const context = useContext(ThemeContext);
+
+  if (!context) {
+    throw new Error("useTheme must be used inside a ThemeProvider");
+  }
+
+  return context;
 }

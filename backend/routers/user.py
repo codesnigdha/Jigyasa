@@ -1,30 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 
 from backend.database import SessionLocal
 from backend.models.user import User
-
 from backend.schemas.user import (
     UserCreate,
     UserLogin,
     UserResponse,
 )
-
 from backend.services.auth import (
     hash_password,
     verify_password,
 )
-
 from backend.services.jwt import create_access_token
+from backend.services.security import get_current_user, get_optional_current_user
 
-from backend.services.security import (
-    get_current_user,
-)
-
-
-# =========================================================
-# ROUTER
-# =========================================================
 
 router = APIRouter(
     prefix="/api/users",
@@ -32,9 +22,9 @@ router = APIRouter(
 )
 
 
-# =========================================================
-# DATABASE DEPENDENCY
-# =========================================================
+# =====================================================
+# DATABASE
+# =====================================================
 
 def get_db():
     db = SessionLocal()
@@ -45,9 +35,9 @@ def get_db():
         db.close()
 
 
-# =========================================================
+# =====================================================
 # REGISTER
-# =========================================================
+# =====================================================
 
 @router.post(
     "/register",
@@ -58,10 +48,6 @@ def register_user(
     user_data: UserCreate,
     db: Session = Depends(get_db),
 ):
-    # -----------------------------------------------------
-    # CHECK EXISTING EMAIL
-    # -----------------------------------------------------
-
     existing_user = (
         db.query(User)
         .filter(User.email == user_data.email)
@@ -74,17 +60,9 @@ def register_user(
             detail="Email already registered",
         )
 
-    # -----------------------------------------------------
-    # HASH PASSWORD
-    # -----------------------------------------------------
-
     hashed_password = hash_password(
         user_data.password
     )
-
-    # -----------------------------------------------------
-    # CREATE USER
-    # -----------------------------------------------------
 
     new_user = User(
         name=user_data.name,
@@ -93,46 +71,33 @@ def register_user(
     )
 
     db.add(new_user)
-
     db.commit()
-
     db.refresh(new_user)
 
     return new_user
 
 
-# =========================================================
+# =====================================================
 # LOGIN
-# =========================================================
+# =====================================================
 
 @router.post("/login")
 def login_user(
+    response: Response,
     user_data: UserLogin,
     db: Session = Depends(get_db),
 ):
-    # -----------------------------------------------------
-    # FIND USER
-    # -----------------------------------------------------
-
     user = (
         db.query(User)
         .filter(User.email == user_data.email)
         .first()
     )
 
-    # -----------------------------------------------------
-    # CHECK USER
-    # -----------------------------------------------------
-
     if not user:
         raise HTTPException(
             status_code=401,
             detail="Invalid email or password",
         )
-
-    # -----------------------------------------------------
-    # VERIFY PASSWORD
-    # -----------------------------------------------------
 
     if not verify_password(
         user_data.password,
@@ -143,9 +108,9 @@ def login_user(
             detail="Invalid email or password",
         )
 
-    # -----------------------------------------------------
+    # =================================================
     # CREATE JWT
-    # -----------------------------------------------------
+    # =================================================
 
     access_token = create_access_token(
         {
@@ -154,17 +119,22 @@ def login_user(
         }
     )
 
-    # -----------------------------------------------------
-    # RESPONSE
-    # -----------------------------------------------------
+    # =================================================
+    # STORE JWT IN HTTPONLY COOKIE
+    # =================================================
+
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=False,       # True in production HTTPS
+        samesite="lax",
+        max_age=60 * 60,
+        path="/",
+    )
 
     return {
         "message": "Login successful",
-
-        "access_token": access_token,
-
-        "token_type": "bearer",
-
         "user": {
             "id": user.id,
             "name": user.name,
@@ -173,15 +143,48 @@ def login_user(
     }
 
 
-# =========================================================
+# =====================================================
 # CURRENT USER
-# =========================================================
+# =====================================================
+
+@router.get("/session")
+def get_session(
+    current_user: User | None = Depends(get_optional_current_user),
+):
+    if not current_user:
+        return {"user": None}
+
+    return {
+        "user": {
+            "id": current_user.id,
+            "name": current_user.name,
+            "email": current_user.email,
+        }
+    }
+
 
 @router.get("/me")
 def get_current_user_info(
     current_user=Depends(get_current_user),
 ):
     return {
-        "message": "You are authenticated",
-        "user": current_user,
+        "id": current_user.id,
+        "name": current_user.name,
+        "email": current_user.email,
+    }
+
+
+# =====================================================
+# LOGOUT
+# =====================================================
+
+@router.post("/logout")
+def logout_user(response: Response):
+    response.delete_cookie(
+        key="access_token",
+        path="/",
+    )
+
+    return {
+        "message": "Logout successful",
     }

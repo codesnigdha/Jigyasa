@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import "./Home.css";
+import { useTheme } from "../../../context/ThemeContext";
 
 function Home() {
   const navigate = useNavigate();
@@ -24,36 +25,13 @@ function Home() {
   // THEME
   // =====================================================
 
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem("jigyasa_theme") === "dark";
-  });
+  const { isDark: darkMode, toggleTheme } = useTheme();
 
   // =====================================================
   // MOBILE MENU
   // =====================================================
 
   const [menuOpen, setMenuOpen] = useState(false);
-
-  // =====================================================
-  // THEME EFFECT
-  // =====================================================
-
-  useEffect(() => {
-    const theme = darkMode ? "dark" : "light";
-
-    localStorage.setItem("jigyasa_theme", theme);
-
-    document.documentElement.setAttribute("data-theme", theme);
-    document.body.setAttribute("data-theme", theme);
-  }, [darkMode]);
-
-  // =====================================================
-  // TOGGLE THEME
-  // =====================================================
-
-  const toggleTheme = () => {
-    setDarkMode((previousMode) => !previousMode);
-  };
 
   // =====================================================
   // NAVIGATION
@@ -100,12 +78,7 @@ function Home() {
             className="home-logo"
             onClick={() => window.scrollTo(0, 0)}
           >
-            <div className="home-logo-icon">J</div>
-
-            <div className="home-logo-text">
-              <strong>JIGYASA</strong>
-              <span>AI-POWERED LEARNING</span>
-            </div>
+            <img src="/logo.png" alt="Jigyasa" className="home-logo-image" />
           </button>
 
           {/* DESKTOP NAVIGATION */}
@@ -573,12 +546,7 @@ function Home() {
         <div className="footer-inner">
           <div className="footer-brand">
             <div className="footer-logo">
-              <div className="footer-logo-icon">J</div>
-
-              <div>
-                <strong>JIGYASA</strong>
-                <span>AI-POWERED LEARNING</span>
-              </div>
+              <img src="/logo.png" alt="Jigyasa" className="home-footer-logo-image" />
             </div>
 
             <p>Learn beyond boundaries.</p>

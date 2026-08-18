@@ -100,8 +100,6 @@
 
   line-height: 1.05;
 
-  letter-spacing: -1.8px;
-
   font-weight: 800;
 }
 
@@ -721,6 +719,23 @@
   color: white;
 }
 
+/* Softens the transition from the authentication panel into the brand panel. */
+.signup-brand-section::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  left: -42px;
+  width: 42px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(to right, #f8fafc, rgba(37, 99, 235, 0.32));
+}
+
+:root[data-theme="dark"] .signup-brand-section::before {
+  background: linear-gradient(to right, #0b1220, rgba(37, 99, 235, 0.28));
+}
+
 /* =========================================================
    GRID PATTERN
    ========================================================= */
@@ -787,6 +802,19 @@
   cursor: pointer;
 
   text-align: left;
+  transform: translate(-14px, -10px);
+}
+
+.signup-logo-image {
+  width: 180px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+@media (max-width: 800px) {
+  .signup-logo {
+    transform: translate(-6px, -5px);
+  }
 }
 
 .signup-logo-icon {

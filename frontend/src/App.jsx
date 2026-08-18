@@ -1,31 +1,37 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
-import Home from "./pages/Home/Home";
-import Login from "./pages/Login/Login";
-import Signup from "./pages/Signup/Signup";
+import Navbar from "./components/Navbar/Navbar";
+import Footer from "./components/Footer/Footer";
+
+import Home from "./pages/public/Home/Home";
+import Login from "./pages/auth/Login/Login";
+import Signup from "./pages/auth/Signup/Signup";
+import Dashboard from "./pages/user/Dashboard/Dashboard";
 
 import "./App.css";
 
 function App() {
+  const { pathname } = useLocation();
+  const isStandalonePage = ["/", "/login", "/signup"].includes(pathname);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Home */}
-        <Route path="/" element={<Home />} />
+    <div className="app">
+      {!isStandalonePage && <Navbar />}
 
-        {/* Authentication */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+      <main className="app-main">
+        <Routes>
+          <Route path="/" element={<Home />} />
 
-        {/* Temporary dashboard route */}
-        <Route
-          path="/dashboard"
-          element={
-            <div style={{ padding: "50px" }}>Dashboard coming next...</div>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route path="/login" element={<Login />} />
+
+          <Route path="/signup" element={<Signup />} />
+
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </main>
+
+      {!isStandalonePage && <Footer />}
+    </div>
   );
 }
 

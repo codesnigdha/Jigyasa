@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+  <defs>
+    <linearGradient id="book" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#102A8F"/>
+      <stop offset=".55" stop-color="#1877F2"/>
+      <stop offset="1" stop-color="#18D9F5"/>
+    </linearGradient>
+    <linearGradient id="brain" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7B2CFF"/>
+      <stop offset=".5" stop-color="#2456E8"/>
+      <stop offset="1" stop-color="#18D9F5"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#087F8C"/>
+      <stop offset=".55" stop-color="#18C9A0"/>
+      <stop offset="1" stop-color="#7DEB45"/>
+    </linearGradient>
+    <radialGradient id="glow">
+      <stop stop-color="#18D9F5" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#18D9F5" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+  </defs>
+
+  <circle cx="400" cy="390" r="340" fill="url(#glow)"/>
+
+  <!-- Open book -->
+  <path d="M85 590 Q225 530 365 570 Q390 578 400 610
+           Q410 578 435 570 Q575 530 715 590
+           L735 675 Q575 620 440 660 Q415 668 400 700
+           Q385 668 360 660 Q225 620 65 675 Z"
+        fill="url(#book)"/>
+
+  <path d="M92 595 Q230 555 360 592 Q390 600 400 632
+           Q410 600 440 592 Q570 555 708 595"
+        fill="none" stroke="#18D9F5" stroke-width="13"
+        stroke-linecap="round"/>
+
+  <path d="M400 610 L400 700"
+        stroke="#7B2CFF" stroke-width="9" stroke-linecap="round"/>
+
+  <!-- Central brain / AI shape -->
+  <path d="M400 575
+           C355 530 310 475 315 400
+           C320 330 365 265 430 245
+           C500 224 560 260 570 320
+           C578 370 550 410 535 445
+           C520 480 530 525 500 555
+           C470 582 430 588 400 575Z"
+        fill="url(#brain)"/>
+
+  <!-- Neural circuitry -->
+  <g fill="none" stroke="#F7FBFF" stroke-width="8"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path d="M385 285 V365 L420 400 V515"/>
+    <path d="M470 275 V330 L430 370 V450"/>
+    <path d="M350 375 V430 H400"/>
+    <path d="M420 400 L480 455"/>
+    <path d="M390 475 H345"/>
+  </g>
+
+  <g>
+    <circle cx="385" cy="285" r="13" fill="#F7FBFF"/>
+    <circle cx="470" cy="275" r="13" fill="#18D9F5"/>
+    <circle cx="430" cy="370" r="13" fill="#18D9F5"/>
+    <circle cx="350" cy="375" r="13" fill="#F7FBFF"/>
+    <circle cx="345" cy="475" r="13" fill="#C96BFF"/>
+    <circle cx="480" cy="455" r="13" fill="#18D9F5"/>
+  </g>
+
+  <!-- Leaves -->
+  <path d="M465 555
+           C500 470 555 380 650 335
+           C645 430 600 505 465 555Z"
+        fill="url(#leaf)"/>
+
+  <path d="M450 565
+           C480 475 520 415 575 385"
+        fill="none" stroke="#83F4D1" stroke-width="7"
+        stroke-linecap="round"/>
+
+  <path d="M500 520
+           C540 470 590 450 625 440"
+        fill="none" stroke="#1A9E91" stroke-width="5"
+        stroke-linecap="round"/>
+
+  <!-- Sparkles -->
+  <path d="M615 190 l10 25 25 10-25 10-10 25-10-25-25-10 25-10z"
+        fill="#FFC928"/>
+  <path d="M680 235 l8 19 19 8-19 8-8 19-8-19-19-8 19-8z"
+        fill="#1689F5"/>
+  <circle cx="650" cy="285" r="11" fill="#62DF75"/>
+
+  <!-- Subtle shadow -->
+  <ellipse cx="400" cy="720" rx="260" ry="25"
+           fill="#0B1D72" opacity=".15" filter="url(#softGlow)"/>
+</svg>

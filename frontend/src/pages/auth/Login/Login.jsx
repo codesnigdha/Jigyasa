@@ -1,33 +1,33 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { loginUser } from "../../services/authService";
-import ThemeToggle from "../../components/ThemeToggle/ThemeToggle";
+import { loginUser } from "../../../services/authService";
+
+import { useAuth } from "../../../context/AuthContext";
+import { useTheme } from "../../../context/ThemeContext";
+
+import ThemeToggle from "../../../components/ThemeToggle/ThemeToggle";
 
 import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
 
-  // =========================================================
-  // FORM STATE
-  // =========================================================
+  const { setUser } = useAuth();
+  const { isDark } = useTheme();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  // =========================================================
-  // UI STATE
-  // =========================================================
-
   const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
 
-  // =========================================================
-  // HANDLE INPUT CHANGE
-  // =========================================================
+  // =====================================================
+  // INPUT CHANGE
+  // =====================================================
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -42,9 +42,9 @@ function Login() {
     }
   };
 
-  // =========================================================
-  // HANDLE LOGIN
-  // =========================================================
+  // =====================================================
+  // LOGIN
+  // =====================================================
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -52,51 +52,35 @@ function Login() {
     setError("");
 
     const email = formData.email.trim();
-    const password = formData.password;
 
-    // -------------------------------------------------------
-    // BASIC VALIDATION
-    // -------------------------------------------------------
+    const password = formData.password;
 
     if (!email) {
       setError("Please enter your email address.");
+
       return;
     }
 
     if (!password) {
       setError("Please enter your password.");
+
       return;
     }
 
     setLoading(true);
 
     try {
-      // -----------------------------------------------------
-      // LOGIN API
-      // -----------------------------------------------------
-
       const data = await loginUser({
         email,
         password,
       });
 
-      // -----------------------------------------------------
-      // SAVE ACCESS TOKEN
-      // -----------------------------------------------------
+      // =================================================
+      // USER IS STORED IN REACT STATE
+      // JWT IS STORED IN HTTP-ONLY COOKIE BY BACKEND
+      // =================================================
 
-      localStorage.setItem("access_token", data.access_token);
-
-      // -----------------------------------------------------
-      // SAVE USER
-      // -----------------------------------------------------
-
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
-
-      // -----------------------------------------------------
-      // REDIRECT
-      // -----------------------------------------------------
+      setUser(data.user);
 
       navigate("/dashboard", {
         replace: true,
@@ -118,43 +102,23 @@ function Login() {
     }
   };
 
-  // =========================================================
-  // RENDER
-  // =========================================================
-
   return (
-    <main className="login-page">
+    <main className={`login-page ${isDark ? "dark-mode" : "light-mode"}`}>
       {/* =====================================================
-          LEFT BRANDING SECTION
+          LEFT BRANDING
       ===================================================== */}
 
       <section className="login-brand-section">
-        {/* Decorative background */}
         <div className="login-grid-pattern"></div>
 
         <div className="login-brand-content">
-          {/* =================================================
-              LOGO
-          ================================================= */}
-
           <button
             type="button"
             className="login-logo"
             onClick={() => navigate("/")}
-            aria-label="Go to Jigyasa home"
           >
-            <div className="login-logo-icon">J</div>
-
-            <div className="login-logo-text">
-              <strong>JIGYASA</strong>
-
-              <span>AI-POWERED LEARNING</span>
-            </div>
+            <img src="/logo.png" alt="Jigyasa" className="login-logo-image" />
           </button>
-
-          {/* =================================================
-              BRANDING CONTENT
-          ================================================= */}
 
           <div className="login-brand-main">
             <span className="login-brand-eyebrow">WELCOME BACK</span>
@@ -169,10 +133,6 @@ function Login() {
               Sign in to Jigyasa and continue exploring knowledge, building
               skills, and growing every day.
             </p>
-
-            {/* =================================================
-                FEATURES
-            ================================================= */}
 
             <div className="login-features">
               <div className="login-feature">
@@ -195,10 +155,6 @@ function Login() {
             </div>
           </div>
 
-          {/* =================================================
-              BRAND FOOTER
-          ================================================= */}
-
           <div className="login-brand-footer">
             <span>JIGYASA</span>
 
@@ -208,27 +164,15 @@ function Login() {
       </section>
 
       {/* =====================================================
-          RIGHT AUTHENTICATION SECTION
+          RIGHT AUTH
       ===================================================== */}
 
       <section className="login-auth-section">
-        {/* =================================================
-            THEME TOGGLE
-        ================================================= */}
-
         <div className="login-theme-toggle">
           <ThemeToggle />
         </div>
 
-        {/* =================================================
-            AUTH CONTAINER
-        ================================================= */}
-
         <div className="login-auth-container">
-          {/* =================================================
-              HEADER
-          ================================================= */}
-
           <div className="login-header">
             <span className="auth-eyebrow">SIGN IN</span>
 
@@ -236,10 +180,6 @@ function Login() {
 
             <p>Enter your details to continue your Jigyasa journey.</p>
           </div>
-
-          {/* =================================================
-              LOGIN FORM
-          ================================================= */}
 
           <form className="login-form" onSubmit={handleSubmit}>
             {/* EMAIL */}
@@ -299,7 +239,7 @@ function Login() {
               </div>
             )}
 
-            {/* LOGIN BUTTON */}
+            {/* BUTTON */}
 
             <button className="primary-button" type="submit" disabled={loading}>
               {loading ? (
@@ -318,9 +258,7 @@ function Login() {
             </button>
           </form>
 
-          {/* =================================================
-              SIGNUP
-          ================================================= */}
+          {/* SIGNUP */}
 
           <div className="auth-switch">
             <span>Don't have an account?</span>
@@ -334,9 +272,7 @@ function Login() {
             </button>
           </div>
 
-          {/* =================================================
-              BACK HOME
-          ================================================= */}
+          {/* HOME */}
 
           <button
             type="button"

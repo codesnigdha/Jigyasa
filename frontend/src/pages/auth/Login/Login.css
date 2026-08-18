@@ -87,6 +87,23 @@
   color: #ffffff;
 }
 
+/* Softens the transition into the authentication panel. */
+.login-brand-section::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: -42px;
+  width: 42px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(to right, rgba(14, 165, 233, 0.32), #f8fafc);
+}
+
+:root[data-theme="dark"] .login-brand-section::after {
+  background: linear-gradient(to right, rgba(14, 165, 233, 0.28), #0f172a);
+}
+
 /* =========================================================
    GRID PATTERN
 ========================================================= */
@@ -143,6 +160,19 @@
   cursor: pointer;
 
   text-align: left;
+  transform: translate(-14px, -10px);
+}
+
+.login-logo-image {
+  width: 180px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+@media (max-width: 800px) {
+  .login-logo {
+    transform: translate(-6px, -5px);
+  }
 }
 
 .login-logo-icon {
@@ -225,11 +255,9 @@
 
   color: #ffffff;
 
-  font-size: clamp(54px, 5vw, 76px);
+  font-size: clamp(52px, 5vw, 78px);
   font-weight: 850;
-
-  letter-spacing: -0.065em;
-
+  letter-spacing: -3px;
   line-height: 0.95;
 }
 
@@ -311,7 +339,7 @@
 
   font-size: 10px;
   font-weight: 600;
-
+  margin-top: 25px;
   letter-spacing: 0.14em;
 }
 
@@ -421,10 +449,8 @@
 
   color: var(--heading);
 
-  font-size: clamp(48px, 5vw, 64px);
+  font-size: 54px;
   font-weight: 850;
-
-  letter-spacing: -0.06em;
 
   line-height: 1;
 }
@@ -805,6 +831,10 @@
 
   .login-brand-section {
     min-height: auto;
+  }
+
+  .login-brand-section::after {
+    display: none;
   }
 
   .login-brand-content {

@@ -1,11 +1,31 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { registerUser } from "../../services/authService";
-import { useTheme } from "../../context/ThemeContext";
-import ThemeToggle from "../../components/ThemeToggle/ThemeToggle";
+import { registerUser } from "../../../services/authService";
+import { useTheme } from "../../../context/ThemeContext";
+import ThemeToggle from "../../../components/ThemeToggle/ThemeToggle";
 
 import "./Signup.css";
+
+function EyeIcon({ off = false }) {
+  if (off) {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 3l18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <path d="M9.88 4.24A9.77 9.77 0 0 1 12 4c5 0 8.27 4.11 9 6-.32.83-1.14 2.22-2.67 3.57" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6.61 6.61C4.65 7.89 3.4 9.75 3 10c.73 1.89 4 6 9 6 1.25 0 2.4-.25 3.42-.67" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
 
 function Signup() {
   const navigate = useNavigate();
@@ -20,7 +40,6 @@ function Signup() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "student",
   });
 
   // =========================================================
@@ -129,7 +148,6 @@ function Signup() {
     const email = formData.email.trim();
     const password = formData.password;
     const confirmPassword = formData.confirmPassword;
-    const role = formData.role;
 
     // =======================================================
     // NAME VALIDATION
@@ -199,7 +217,6 @@ function Signup() {
         name,
         email,
         password,
-        role,
       });
 
       setSuccess("Account created successfully! Redirecting you to login...");
@@ -210,7 +227,6 @@ function Signup() {
         email: "",
         password: "",
         confirmPassword: "",
-        role: "student",
       });
 
       setShowPassword(false);
@@ -240,74 +256,6 @@ function Signup() {
     } finally {
       setLoading(false);
     }
-  };
-
-  // =========================================================
-  // EYE ICON
-  // =========================================================
-
-  const EyeIcon = ({ off = false }) => {
-    if (off) {
-      return (
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M3 3l18 18"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-
-          <path
-            d="M10.58 10.58a2 2 0 0 0 2.83 2.83"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-
-          <path
-            d="M9.88 4.24A9.77 9.77 0 0 1 12 4c5 0 8.27 4.11 9 6-.32.83-1.14 2.22-2.67 3.57"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-
-          <path
-            d="M6.61 6.61C4.65 7.89 3.4 9.75 3 10c.73 1.89 4 6 9 6 1.25 0 2.4-.25 3.42-.67"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      );
-    }
-
-    return (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path
-          d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-
-        <circle
-          cx="12"
-          cy="12"
-          r="2.5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        />
-      </svg>
-    );
   };
 
   // =========================================================
@@ -658,13 +606,7 @@ function Signup() {
             onClick={() => navigate("/")}
             aria-label="Go to Jigyasa home"
           >
-            <div className="signup-logo-icon">J</div>
-
-            <div className="signup-logo-text">
-              <strong>JIGYASA</strong>
-
-              <span>AI-POWERED LEARNING</span>
-            </div>
+            <img src="/logo.png" alt="Jigyasa" className="signup-logo-image" />
           </button>
 
           {/* BRAND MESSAGE */}
