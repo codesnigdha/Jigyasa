@@ -561,26 +561,6 @@ function Signup() {
             </div>
 
             {/* =================================================
-                ACCOUNT TYPE
-            ================================================= */}
-
-            <div className="signup-form-group">
-              <label htmlFor="role">Account Type</label>
-
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                disabled={loading}
-              >
-                <option value="student">Student</option>
-
-                <option value="teacher">Teacher</option>
-              </select>
-            </div>
-
-            {/* =================================================
                 ERROR
             ================================================= */}
 

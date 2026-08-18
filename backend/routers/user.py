@@ -3,20 +3,38 @@ from sqlalchemy.orm import Session
 
 from backend.database import SessionLocal
 from backend.models.user import User
+
 from backend.schemas.user import (
     UserCreate,
     UserLogin,
     UserResponse,
 )
-from backend.services.auth import hash_password, verify_password
+
+from backend.services.auth import (
+    hash_password,
+    verify_password,
+)
+
 from backend.services.jwt import create_access_token
-from backend.services.security import get_current_user
+
+from backend.services.security import (
+    get_current_user,
+)
+
+
+# =========================================================
+# ROUTER
+# =========================================================
 
 router = APIRouter(
     prefix="/api/users",
     tags=["Users"],
 )
 
+
+# =========================================================
+# DATABASE DEPENDENCY
+# =========================================================
 
 def get_db():
     db = SessionLocal()
@@ -27,9 +45,9 @@ def get_db():
         db.close()
 
 
-# =====================================================
+# =========================================================
 # REGISTER
-# =====================================================
+# =========================================================
 
 @router.post(
     "/register",
@@ -40,6 +58,10 @@ def register_user(
     user_data: UserCreate,
     db: Session = Depends(get_db),
 ):
+    # -----------------------------------------------------
+    # CHECK EXISTING EMAIL
+    # -----------------------------------------------------
+
     existing_user = (
         db.query(User)
         .filter(User.email == user_data.email)
@@ -52,42 +74,65 @@ def register_user(
             detail="Email already registered",
         )
 
-    hashed_password = hash_password(user_data.password)
+    # -----------------------------------------------------
+    # HASH PASSWORD
+    # -----------------------------------------------------
+
+    hashed_password = hash_password(
+        user_data.password
+    )
+
+    # -----------------------------------------------------
+    # CREATE USER
+    # -----------------------------------------------------
 
     new_user = User(
         name=user_data.name,
         email=user_data.email,
         password=hashed_password,
-        role=user_data.role,
     )
 
     db.add(new_user)
+
     db.commit()
+
     db.refresh(new_user)
 
     return new_user
 
 
-# =====================================================
+# =========================================================
 # LOGIN
-# =====================================================
+# =========================================================
 
 @router.post("/login")
 def login_user(
     user_data: UserLogin,
     db: Session = Depends(get_db),
 ):
+    # -----------------------------------------------------
+    # FIND USER
+    # -----------------------------------------------------
+
     user = (
         db.query(User)
         .filter(User.email == user_data.email)
         .first()
     )
 
+    # -----------------------------------------------------
+    # CHECK USER
+    # -----------------------------------------------------
+
     if not user:
         raise HTTPException(
             status_code=401,
             detail="Invalid email or password",
         )
+
+    # -----------------------------------------------------
+    # VERIFY PASSWORD
+    # -----------------------------------------------------
 
     if not verify_password(
         user_data.password,
@@ -98,26 +143,39 @@ def login_user(
             detail="Invalid email or password",
         )
 
+    # -----------------------------------------------------
+    # CREATE JWT
+    # -----------------------------------------------------
+
     access_token = create_access_token(
         {
             "sub": str(user.id),
             "email": user.email,
-            "role": user.role,
         }
     )
 
+    # -----------------------------------------------------
+    # RESPONSE
+    # -----------------------------------------------------
+
     return {
         "message": "Login successful",
+
         "access_token": access_token,
+
         "token_type": "bearer",
+
         "user": {
             "id": user.id,
             "name": user.name,
             "email": user.email,
-            "role": user.role,
         },
     }
 
+
+# =========================================================
+# CURRENT USER
+# =========================================================
 
 @router.get("/me")
 def get_current_user_info(
