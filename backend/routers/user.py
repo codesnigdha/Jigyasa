@@ -10,7 +10,7 @@ from backend.schemas.user import (
 )
 from backend.services.auth import hash_password, verify_password
 from backend.services.jwt import create_access_token
-
+from backend.services.security import get_current_user
 
 router = APIRouter(
     prefix="/api/users",
@@ -116,4 +116,14 @@ def login_user(
             "email": user.email,
             "role": user.role,
         },
+    }
+
+
+@router.get("/me")
+def get_current_user_info(
+    current_user=Depends(get_current_user),
+):
+    return {
+        "message": "You are authenticated",
+        "user": current_user,
     }
