@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 
+from backend.models.base import Base
+from backend.models.user import User
+
 load_dotenv()
 
 DB_HOST = os.getenv("DB_HOST")
@@ -42,3 +45,8 @@ def test_database_connection():
 
 if __name__ == "__main__":
     test_database_connection()
+
+
+def create_tables():
+    Base.metadata.create_all(bind=engine)
+    print("✅ Database tables created successfully!")
