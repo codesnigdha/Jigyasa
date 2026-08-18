@@ -1,0 +1,943 @@
+/* =========================================================
+   LOGIN PAGE
+========================================================= */
+
+.login-page {
+  --primary: #3b82f6;
+  --primary-dark: #2563eb;
+  --secondary: #38bdf8;
+
+  width: 100%;
+  min-height: 100vh;
+
+  display: grid;
+  grid-template-columns: 48% 52%;
+
+  overflow: hidden;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* =========================================================
+   LIGHT MODE VARIABLES
+========================================================= */
+
+.login-page.light-mode {
+  --auth-bg: #f8fafc;
+  --auth-surface: #ffffff;
+
+  --heading: #0f172a;
+  --body-text: #334155;
+  --muted: #64748b;
+
+  --border: #cbd5e1;
+  --input-bg: #ffffff;
+
+  --brand-heading: #0f172a;
+  --brand-body: #ffffff;
+}
+
+/* =========================================================
+   DARK MODE VARIABLES
+========================================================= */
+
+.login-page.dark-mode {
+  --auth-bg: #0f172a;
+  --auth-surface: #111c31;
+
+  --heading: #f8fafc;
+  --body-text: #cbd5e1;
+  --muted: #94a3b8;
+
+  --border: #334155;
+  --input-bg: #162238;
+
+  /*
+     IMPORTANT:
+     The branding section is BLUE in both themes.
+     Therefore its text MUST remain light.
+  */
+
+  --brand-heading: #ffffff;
+  --brand-body: #eaf2ff;
+}
+
+/* =========================================================
+   LEFT — BRANDING SECTION
+========================================================= */
+
+.login-brand-section {
+  position: relative;
+
+  min-height: 100vh;
+
+  overflow: hidden;
+
+  background: linear-gradient(145deg, #2563eb 0%, #3b82f6 48%, #0ea5e9 100%);
+
+  color: #ffffff;
+}
+
+/* =========================================================
+   GRID PATTERN
+========================================================= */
+
+.login-grid-pattern {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  opacity: 0.15;
+
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.45) 1px, transparent 1px);
+
+  background-size: 54px 54px;
+}
+
+/* =========================================================
+   BRAND CONTENT
+========================================================= */
+
+.login-brand-content {
+  position: relative;
+  z-index: 2;
+
+  min-height: 100vh;
+
+  padding: 58px 10.5% 42px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.login-logo {
+  width: fit-content;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+  color: #ffffff;
+
+  cursor: pointer;
+
+  text-align: left;
+}
+
+.login-logo-icon {
+  width: 57px;
+  height: 57px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  border-radius: 15px;
+
+  background: rgba(255, 255, 255, 0.09);
+
+  color: #ffffff;
+
+  font-size: 27px;
+  font-weight: 800;
+
+  backdrop-filter: blur(8px);
+}
+
+.login-logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.login-logo-text strong {
+  color: #ffffff;
+
+  font-size: 22px;
+  font-weight: 800;
+
+  letter-spacing: 0.04em;
+}
+
+.login-logo-text span {
+  color: rgba(255, 255, 255, 0.78);
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 0.19em;
+}
+
+/* =========================================================
+   BRAND MAIN
+========================================================= */
+
+.login-brand-main {
+  max-width: 650px;
+
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* =========================================================
+   EYEBROW
+========================================================= */
+
+.login-brand-eyebrow {
+  margin-bottom: 26px;
+
+  color: rgba(255, 255, 255, 0.9);
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: 0.24em;
+}
+
+/* =========================================================
+   BRAND HEADING
+========================================================= */
+
+.login-brand-main h2 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: clamp(54px, 5vw, 76px);
+  font-weight: 850;
+
+  letter-spacing: -0.065em;
+
+  line-height: 0.95;
+}
+
+.login-brand-main h2 span {
+  color: #bfdbfe;
+}
+
+/* =========================================================
+   BRAND DESCRIPTION
+========================================================= */
+
+.login-brand-main > p {
+  max-width: 580px;
+
+  margin: 36px 0 0;
+
+  color: rgba(255, 255, 255, 0.88);
+
+  font-size: 16px;
+
+  line-height: 1.8;
+}
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.login-features {
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+
+  margin-top: 42px;
+}
+
+.login-feature {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.feature-icon {
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.14);
+
+  color: #ffffff;
+
+  font-size: 14px;
+
+  backdrop-filter: blur(8px);
+}
+
+/* =========================================================
+   BRAND FOOTER
+========================================================= */
+
+.login-brand-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  color: rgba(255, 255, 255, 0.68);
+
+  font-size: 10px;
+  font-weight: 600;
+
+  letter-spacing: 0.14em;
+}
+
+.login-brand-footer span:last-child {
+  letter-spacing: 0.08em;
+}
+
+/* =========================================================
+   RIGHT — AUTH SECTION
+========================================================= */
+
+.login-auth-section {
+  position: relative;
+
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 70px 70px;
+
+  background: var(--auth-bg);
+  color: var(--heading);
+
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* =========================================================
+   THEME BUTTON
+========================================================= */
+
+.theme-toggle {
+  position: absolute;
+
+  top: 34px;
+  right: 36px;
+
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--border);
+  border-radius: 50%;
+
+  background: var(--auth-surface);
+
+  color: var(--heading);
+
+  font-size: 21px;
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.2s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--primary);
+
+  color: var(--primary);
+
+  transform: rotate(12deg);
+}
+
+/* =========================================================
+   AUTH CONTAINER
+========================================================= */
+
+.login-auth-container {
+  width: min(100%, 595px);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.login-header {
+  margin-bottom: 48px;
+}
+
+.auth-eyebrow {
+  display: block;
+
+  margin-bottom: 23px;
+
+  color: var(--primary);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 0.23em;
+}
+
+.login-header h1 {
+  margin: 0;
+
+  color: var(--heading);
+
+  font-size: clamp(48px, 5vw, 64px);
+  font-weight: 850;
+
+  letter-spacing: -0.06em;
+
+  line-height: 1;
+}
+
+.login-header p {
+  margin: 22px 0 0;
+
+  color: var(--muted);
+
+  font-size: 15px;
+
+  line-height: 1.7;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.auth-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.auth-form-group label {
+  color: var(--heading);
+
+  font-size: 14px;
+  font-weight: 750;
+}
+
+/* =========================================================
+   PASSWORD ROW
+========================================================= */
+
+.password-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.password-row label {
+  margin: 0;
+}
+
+.forgot-password {
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--primary);
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.auth-form-group input {
+  width: 100%;
+  height: 64px;
+
+  padding: 0 20px;
+
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+
+  outline: none;
+
+  background: var(--input-bg);
+  color: var(--heading);
+
+  font-family: inherit;
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.auth-form-group input::placeholder {
+  color: var(--muted);
+
+  opacity: 0.75;
+}
+
+.auth-form-group input:hover {
+  border-color: #94a3b8;
+}
+
+.auth-form-group input:focus {
+  border-color: var(--primary);
+
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+.login-page.dark-mode .auth-form-group input:hover {
+  border-color: #64748b;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.auth-error {
+  padding: 13px 15px;
+
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 9px;
+
+  background: rgba(239, 68, 68, 0.08);
+
+  color: #ef4444;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   PRIMARY BUTTON
+========================================================= */
+
+.primary-button {
+  width: 100%;
+  height: 62px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: var(--primary-dark);
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.primary-button:hover:not(:disabled) {
+  background: #1d4ed8;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 12px 25px rgba(37, 99, 235, 0.25);
+}
+
+.primary-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.primary-button:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   BUTTON ARROW
+========================================================= */
+
+.button-arrow {
+  font-size: 23px;
+
+  line-height: 1;
+
+  transition: transform 0.2s ease;
+}
+
+.primary-button:hover:not(:disabled) .button-arrow {
+  transform: translateX(4px);
+}
+
+/* =========================================================
+   SPINNER
+========================================================= */
+
+.spinner {
+  width: 18px;
+  height: 18px;
+
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+
+  border-radius: 50%;
+
+  animation: login-spin 0.7s linear infinite;
+}
+
+@keyframes login-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   SIGNUP SWITCH
+========================================================= */
+
+.auth-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  margin-top: 34px;
+
+  color: var(--muted);
+
+  font-size: 14px;
+}
+
+.auth-switch button {
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--primary);
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.auth-switch button:hover {
+  text-decoration: underline;
+}
+
+/* =========================================================
+   BACK HOME
+========================================================= */
+
+.back-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  margin: 31px auto 0;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--muted);
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.back-home:hover {
+  color: var(--primary);
+
+  transform: translateX(-2px);
+}
+
+/* =========================================================
+   DARK MODE — EXTRA CONTRAST FIX
+========================================================= */
+
+/*
+   The branding section ALWAYS uses the blue background.
+   These rules deliberately override any inherited dark-mode
+   text colors.
+*/
+
+.login-page.dark-mode .login-brand-section,
+.login-page.dark-mode .login-brand-section h2,
+.login-page.dark-mode .login-brand-section p,
+.login-page.dark-mode .login-brand-section span,
+.login-page.dark-mode .login-brand-section strong,
+.login-page.dark-mode .login-brand-section .login-feature {
+  color: #ffffff;
+}
+
+.login-page.dark-mode .login-brand-section h2 span {
+  color: #bfdbfe;
+}
+
+.login-page.dark-mode .login-logo-text span,
+.login-page.dark-mode .login-brand-footer {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.login-page.dark-mode .login-brand-main > p {
+  color: rgba(255, 255, 255, 0.86);
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+  .login-page {
+    grid-template-columns: 46% 54%;
+  }
+
+  .login-brand-content {
+    padding-left: 8%;
+    padding-right: 8%;
+  }
+
+  .login-brand-main h2 {
+    font-size: 55px;
+  }
+
+  .login-auth-section {
+    padding: 65px 45px;
+  }
+
+  .login-header h1 {
+    font-size: 50px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+  .login-page {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* -------------------------------------------------------
+     BRAND
+  ------------------------------------------------------- */
+
+  .login-brand-section {
+    min-height: auto;
+  }
+
+  .login-brand-content {
+    min-height: auto;
+
+    padding: 35px 25px 40px;
+  }
+
+  .login-brand-main {
+    margin: 70px 0 55px;
+  }
+
+  .login-brand-main h2 {
+    font-size: 49px;
+  }
+
+  .login-brand-main > p {
+    margin-top: 25px;
+
+    font-size: 14px;
+  }
+
+  .login-features {
+    gap: 15px;
+
+    margin-top: 30px;
+  }
+
+  .login-feature {
+    font-size: 12px;
+  }
+
+  .login-brand-footer {
+    display: none;
+  }
+
+  /* -------------------------------------------------------
+     AUTH
+  ------------------------------------------------------- */
+
+  .login-auth-section {
+    min-height: auto;
+
+    padding: 80px 25px 60px;
+  }
+
+  .theme-toggle {
+    top: 20px;
+    right: 20px;
+
+    width: 43px;
+    height: 43px;
+  }
+
+  .login-header {
+    margin-bottom: 38px;
+  }
+
+  .login-header h1 {
+    font-size: 46px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE — SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .login-brand-content {
+    padding: 28px 20px 35px;
+  }
+
+  .login-logo-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 12px;
+
+    font-size: 22px;
+  }
+
+  .login-logo-text strong {
+    font-size: 18px;
+  }
+
+  .login-logo-text span {
+    font-size: 7px;
+  }
+
+  .login-brand-main {
+    margin: 55px 0 45px;
+  }
+
+  .login-brand-main h2 {
+    font-size: 42px;
+  }
+
+  .login-brand-main > p {
+    font-size: 13px;
+  }
+
+  .login-feature {
+    font-size: 11px;
+  }
+
+  .feature-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .login-auth-section {
+    padding: 75px 20px 50px;
+  }
+
+  .login-header h1 {
+    font-size: 41px;
+  }
+
+  .login-header p {
+    font-size: 13px;
+  }
+
+  .auth-form-group input {
+    height: 58px;
+  }
+
+  .primary-button {
+    height: 58px;
+  }
+
+  .auth-switch {
+    flex-direction: column;
+
+    font-size: 12px;
+  }
+}

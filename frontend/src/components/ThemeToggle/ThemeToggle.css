@@ -1,0 +1,71 @@
+/* =========================================================
+   THEME TOGGLE
+========================================================= */
+
+.theme-toggle {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid var(--border, #cbd5e1);
+  border-radius: 50%;
+
+  background: var(--card, #ffffff);
+  color: var(--heading, #0f172a);
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.2s ease,
+    box-shadow 0.25s ease;
+}
+
+.theme-toggle:hover {
+  color: var(--primary, #3b82f6);
+
+  border-color: var(--primary, #3b82f6);
+
+  transform: rotate(10deg);
+
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+.theme-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 21px;
+  line-height: 1;
+
+  user-select: none;
+}
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+[data-theme="dark"] .theme-toggle {
+  background: #111c31;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+  color: #38bdf8;
+  border-color: #3b82f6;
+}
