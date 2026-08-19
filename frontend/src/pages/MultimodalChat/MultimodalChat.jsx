@@ -15,6 +15,10 @@ import {
 
 import "./MultimodalChat.css";
 
+/* =====================================================
+   ACCEPTED FILE TYPES
+===================================================== */
+
 const ACCEPTED_TYPES = [
   "image/png",
   "image/jpeg",
@@ -28,23 +32,22 @@ const ACCEPTED_TYPES = [
 
 const ACCEPTED_EXTENSIONS = ".png,.jpg,.jpeg,.webp,.pdf,.txt,.doc,.docx";
 
-/* =========================================
+/* =====================================================
    QUICK ACTIONS
-========================================= */
+===================================================== */
 
 const QUICK_ACTIONS = [
   {
     icon: FileText,
     title: "Summarize",
     description: "Get a summary of your content",
-    prompt:
-      "Summarize the uploaded content and give me the most important points.",
+    prompt: "Summarize the content and give me the most important points.",
   },
   {
     icon: "ai",
     title: "Explain",
     description: "Explain in simple terms",
-    prompt: "Explain the uploaded content in simple language.",
+    prompt: "Explain this in simple language.",
   },
   {
     icon: ImageIcon,
@@ -56,13 +59,13 @@ const QUICK_ACTIONS = [
     icon: Check,
     title: "Key points",
     description: "Extract key points",
-    prompt: "Extract the most important information from the uploaded content.",
+    prompt: "Extract the most important information and key points.",
   },
 ];
 
-/* =========================================
+/* =====================================================
    JIGYASA AI ICON
-========================================= */
+===================================================== */
 
 function AIIcon({ className = "" }) {
   return (
@@ -74,9 +77,9 @@ function AIIcon({ className = "" }) {
   );
 }
 
-/* =========================================
+/* =====================================================
    MAIN COMPONENT
-========================================= */
+===================================================== */
 
 function MultimodalChat() {
   const [messages, setMessages] = useState([]);
@@ -91,9 +94,9 @@ function MultimodalChat() {
 
   const hasConversation = messages.length > 0;
 
-  /* =========================================
+  /* =====================================================
      AUTO SCROLL
-  ========================================= */
+  ===================================================== */
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
@@ -101,9 +104,9 @@ function MultimodalChat() {
     });
   }, [messages, isTyping]);
 
-  /* =========================================
+  /* =====================================================
      FILE SIZE
-  ========================================= */
+  ===================================================== */
 
   const formatFileSize = (bytes) => {
     if (bytes < 1024) {
@@ -117,9 +120,9 @@ function MultimodalChat() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  /* =========================================
+  /* =====================================================
      FILE ICON
-  ========================================= */
+  ===================================================== */
 
   const getFileIcon = (file) => {
     if (file.type.startsWith("image/")) {
@@ -129,9 +132,9 @@ function MultimodalChat() {
     return <FileText size={18} />;
   };
 
-  /* =========================================
+  /* =====================================================
      ADD FILES
-  ========================================= */
+  ===================================================== */
 
   const addFiles = (selectedFiles) => {
     const incomingFiles = Array.from(selectedFiles);
@@ -164,6 +167,10 @@ function MultimodalChat() {
     setFiles((previous) => [...previous, ...preparedFiles]);
   };
 
+  /* =====================================================
+     FILE CHANGE
+  ===================================================== */
+
   const handleFileChange = (event) => {
     if (event.target.files?.length) {
       addFiles(event.target.files);
@@ -172,9 +179,9 @@ function MultimodalChat() {
     event.target.value = "";
   };
 
-  /* =========================================
+  /* =====================================================
      REMOVE FILE
-  ========================================= */
+  ===================================================== */
 
   const removeFile = (id) => {
     setFiles((previous) => {
@@ -188,6 +195,10 @@ function MultimodalChat() {
     });
   };
 
+  /* =====================================================
+     CLEAR FILES
+  ===================================================== */
+
   const clearFiles = () => {
     files.forEach((file) => {
       if (file.preview) {
@@ -198,9 +209,9 @@ function MultimodalChat() {
     setFiles([]);
   };
 
-  /* =========================================
+  /* =====================================================
      DRAG & DROP
-  ========================================= */
+  ===================================================== */
 
   const handleDrop = (event) => {
     event.preventDefault();
@@ -214,62 +225,88 @@ function MultimodalChat() {
     event.preventDefault();
   };
 
-  /* =========================================
-     MOCK AI RESPONSE
-  ========================================= */
+  /* =====================================================
+     AZURE AI API
+  ===================================================== */
 
-  const getMockResponse = (question, uploadedFiles) => {
-    if (uploadedFiles.length > 0) {
-      const names = uploadedFiles.map((file) => file.name).join(", ");
+  const getAIResponse = async (message) => {
+    const response = await fetch("http://127.0.0.1:8000/api/ai/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message,
+      }),
+    });
 
-      return `I've received your content.
+    let data;
 
-Uploaded files:
-${names}
-
-Your request:
-${question || "Analyze the uploaded content."}
-
-The Jigyasa multimodal interface is ready.
-
-The next stage is connecting this interface to Azure AI so Jigyasa can actually analyze the uploaded image, document or text and generate an intelligent response.`;
+    try {
+      data = await response.json();
+    } catch {
+      throw new Error("The server returned an invalid response.");
     }
 
-    return `I received your question:
+    if (!response.ok) {
+      throw new Error(
+        data?.detail ||
+          data?.message ||
+          `AI request failed with status ${response.status}.`,
+      );
+    }
 
-${question}
+    if (!data?.success) {
+      throw new Error(data?.message || "Unable to get AI response.");
+    }
 
-The Jigyasa AI interface is working.
-
-The next stage is connecting this interface to Azure AI for the actual AI-generated response.`;
+    return data.message;
   };
 
-  /* =========================================
+  /* =====================================================
      SEND MESSAGE
-  ========================================= */
+  ===================================================== */
 
-  const sendMessage = (customPrompt = null) => {
+  const sendMessage = async (customPrompt = null) => {
     const messageText = (customPrompt !== null ? customPrompt : input).trim();
 
+    /*
+     * Don't send an empty message unless files are selected.
+     */
     if (!messageText && files.length === 0) {
       return;
     }
 
     const currentFiles = [...files];
 
+    /*
+     * Lab 3 currently supports text chat.
+     *
+     * If only a file is selected, we send a simple instruction.
+     * The file itself will be handled by the later multimodal labs.
+     */
+    const requestMessage =
+      messageText ||
+      `I have uploaded ${currentFiles.length} ${
+        currentFiles.length === 1 ? "file" : "files"
+      }. Please tell me what I can do with this content.`;
+
+    /* ===================================================
+       USER MESSAGE
+    =================================================== */
+
     const userMessage = {
       id: Date.now(),
       role: "user",
-      content:
-        messageText ||
-        `Analyze ${currentFiles.length} uploaded ${
-          currentFiles.length === 1 ? "file" : "files"
-        }.`,
+      content: requestMessage,
       files: currentFiles,
     };
 
     setMessages((previous) => [...previous, userMessage]);
 
+    /*
+     * Clear composer.
+     */
     setInput("");
     setFiles([]);
     setIsTyping(true);
@@ -278,22 +315,41 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
       textareaRef.current.style.height = "auto";
     }
 
-    setTimeout(() => {
+    /* ===================================================
+       CALL AZURE AI THROUGH FASTAPI
+    =================================================== */
+
+    try {
+      const aiResponse = await getAIResponse(requestMessage);
+
       const assistantMessage = {
         id: Date.now() + 1,
         role: "assistant",
-        content: getMockResponse(messageText, currentFiles),
+        content: aiResponse,
       };
 
       setMessages((previous) => [...previous, assistantMessage]);
+    } catch (error) {
+      console.error("Azure AI request failed:", error);
 
+      const errorMessage = {
+        id: Date.now() + 1,
+        role: "assistant",
+        content:
+          "I'm sorry, I couldn't connect to Jigyasa AI right now.\n\n" +
+          `${error.message}\n\n` +
+          "Please make sure the Jigyasa backend is running and Azure AI is available.",
+      };
+
+      setMessages((previous) => [...previous, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1200);
+    }
   };
 
-  /* =========================================
+  /* =====================================================
      TEXTAREA
-  ========================================= */
+  ===================================================== */
 
   const handleInput = (event) => {
     setInput(event.target.value);
@@ -307,16 +363,23 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
     }
   };
 
+  /* =====================================================
+     ENTER KEY
+  ===================================================== */
+
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      sendMessage();
+
+      if (!isTyping) {
+        sendMessage();
+      }
     }
   };
 
-  /* =========================================
+  /* =====================================================
      NEW CHAT
-  ========================================= */
+  ===================================================== */
 
   const clearConversation = () => {
     clearFiles();
@@ -330,9 +393,9 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
     }
   };
 
-  /* =========================================
-     COPY
-  ========================================= */
+  /* =====================================================
+     COPY MESSAGE
+  ===================================================== */
 
   const copyMessage = async (message) => {
     try {
@@ -348,16 +411,16 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
     }
   };
 
-  /* =========================================
+  /* =====================================================
      RENDER
-  ========================================= */
+  ===================================================== */
 
   return (
     <div className="multimodal-page">
       <div className="ai-workspace">
-        {/* =====================================
+        {/* =================================================
             LEFT CHAT PANEL
-        ===================================== */}
+        ================================================= */}
 
         <section className="chat-panel">
           {/* CHAT HEADER */}
@@ -392,9 +455,9 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
             onDragOver={handleDragOver}
           >
             {!hasConversation ? (
-              /* =====================================
+              /* =================================================
                  EMPTY STATE
-              ===================================== */
+              ================================================= */
 
               <div className="empty-state">
                 <div className="empty-state-icon">
@@ -421,9 +484,9 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
                 </div>
               </div>
             ) : (
-              /* =====================================
+              /* =================================================
                  MESSAGES
-              ===================================== */
+              ================================================= */
 
               <div className="messages-container">
                 {messages.map((message) => (
@@ -528,9 +591,9 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
             )}
           </div>
 
-          {/* =====================================
+          {/* =================================================
               CHAT INPUT
-          ===================================== */}
+          ================================================= */}
 
           <div className="chat-input-section">
             {/* SELECTED FILES */}
@@ -580,12 +643,13 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
                 onKeyDown={handleKeyDown}
                 placeholder="Type your message or ask Jigyasa anything..."
                 rows={1}
+                disabled={isTyping}
               />
 
               <button
                 type="button"
                 className="composer-send"
-                disabled={!input.trim() && files.length === 0}
+                disabled={isTyping || (!input.trim() && files.length === 0)}
                 onClick={() => sendMessage()}
                 aria-label="Send message"
               >
@@ -599,9 +663,9 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
           </div>
         </section>
 
-        {/* =====================================
+        {/* =================================================
             RIGHT SIDEBAR
-        ===================================== */}
+        ================================================= */}
 
         <aside className="ai-sidebar">
           {/* UPLOAD CARD */}
@@ -692,6 +756,7 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
                     type="button"
                     className="quick-action"
                     onClick={() => sendMessage(action.prompt)}
+                    disabled={isTyping}
                   >
                     <div className="quick-action-icon">
                       {Icon === "ai" ? <AIIcon /> : <Icon size={17} />}
@@ -710,9 +775,9 @@ The next stage is connecting this interface to Azure AI for the actual AI-genera
         </aside>
       </div>
 
-      {/* =====================================
+      {/* =================================================
           HIDDEN FILE INPUT
-      ===================================== */}
+      ================================================= */}
 
       <input
         ref={fileInputRef}
