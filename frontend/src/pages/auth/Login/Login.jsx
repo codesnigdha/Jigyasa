@@ -1,14 +1,86 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { loginUser } from "../../../services/authService";
-
 import { useAuth } from "../../../context/AuthContext";
 import { useTheme } from "../../../context/ThemeContext";
+
+import { loginUser } from "../../../services/authService";
 
 import ThemeToggle from "../../../components/ThemeToggle/ThemeToggle";
 
 import "./Login.css";
+
+/* =====================================================
+   EYE ICON
+===================================================== */
+
+function EyeIcon({ off = false }) {
+  if (off) {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" className="password-eye-icon">
+        <path
+          d="M3 3l18 18"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M10.58 10.58a2 2 0 0 0 2.83 2.83"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M9.88 4.24A9.77 9.77 0 0 1 12 4c5 0 8.27 4.11 9 8-.32.83-1.14 2.22-2.67 3.57"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+        <path
+          d="M6.61 6.61C4.65 7.89 3.4 9.75 3 12c.73 1.89 4 6 9 6 1.25 0 2.4-.25 3.42-.67"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="password-eye-icon">
+      <path
+        d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+
+      <circle
+        cx="12"
+        cy="12"
+        r="2.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+    </svg>
+  );
+}
+
+/* =====================================================
+   LOGIN
+===================================================== */
 
 function Login() {
   const navigate = useNavigate();
@@ -16,24 +88,32 @@ function Login() {
   const { setUser } = useAuth();
   const { isDark } = useTheme();
 
+  /* =====================================================
+     FORM
+  ===================================================== */
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
+  /* =====================================================
+     UI STATE
+  ===================================================== */
+
   const [error, setError] = useState("");
-
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  // =====================================================
-  // INPUT CHANGE
-  // =====================================================
+  /* =====================================================
+     INPUT CHANGE
+  ===================================================== */
 
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    setFormData((previousData) => ({
-      ...previousData,
+    setFormData((previous) => ({
+      ...previous,
       [name]: value,
     }));
 
@@ -42,46 +122,69 @@ function Login() {
     }
   };
 
-  // =====================================================
-  // LOGIN
-  // =====================================================
+  /* =====================================================
+     LOGIN
+  ===================================================== */
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (loading) {
+      return;
+    }
+
     setError("");
 
     const email = formData.email.trim();
-
     const password = formData.password;
+
+    /* =================================================
+       VALIDATION
+    ================================================= */
 
     if (!email) {
       setError("Please enter your email address.");
-
       return;
     }
 
     if (!password) {
       setError("Please enter your password.");
-
       return;
     }
 
     setLoading(true);
 
     try {
+      /*
+       * IMPORTANT:
+       * We directly use the existing backend API service.
+       *
+       * The backend manages authentication/session.
+       */
       const data = await loginUser({
         email,
         password,
       });
 
-      // =================================================
-      // USER IS STORED IN REACT STATE
-      // JWT IS STORED IN HTTP-ONLY COOKIE BY BACKEND
-      // =================================================
+      /*
+       * Backend response contains user.
+       */
+      const loggedInUser = data?.user || data?.data?.user || null;
 
-      setUser(data.user);
+      if (!loggedInUser) {
+        throw new Error(
+          "Login succeeded but user information was not returned.",
+        );
+      }
 
+      /*
+       * Update AuthContext.
+       */
+      setUser(loggedInUser);
+
+      /*
+       * Dashboard.
+       */
       navigate("/dashboard", {
         replace: true,
       });
@@ -90,10 +193,14 @@ function Login() {
 
       if (error.response?.status === 401) {
         setError("Invalid email or password.");
+      } else if (error.response?.status === 400) {
+        setError(error.response?.data?.detail || "Invalid email or password.");
       } else if (error.response?.status === 422) {
         setError("Please enter valid login details.");
       } else if (error.response?.data?.detail) {
         setError(error.response.data.detail);
+      } else if (error.message) {
+        setError(error.message);
       } else {
         setError("Unable to connect to the server. Please try again.");
       }
@@ -102,23 +209,32 @@ function Login() {
     }
   };
 
+  /* =====================================================
+     RENDER
+  ===================================================== */
+
   return (
     <main className={`login-page ${isDark ? "dark-mode" : "light-mode"}`}>
-      {/* =====================================================
+      {/* =================================================
           LEFT BRANDING
-      ===================================================== */}
+      ================================================= */}
 
       <section className="login-brand-section">
         <div className="login-grid-pattern"></div>
 
         <div className="login-brand-content">
+          {/* LOGO */}
+
           <button
             type="button"
             className="login-logo"
             onClick={() => navigate("/")}
+            aria-label="Go to Jigyasa home"
           >
             <img src="/logo.png" alt="Jigyasa" className="login-logo-image" />
           </button>
+
+          {/* BRAND CONTENT */}
 
           <div className="login-brand-main">
             <span className="login-brand-eyebrow">WELCOME BACK</span>
@@ -155,6 +271,8 @@ function Login() {
             </div>
           </div>
 
+          {/* BRAND FOOTER */}
+
           <div className="login-brand-footer">
             <span>JIGYASA</span>
 
@@ -163,16 +281,20 @@ function Login() {
         </div>
       </section>
 
-      {/* =====================================================
+      {/* =================================================
           RIGHT AUTH
-      ===================================================== */}
+      ================================================= */}
 
       <section className="login-auth-section">
+        {/* THEME */}
+
         <div className="login-theme-toggle">
           <ThemeToggle />
         </div>
 
         <div className="login-auth-container">
+          {/* HEADER */}
+
           <div className="login-header">
             <span className="auth-eyebrow">SIGN IN</span>
 
@@ -181,14 +303,16 @@ function Login() {
             <p>Enter your details to continue your Jigyasa journey.</p>
           </div>
 
+          {/* FORM */}
+
           <form className="login-form" onSubmit={handleSubmit}>
             {/* EMAIL */}
 
             <div className="auth-form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="login-email">Email Address</label>
 
               <input
-                id="email"
+                id="login-email"
                 type="email"
                 name="email"
                 value={formData.email}
@@ -204,7 +328,7 @@ function Login() {
 
             <div className="auth-form-group">
               <div className="password-row">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="login-password">Password</label>
 
                 <button
                   type="button"
@@ -218,28 +342,41 @@ function Login() {
                 </button>
               </div>
 
-              <input
-                id="password"
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                disabled={loading}
-                required
-              />
+              <div className="password-input-wrapper">
+                <input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  disabled={loading}
+                  required
+                />
+
+                <button
+                  type="button"
+                  className="password-eye-button"
+                  onClick={() => setShowPassword((previous) => !previous)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  disabled={loading}
+                >
+                  <EyeIcon off={showPassword} />
+                </button>
+              </div>
             </div>
 
             {/* ERROR */}
 
             {error && (
               <div className="auth-error" role="alert">
-                {error}
+                <span>!</span>
+                <span>{error}</span>
               </div>
             )}
 
-            {/* BUTTON */}
+            {/* SUBMIT */}
 
             <button className="primary-button" type="submit" disabled={loading}>
               {loading ? (

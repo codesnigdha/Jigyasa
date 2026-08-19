@@ -1,10 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
-
 import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
-
-import ThemeToggle from "../ThemeToggle/ThemeToggle";
+import { useTheme } from "../../context/ThemeContext";
 
 import "./Navbar.css";
 
@@ -12,94 +10,387 @@ function Navbar() {
   const navigate = useNavigate();
 
   const { user, isAuthenticated, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
 
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleLogout = async () => {
-    await logout();
+  /* =====================================================
+     LOGO
+  ===================================================== */
 
-    setMenuOpen(false);
+  const logo = isDark ? "/dark-logo.png" : "/light-logo.png";
 
-    navigate("/");
+  /* =====================================================
+     CLOSE MENUS
+  ===================================================== */
+
+  const closeMenus = () => {
+    setProfileOpen(false);
+    setMobileOpen(false);
   };
 
+  const closeMobileMenu = () => {
+    setMobileOpen(false);
+  };
+
+  /* =====================================================
+     NAVIGATION
+  ===================================================== */
+
+  const handleNavigation = (path) => {
+    closeMenus();
+    navigate(path);
+  };
+
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
+
+  const handleLogout = async () => {
+    closeMenus();
+
+    try {
+      await logout();
+    } finally {
+      navigate("/login", { replace: true });
+    }
+  };
+
+  /* =====================================================
+     NAV LINK CLASS
+  ===================================================== */
+
+  const navLinkClass = ({ isActive }) =>
+    `navbar-link ${isActive ? "active" : ""}`;
+
+  /* =====================================================
+     USER INFORMATION
+  ===================================================== */
+
+  const userName = user?.name || "User";
+  const userEmail = user?.email || "";
+  const userInitial = userName.charAt(0).toUpperCase();
+
+  /* =====================================================
+     RETURN
+  ===================================================== */
+
   return (
-    <nav className="navbar">
-      <Link to="/" className="navbar-logo">
-        <img src="/logo.png" alt="Jigyasa" className="navbar-logo-image" />
-      </Link>
+    <header className="navbar">
+      <div className="navbar-container">
+        {/* =================================================
+            LOGO
+        ================================================= */}
 
-      <div className="navbar-links">
-        <Link to="/">Home</Link>
+        <NavLink
+          to="/"
+          className="navbar-logo"
+          onClick={closeMenus}
+          aria-label="Jigyasa Home"
+        >
+          <img src={logo} alt="Jigyasa" className="navbar-logo-image" />
+        </NavLink>
 
-        <Link to="/explore">Explore</Link>
+        {/* =================================================
+            DESKTOP NAVIGATION
+        ================================================= */}
 
-        <Link to="/about">About</Link>
+        <nav className="navbar-links" aria-label="Main navigation">
+          <NavLink to="/" end className={navLinkClass}>
+            Home
+          </NavLink>
 
-        <Link to="/help">Help</Link>
-      </div>
+          <NavLink to="/explore" className={navLinkClass}>
+            Explore
+          </NavLink>
 
-      <div className="navbar-actions">
-        <ThemeToggle />
+          <NavLink to="/about" className={navLinkClass}>
+            About
+          </NavLink>
 
-        {!isAuthenticated ? (
-          <>
-            <button className="navbar-login" onClick={() => navigate("/login")}>
-              Login
-            </button>
+          <NavLink to="/help" className={navLinkClass}>
+            Help
+          </NavLink>
 
-            <button
-              className="navbar-get-started"
-              onClick={() => navigate("/signup")}
-            >
-              Get Started
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              className="navbar-dashboard"
-              onClick={() => navigate("/dashboard")}
-            >
+          {isAuthenticated && (
+            <NavLink to="/dashboard" className={navLinkClass}>
               Dashboard
-            </button>
+            </NavLink>
+          )}
+        </nav>
+
+        {/* =================================================
+            DESKTOP ACTIONS
+        ================================================= */}
+
+        <div className="navbar-actions">
+          {/* =================================================
+              THEME TOGGLE
+          ================================================= */}
+
+          <button
+            type="button"
+            className="navbar-theme-button"
+            onClick={toggleTheme}
+            aria-pressed={isDark}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {isDark ? "☀️" : "🌙"}
+          </button>
+
+          {/* =================================================
+              LOGGED OUT
+          ================================================= */}
+
+          {!isAuthenticated ? (
+            <>
+              <button
+                type="button"
+                className="navbar-login"
+                onClick={() => handleNavigation("/login")}
+              >
+                Login
+              </button>
+
+              <button
+                type="button"
+                className="navbar-get-started"
+                onClick={() => handleNavigation("/signup")}
+              >
+                Get Started
+              </button>
+            </>
+          ) : (
+            /* =================================================
+               LOGGED IN
+            ================================================= */
 
             <div className="navbar-profile">
               <button
+                type="button"
                 className="profile-button"
-                onClick={() => setMenuOpen(!menuOpen)}
+                onClick={() => setProfileOpen((previous) => !previous)}
+                aria-expanded={profileOpen}
+                aria-haspopup="menu"
               >
-                <span className="profile-avatar">
-                  {user?.name?.charAt(0)?.toUpperCase()}
+                <span className="profile-avatar">{userInitial}</span>
+
+                <span className="profile-name">{userName}</span>
+
+                <span
+                  className={`profile-chevron ${profileOpen ? "rotate" : ""}`}
+                >
+                  ▾
                 </span>
-
-                <span>{user?.name}</span>
-
-                <span>▾</span>
               </button>
 
-              {menuOpen && (
-                <div className="profile-menu">
-                  <button onClick={() => navigate("/profile")}>Profile</button>
+              {/* =================================================
+                  PROFILE DROPDOWN
+              ================================================= */}
 
-                  <button onClick={() => navigate("/settings")}>
-                    Settings
+              {profileOpen && (
+                <div className="profile-menu" role="menu">
+                  {/* PROFILE HEADER */}
+
+                  <div className="profile-menu-header">
+                    <div className="profile-menu-avatar">{userInitial}</div>
+
+                    <div className="profile-menu-user">
+                      <strong>{userName}</strong>
+
+                      <span>{userEmail}</span>
+                    </div>
+                  </div>
+
+                  <div className="profile-menu-divider" />
+
+                  {/* DASHBOARD */}
+
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => handleNavigation("/dashboard")}
+                  >
+                    <span>Dashboard</span>
                   </button>
 
-                  <button onClick={() => navigate("/help")}>Help</button>
+                  {/* ABOUT */}
 
-                  <hr />
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => handleNavigation("/about")}
+                  >
+                    <span>About Jigyasa</span>
+                  </button>
 
-                  <button className="logout-button" onClick={handleLogout}>
-                    Logout
+                  <div className="profile-menu-divider" />
+
+                  {/* LOGOUT */}
+
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className="logout-button"
+                    onClick={handleLogout}
+                  >
+                    <span>Logout</span>
                   </button>
                 </div>
               )}
             </div>
-          </>
-        )}
+          )}
+        </div>
+
+        {/* =================================================
+            MOBILE MENU BUTTON
+        ================================================= */}
+
+        <button
+          type="button"
+          className="navbar-mobile-button"
+          onClick={() => setMobileOpen((previous) => !previous)}
+          aria-label={
+            mobileOpen ? "Close navigation menu" : "Open navigation menu"
+          }
+          aria-expanded={mobileOpen}
+        >
+          <span className={mobileOpen ? "bar open" : "bar"} />
+
+          <span className={mobileOpen ? "bar open" : "bar"} />
+
+          <span className={mobileOpen ? "bar open" : "bar"} />
+        </button>
       </div>
-    </nav>
+
+      {/* =====================================================
+          MOBILE MENU
+      ===================================================== */}
+
+      {mobileOpen && (
+        <div className="navbar-mobile-menu">
+          {/* HOME */}
+
+          <NavLink
+            to="/"
+            end
+            className={navLinkClass}
+            onClick={closeMobileMenu}
+          >
+            Home
+          </NavLink>
+
+          {/* EXPLORE */}
+
+          <NavLink
+            to="/explore"
+            className={navLinkClass}
+            onClick={closeMobileMenu}
+          >
+            Explore
+          </NavLink>
+
+          {/* ABOUT */}
+
+          <NavLink
+            to="/about"
+            className={navLinkClass}
+            onClick={closeMobileMenu}
+          >
+            About
+          </NavLink>
+
+          {/* HELP */}
+
+          <NavLink
+            to="/help"
+            className={navLinkClass}
+            onClick={closeMobileMenu}
+          >
+            Help
+          </NavLink>
+
+          {/* DASHBOARD */}
+
+          {isAuthenticated && (
+            <NavLink
+              to="/dashboard"
+              className={navLinkClass}
+              onClick={closeMobileMenu}
+            >
+              Dashboard
+            </NavLink>
+          )}
+
+          <div className="mobile-divider" />
+
+          {/* =================================================
+              MOBILE THEME
+          ================================================= */}
+
+          <button
+            type="button"
+            className="mobile-theme-button"
+            onClick={toggleTheme}
+            aria-pressed={isDark}
+          >
+            <span>{isDark ? "☀️" : "🌙"}</span>
+
+            <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
+          </button>
+
+          {/* =================================================
+              MOBILE LOGGED OUT
+          ================================================= */}
+
+          {!isAuthenticated ? (
+            <>
+              <button
+                type="button"
+                className="mobile-login"
+                onClick={() => handleNavigation("/login")}
+              >
+                Login
+              </button>
+
+              <button
+                type="button"
+                className="mobile-signup"
+                onClick={() => handleNavigation("/signup")}
+              >
+                Get Started
+              </button>
+            </>
+          ) : (
+            /* =================================================
+               MOBILE LOGGED IN
+            ================================================= */
+
+            <>
+              <div className="mobile-user">
+                <div className="profile-avatar">{userInitial}</div>
+
+                <div>
+                  <strong>{userName}</strong>
+
+                  <span>{userEmail}</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="mobile-logout"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </header>
   );
 }
 

@@ -3,37 +3,90 @@ import { useNavigate } from "react-router-dom";
 
 import { registerUser } from "../../../services/authService";
 import { useTheme } from "../../../context/ThemeContext";
+
 import ThemeToggle from "../../../components/ThemeToggle/ThemeToggle";
 
 import "./Signup.css";
+
+/* =====================================================
+   EYE ICON
+===================================================== */
 
 function EyeIcon({ off = false }) {
   if (off) {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 3l18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        <path d="M10.58 10.58a2 2 0 0 0 2.83 2.83" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        <path d="M9.88 4.24A9.77 9.77 0 0 1 12 4c5 0 8.27 4.11 9 6-.32.83-1.14 2.22-2.67 3.57" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M6.61 6.61C4.65 7.89 3.4 9.75 3 10c.73 1.89 4 6 9 6 1.25 0 2.4-.25 3.42-.67" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M3 3l18 18"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M10.58 10.58a2 2 0 0 0 2.83 2.83"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+
+        <path
+          d="M9.88 4.24A9.77 9.77 0 0 1 12 4c5 0 8.27 4.11 9 8-.32.83-1.14 2.22-2.67 3.57"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+        <path
+          d="M6.61 6.61C4.65 7.89 3.4 9.75 3 12c.73 1.89 4 6 9 6 1.25 0 2.4-.25 3.42-.67"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     );
   }
 
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path
+        d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+
+      <circle
+        cx="12"
+        cy="12"
+        r="2.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
     </svg>
   );
 }
+
+/* =====================================================
+   SIGNUP
+===================================================== */
 
 function Signup() {
   const navigate = useNavigate();
   const { isDark } = useTheme();
 
-  // =========================================================
-  // FORM DATA
-  // =========================================================
+  /* =====================================================
+     FORM
+  ===================================================== */
 
   const [formData, setFormData] = useState({
     name: "",
@@ -42,20 +95,21 @@ function Signup() {
     confirmPassword: "",
   });
 
-  // =========================================================
-  // UI STATE
-  // =========================================================
+  /* =====================================================
+     UI
+  ===================================================== */
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
+
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // =========================================================
-  // PASSWORD RULES
-  // =========================================================
+  /* =====================================================
+     PASSWORD RULES
+  ===================================================== */
 
   const passwordRules = {
     minLength: formData.password.length >= 8,
@@ -72,9 +126,9 @@ function Signup() {
     passwordRules.number &&
     passwordRules.special;
 
-  // =========================================================
-  // PASSWORD STRENGTH
-  // =========================================================
+  /* =====================================================
+     PASSWORD STRENGTH
+  ===================================================== */
 
   const getPasswordStrength = () => {
     if (!formData.password) {
@@ -118,15 +172,15 @@ function Signup() {
 
   const passwordStrength = getPasswordStrength();
 
-  // =========================================================
-  // HANDLE INPUT
-  // =========================================================
+  /* =====================================================
+     INPUT CHANGE
+  ===================================================== */
 
   const handleChange = (event) => {
     const { name, value } = event.target;
 
-    setFormData((previousData) => ({
-      ...previousData,
+    setFormData((previous) => ({
+      ...previous,
       [name]: value,
     }));
 
@@ -134,12 +188,16 @@ function Signup() {
     setSuccess("");
   };
 
-  // =========================================================
-  // HANDLE SUBMIT
-  // =========================================================
+  /* =====================================================
+     SUBMIT
+  ===================================================== */
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (loading) {
+      return;
+    }
 
     setError("");
     setSuccess("");
@@ -149,9 +207,9 @@ function Signup() {
     const password = formData.password;
     const confirmPassword = formData.confirmPassword;
 
-    // =======================================================
-    // NAME VALIDATION
-    // =======================================================
+    /* =================================================
+       NAME
+    ================================================= */
 
     if (!name) {
       setError("Please enter your full name.");
@@ -163,18 +221,18 @@ function Signup() {
       return;
     }
 
-    // =======================================================
-    // EMAIL VALIDATION
-    // =======================================================
+    /* =================================================
+       EMAIL
+    ================================================= */
 
     if (!email) {
       setError("Please enter your email address.");
       return;
     }
 
-    // =======================================================
-    // PASSWORD VALIDATION
-    // =======================================================
+    /* =================================================
+       PASSWORD
+    ================================================= */
 
     if (!password) {
       setError("Please create a password.");
@@ -188,9 +246,9 @@ function Signup() {
       return;
     }
 
-    // =======================================================
-    // CONFIRM PASSWORD
-    // =======================================================
+    /* =================================================
+       CONFIRM PASSWORD
+    ================================================= */
 
     if (!confirmPassword) {
       setError("Please confirm your password.");
@@ -202,15 +260,11 @@ function Signup() {
       return;
     }
 
-    // =======================================================
-    // START LOADING
-    // =======================================================
-
     setLoading(true);
 
-    // =======================================================
-    // REGISTER USER
-    // =======================================================
+    /* =================================================
+       REGISTER
+    ================================================= */
 
     try {
       await registerUser({
@@ -221,7 +275,6 @@ function Signup() {
 
       setSuccess("Account created successfully! Redirecting you to login...");
 
-      // Clear form
       setFormData({
         name: "",
         email: "",
@@ -232,12 +285,11 @@ function Signup() {
       setShowPassword(false);
       setShowConfirmPassword(false);
 
-      // Redirect
       setTimeout(() => {
         navigate("/login", {
           replace: true,
         });
-      }, 1500);
+      }, 1200);
     } catch (error) {
       console.error("Registration error:", error);
 
@@ -258,26 +310,22 @@ function Signup() {
     }
   };
 
-  // =========================================================
-  // RENDER
-  // =========================================================
+  /* =====================================================
+     RENDER
+  ===================================================== */
 
   return (
     <main className={`signup-page ${isDark ? "dark-mode" : "light-mode"}`}>
-      {/* =====================================================
-          LEFT — AUTHENTICATION
-      ===================================================== */}
+      {/* =================================================
+          LEFT AUTH
+      ================================================= */}
 
       <section className="signup-auth-section">
-        {/* Theme Toggle */}
-
         <div className="signup-theme-toggle">
           <ThemeToggle />
         </div>
 
         <div className="signup-auth-container">
-          {/* HEADER */}
-
           <div className="signup-header">
             <span className="signup-eyebrow">CREATE ACCOUNT</span>
 
@@ -286,20 +334,16 @@ function Signup() {
             <p>Create your account and start your learning journey.</p>
           </div>
 
-          {/* =================================================
-              FORM
-          ================================================= */}
+          {/* FORM */}
 
           <form className="signup-form" onSubmit={handleSubmit}>
-            {/* =================================================
-                FULL NAME
-            ================================================= */}
+            {/* NAME */}
 
             <div className="signup-form-group">
-              <label htmlFor="name">Full Name</label>
+              <label htmlFor="signup-name">Full Name</label>
 
               <input
-                id="name"
+                id="signup-name"
                 type="text"
                 name="name"
                 value={formData.name}
@@ -311,15 +355,13 @@ function Signup() {
               />
             </div>
 
-            {/* =================================================
-                EMAIL
-            ================================================= */}
+            {/* EMAIL */}
 
             <div className="signup-form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="signup-email">Email Address</label>
 
               <input
-                id="email"
+                id="signup-email"
                 type="email"
                 name="email"
                 value={formData.email}
@@ -331,16 +373,14 @@ function Signup() {
               />
             </div>
 
-            {/* =================================================
-                PASSWORD
-            ================================================= */}
+            {/* PASSWORD */}
 
             <div className="signup-form-group password-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="signup-password">Password</label>
 
               <div className="password-input-wrapper">
                 <input
-                  id="password"
+                  id="signup-password"
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
@@ -362,9 +402,7 @@ function Signup() {
                 </button>
               </div>
 
-              {/* =================================================
-                  PASSWORD STRENGTH
-              ================================================= */}
+              {/* STRENGTH */}
 
               {formData.password && (
                 <div className="password-strength">
@@ -386,8 +424,6 @@ function Signup() {
                       }}
                     />
                   </div>
-
-                  {/* REQUIREMENTS */}
 
                   <div className="password-requirements">
                     <div
@@ -454,16 +490,14 @@ function Signup() {
               )}
             </div>
 
-            {/* =================================================
-                CONFIRM PASSWORD
-            ================================================= */}
+            {/* CONFIRM PASSWORD */}
 
             <div className="signup-form-group">
-              <label htmlFor="confirmPassword">Confirm Password</label>
+              <label htmlFor="signup-confirm-password">Confirm Password</label>
 
               <div className="password-input-wrapper">
                 <input
-                  id="confirmPassword"
+                  id="signup-confirm-password"
                   type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
                   value={formData.confirmPassword}
@@ -491,8 +525,6 @@ function Signup() {
                 </button>
               </div>
 
-              {/* PASSWORD MATCH */}
-
               {formData.confirmPassword && (
                 <div
                   className={
@@ -508,9 +540,7 @@ function Signup() {
               )}
             </div>
 
-            {/* =================================================
-                ERROR
-            ================================================= */}
+            {/* ERROR */}
 
             {error && (
               <div className="signup-message signup-error" role="alert">
@@ -520,9 +550,7 @@ function Signup() {
               </div>
             )}
 
-            {/* =================================================
-                SUCCESS
-            ================================================= */}
+            {/* SUCCESS */}
 
             {success && (
               <div className="signup-message signup-success" role="status">
@@ -532,9 +560,7 @@ function Signup() {
               </div>
             )}
 
-            {/* =================================================
-                SUBMIT
-            ================================================= */}
+            {/* SUBMIT */}
 
             <button
               className="signup-submit-button"
@@ -557,9 +583,7 @@ function Signup() {
             </button>
           </form>
 
-          {/* =================================================
-              LOGIN
-          ================================================= */}
+          {/* LOGIN */}
 
           <div className="signup-auth-switch">
             <span>Already have an account?</span>
@@ -573,9 +597,7 @@ function Signup() {
             </button>
           </div>
 
-          {/* =================================================
-              HOME
-          ================================================= */}
+          {/* HOME */}
 
           <button
             type="button"
@@ -590,16 +612,14 @@ function Signup() {
         </div>
       </section>
 
-      {/* =====================================================
-          RIGHT — BRANDING
-      ===================================================== */}
+      {/* =================================================
+          RIGHT BRANDING
+      ================================================= */}
 
       <section className="signup-brand-section">
         <div className="signup-grid-pattern"></div>
 
         <div className="signup-brand-content">
-          {/* LOGO */}
-
           <button
             type="button"
             className="signup-logo"
@@ -608,8 +628,6 @@ function Signup() {
           >
             <img src="/logo.png" alt="Jigyasa" className="signup-logo-image" />
           </button>
-
-          {/* BRAND MESSAGE */}
 
           <div className="signup-brand-main">
             <span className="signup-brand-eyebrow">START LEARNING</span>
@@ -624,8 +642,6 @@ function Signup() {
               Create your Jigyasa account and unlock a personalized learning
               experience designed to help you explore, learn and grow.
             </p>
-
-            {/* FEATURES */}
 
             <div className="signup-features">
               <div className="signup-feature">
@@ -647,8 +663,6 @@ function Signup() {
               </div>
             </div>
           </div>
-
-          {/* FOOTER */}
 
           <div className="signup-brand-footer">
             <span>JIGYASA</span>
