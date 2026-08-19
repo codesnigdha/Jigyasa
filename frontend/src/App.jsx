@@ -76,7 +76,7 @@ function App() {
   const { pathname } = useLocation();
 
   /*
-   * Login and Signup are standalone pages.
+   * Authentication pages are standalone.
    *
    * Therefore:
    * - Navbar hidden
@@ -84,6 +84,26 @@ function App() {
    * - Floating Chat hidden
    */
   const isAuthPage = pathname === "/login" || pathname === "/signup";
+
+  /*
+   * AI Assistant has its own complete chat interface.
+   *
+   * Therefore:
+   * - Floating Chat hidden
+   * - Navbar remains visible
+   * - Footer hidden
+   */
+  const isAIAssistantPage = pathname === "/ai-assistant";
+
+  /*
+   * Floating Chat should only appear on normal pages.
+   */
+  const showFloatingChat = !isAuthPage && !isAIAssistantPage;
+
+  /*
+   * Footer should not appear on the full-screen AI page.
+   */
+  const showFooter = !isAuthPage && !isAIAssistantPage;
 
   return (
     <div className="app">
@@ -134,10 +154,7 @@ function App() {
 
           {/* =================================================
               MULTIMODAL AI ASSISTANT
-          =================================================
-
-              Users must be logged in to use the AI assistant.
-          */}
+          ================================================= */}
 
           <Route
             path="/ai-assistant"
@@ -158,15 +175,25 @@ function App() {
 
       {/* =================================================
           FLOATING AI BUTTON
+          
+          Hidden on:
+          - Login
+          - Signup
+          - AI Assistant
       ================================================= */}
 
-      {!isAuthPage && <FloatingChat />}
+      {showFloatingChat && <FloatingChat />}
 
       {/* =================================================
           GLOBAL FOOTER
+          
+          Hidden on:
+          - Login
+          - Signup
+          - AI Assistant
       ================================================= */}
 
-      {!isAuthPage && <Footer />}
+      {showFooter && <Footer />}
     </div>
   );
 }

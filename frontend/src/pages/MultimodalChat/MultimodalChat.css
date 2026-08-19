@@ -1,523 +1,406 @@
+/* =========================================================
+   JIGYASA AI ASSISTANT
+   TWO-PANEL MULTIMODAL INTERFACE
+========================================================= */
+
 .multimodal-page {
-  min-height: 100vh;
-  background: #f8faff;
-  color: #111827;
-}
-
-.multimodal-main {
-  min-height: calc(100vh - 82px);
-  display: flex;
-  justify-content: center;
-  padding: 48px 40px;
-}
-
-/* ========================================
-   WELCOME
-======================================== */
-
-.chat-welcome {
-  width: min(1050px, 100%);
-  padding: 45px 0 70px;
-  text-align: center;
-}
-
-.chat-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 25px;
-  color: #2563eb;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 2.4px;
-}
-
-.eyebrow-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #2563eb;
-  box-shadow: 0 0 0 5px #eaf1ff;
-}
-
-.chat-welcome h1 {
-  margin: 0;
-  color: #101828;
-  font-size: clamp(48px, 6vw, 78px);
-  line-height: 0.98;
-  letter-spacing: -4px;
-  font-weight: 800;
-}
-
-.chat-welcome h1 span {
-  color: #2864e8;
-}
-
-.chat-description {
-  margin: 25px auto 42px;
-  color: #64748b;
-  font-size: 18px;
-  line-height: 1.7;
-}
-
-/* ========================================
-   UPLOAD
-======================================== */
-
-.upload-zone {
-  min-height: 270px;
-  margin: auto;
-  padding: 45px 30px;
-  border: 1.5px dashed #cbd8ef;
-  border-radius: 25px;
-  background: rgba(255, 255, 255, 0.9);
-  cursor: pointer;
-  transition: 0.25s ease;
-}
-
-.upload-zone:hover {
-  border-color: #2563eb;
-  background: #fbfdff;
-  box-shadow: 0 18px 50px rgba(37, 99, 235, 0.08);
-  transform: translateY(-2px);
-}
-
-.upload-icon {
-  width: 58px;
-  height: 58px;
-  margin: 0 auto 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 17px;
-  color: #2563eb;
-  background: #edf4ff;
-}
-
-.upload-zone h3 {
-  margin: 0 0 9px;
-  font-size: 21px;
-  font-weight: 750;
-}
-
-.upload-zone p {
-  margin: 0;
-  color: #8492a8;
-  font-size: 14px;
-}
-
-.upload-zone p span {
-  color: #2563eb;
-  font-weight: 700;
-}
-
-.supported-types {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 22px;
-}
-
-.supported-types span {
-  padding: 6px 10px;
-  border: 1px solid #e2e8f0;
-  border-radius: 7px;
-  color: #64748b;
-  background: #f8fafc;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-/* ========================================
-   DIVIDER
-======================================== */
-
-.or-divider {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  width: min(950px, 100%);
-  margin: 30px auto;
-  color: #a2aec0;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.or-divider::before,
-.or-divider::after {
-  content: "";
-  height: 1px;
-  flex: 1;
-  background: #e2e8f0;
-}
-
-/* ========================================
-   COMPOSER
-======================================== */
-
-.welcome-composer {
-  min-height: 135px;
-  margin: auto;
-  padding: 18px;
-  background: #ffffff;
-  border: 1px solid #dce5f2;
-  border-radius: 22px;
-  box-shadow: 0 15px 45px rgba(15, 23, 42, 0.05);
-}
-
-.welcome-composer textarea {
   width: 100%;
-  min-height: 75px;
-  padding: 3px;
-  resize: none;
-  border: none;
-  outline: none;
-  background: transparent;
+  height: calc(100vh - 82px);
+  min-height: 600px;
+
+  overflow: hidden;
+
+  background: #f8faff;
   color: #172033;
-  font-family: inherit;
-  font-size: 15px;
 }
 
-.welcome-composer textarea::placeholder {
-  color: #a0aec0;
-}
+/* =========================================================
+   MAIN WORKSPACE
+========================================================= */
 
-.composer-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+.ai-workspace {
+  width: 100%;
+  height: 100%;
 
-.attach-button,
-.send-button {
-  border: none;
-  cursor: pointer;
-}
-
-.attach-button {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  color: #64748b;
-  background: #f4f7fb;
-  transition: 0.2s;
-}
-
-.attach-button:hover {
-  color: #2563eb;
-  background: #edf4ff;
-}
-
-.send-button {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 13px;
-  color: white;
-  background: #2864e8;
-  transition: 0.2s;
-}
-
-.send-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(40, 100, 232, 0.25);
-}
-
-.send-button:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-/* ========================================
-   SUGGESTIONS
-======================================== */
-
-.suggestion-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  width: min(900px, 100%);
-  margin: 28px auto 0;
+  grid-template-columns: minmax(0, 2.05fr) minmax(380px, 0.95fr);
+
+  gap: 18px;
+
+  padding: 16px;
 }
 
-.suggestion-card {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 15px;
-  border: 1px solid #e0e7f1;
-  border-radius: 15px;
-  background: white;
-  color: #263348;
-  cursor: pointer;
-  text-align: left;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  transition: 0.2s ease;
-}
+/* =========================================================
+   LEFT CHAT PANEL
+========================================================= */
 
-.suggestion-card:hover {
-  border-color: #b8cdf5;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(15, 23, 42, 0.05);
-}
-
-.suggestion-icon {
-  width: 35px;
-  height: 35px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  color: #2563eb;
-  background: #edf4ff;
-}
-
-.suggestion-arrow {
-  margin-left: auto;
-  color: #9aa7ba;
-  transform: rotate(45deg);
-}
-
-/* ========================================
-   FILE PREVIEW
-======================================== */
-
-.file-preview-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  width: min(820px, 100%);
-  margin: 14px auto 0;
-}
-
-.file-preview {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-width: 280px;
-  padding: 9px 10px;
-  border: 1px solid #e0e7f1;
-  border-radius: 13px;
-  background: white;
-  text-align: left;
-}
-
-.file-preview img {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 9px;
-}
-
-.file-preview-icon {
-  width: 40px;
-  height: 40px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9px;
-  color: #2563eb;
-  background: #edf4ff;
-}
-
-.file-preview-info {
+.chat-panel {
   min-width: 0;
+  min-height: 0;
+
   display: flex;
   flex-direction: column;
-}
 
-.file-preview-info strong {
   overflow: hidden;
-  color: #263348;
-  font-size: 12px;
-  font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+
+  border: 1px solid #e1e8f3;
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.025);
 }
 
-.file-preview-info span {
-  margin-top: 3px;
+/* =========================================================
+   CHAT HEADER
+========================================================= */
+
+.chat-panel-header {
+  height: 68px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 22px;
+
+  border-bottom: 1px solid #edf1f6;
+
+  background: #ffffff;
+}
+
+.chat-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* =========================================================
+   ALL JIGYASA AI ICONS
+========================================================= */
+
+.chat-brand-icon {
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border-radius: 11px;
+}
+
+.chat-brand-icon .jigyasa-ai-icon {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+}
+
+/* Shared AI image */
+
+.jigyasa-ai-icon {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+}
+
+/* =========================================================
+   BRAND TEXT
+========================================================= */
+
+.chat-brand h1 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.chat-brand p {
+  margin: 3px 0 0;
+
   color: #94a3b8;
+
   font-size: 10px;
 }
 
-.file-preview button {
-  width: 27px;
-  height: 27px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 8px;
-  color: #94a3b8;
-  background: transparent;
-  cursor: pointer;
-}
-
-.file-preview button:hover {
-  color: #ef4444;
-  background: #fef2f2;
-}
-
-/* ========================================
-   WORKSPACE
-======================================== */
-
-.chat-workspace {
-  width: min(1100px, 100%);
-  min-height: calc(100vh - 180px);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid #dfe7f3;
-  border-radius: 25px;
-  background: white;
-  box-shadow: 0 20px 70px rgba(15, 23, 42, 0.06);
-}
-
-.chat-header {
-  height: 80px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 25px;
-  border-bottom: 1px solid #e8edf5;
-}
-
-.chat-header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.chat-ai-icon {
-  width: 42px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 13px;
-  color: white;
-  background: linear-gradient(135deg, #2864e8, #5548df);
-}
-
-.chat-header h2 {
-  margin: 0;
-  color: #172033;
-  font-size: 16px;
-}
-
-.chat-header p {
-  margin: 3px 0 0;
-  color: #94a3b8;
-  font-size: 11px;
-}
+/* =========================================================
+   NEW CHAT
+========================================================= */
 
 .new-chat-button {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 10px 14px;
+  gap: 6px;
+
+  padding: 8px 11px;
+
   border: 1px solid #dce5f2;
-  border-radius: 11px;
-  background: white;
-  color: #334155;
-  cursor: pointer;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #475569;
+
   font-family: inherit;
-  font-size: 12px;
+
+  font-size: 11px;
   font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
 }
 
 .new-chat-button:hover {
-  border-color: #b7c8e5;
+  border-color: #b9c9e4;
   background: #f8faff;
 }
 
-/* ========================================
+/* =========================================================
+   CHAT BODY
+========================================================= */
+
+.chat-body {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 25%,
+      rgba(40, 100, 232, 0.025),
+      transparent 38%
+    ),
+    #ffffff;
+
+  scrollbar-width: thin;
+  scrollbar-color: #d3dce9 transparent;
+}
+
+.chat-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #d3dce9;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+  min-height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px 30px 25px;
+
+  text-align: center;
+}
+
+/* Main AI icon */
+
+.empty-state-icon .jigyasa-ai-icon {
+  height: 80px;
+  margin-bottom: 17px;
+  object-fit: contain;
+}
+
+/* =========================================================
+   EMPTY STATE TEXT
+========================================================= */
+
+.empty-state h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 25px;
+  line-height: 1.2;
+
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.empty-state h2 span {
+  color: #2864e8;
+}
+
+.empty-state > p {
+  margin: 9px 0 0;
+
+  color: #718096;
+
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* =========================================================
+   EMPTY HINT
+========================================================= */
+
+.empty-hint {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-top: auto;
+
+  padding: 8px 12px;
+
+  border: 1px solid #e5ebf4;
+  border-radius: 9px;
+
+  background: #fbfcfe;
+
+  color: #8a99ad;
+
+  font-size: 10px;
+}
+
+/* AI icon inside hint */
+
+.empty-hint .jigyasa-ai-icon {
+  width: 17px;
+  height: 17px;
+
+  flex-shrink: 0;
+
+  object-fit: contain;
+}
+
+/* =========================================================
    MESSAGES
-======================================== */
+========================================================= */
 
 .messages-container {
-  flex: 1;
-  min-height: 420px;
-  max-height: calc(100vh - 330px);
-  overflow-y: auto;
-  padding: 35px 40px;
+  width: min(850px, 100%);
+
+  margin: 0 auto;
+
+  padding: 28px 28px 35px;
 }
 
 .message-row {
   display: flex;
-  gap: 13px;
-  max-width: 850px;
-  margin-bottom: 30px;
+  align-items: flex-start;
+  gap: 10px;
+
+  width: 100%;
+
+  margin-bottom: 25px;
 }
 
 .message-row.user {
-  margin-left: auto;
   flex-direction: row-reverse;
 }
 
+/* =========================================================
+   MESSAGE AVATAR
+========================================================= */
+
 .message-avatar {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
+
   flex-shrink: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 11px;
-  color: #2563eb;
+
+  overflow: hidden;
+
+  border-radius: 9px;
+
   background: #edf4ff;
 }
 
+.message-avatar .jigyasa-ai-icon {
+  width: 28px;
+  height: 28px;
+
+  object-fit: contain;
+}
+
+/* User avatar stays blue */
+
 .message-row.user .message-avatar {
-  color: white;
+  color: #ffffff;
   background: #2864e8;
 }
 
+/* =========================================================
+   MESSAGE CONTENT
+========================================================= */
+
 .message-content {
   min-width: 0;
-  max-width: 760px;
+  max-width: 72%;
+}
+
+.message-row.user .message-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .message-author {
-  margin: 3px 0 7px;
-  color: #64748b;
-  font-size: 11px;
-  font-weight: 750;
+  margin: 2px 0 6px;
+
+  color: #718096;
+
+  font-size: 10px;
+  font-weight: 700;
 }
 
-.message-row.user .message-author {
-  text-align: right;
-}
+/* =========================================================
+   MESSAGE BUBBLE
+========================================================= */
 
 .message-bubble {
-  padding: 15px 18px;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px 17px 17px 17px;
+  padding: 12px 15px;
+
+  border: 1px solid #e4eaf2;
+  border-radius: 5px 14px 14px 14px;
+
   background: #f8fafc;
+
   color: #334155;
-  font-size: 14px;
-  line-height: 1.7;
+
+  font-size: 12px;
+  line-height: 1.65;
 }
 
 .message-row.user .message-bubble {
   border: none;
-  border-radius: 17px 5px 17px 17px;
+
+  border-radius: 14px 5px 14px 14px;
+
   background: #2864e8;
-  color: white;
+
+  color: #ffffff;
 }
 
 .message-bubble p {
@@ -525,102 +408,139 @@
 }
 
 .message-bubble p + p {
-  margin-top: 8px;
+  margin-top: 7px;
 }
+
+/* =========================================================
+   MESSAGE FILE
+========================================================= */
 
 .message-files {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 7px;
+
+  margin-bottom: 7px;
 }
 
 .message-file {
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-width: 180px;
-  padding: 7px;
+  gap: 7px;
+
+  padding: 6px;
+
   border: 1px solid #e2e8f0;
-  border-radius: 11px;
-  background: white;
+  border-radius: 9px;
+
+  background: #ffffff;
+}
+
+.message-file img,
+.message-file-icon {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  border-radius: 7px;
 }
 
 .message-file img {
-  width: 42px;
-  height: 42px;
   object-fit: cover;
-  border-radius: 7px;
 }
 
 .message-file-icon {
-  width: 42px;
-  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 7px;
-  color: #2563eb;
+
+  color: #2864e8;
   background: #edf4ff;
 }
 
-.message-file strong {
+.message-file-info strong {
   display: block;
-  max-width: 170px;
+
+  max-width: 150px;
+
   overflow: hidden;
+
   color: #334155;
-  font-size: 11px;
+
+  font-size: 9px;
+
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.message-file span {
+.message-file-info span {
   display: block;
-  margin-top: 3px;
+
+  margin-top: 2px;
+
   color: #94a3b8;
-  font-size: 9px;
+
+  font-size: 8px;
 }
+
+/* =========================================================
+   COPY
+========================================================= */
 
 .copy-button {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 7px;
-  padding: 4px 7px;
+  gap: 4px;
+
+  margin-top: 5px;
+  padding: 4px 6px;
+
   border: none;
-  border-radius: 7px;
+  border-radius: 6px;
+
   background: transparent;
+
   color: #94a3b8;
-  cursor: pointer;
+
   font-family: inherit;
-  font-size: 10px;
+  font-size: 9px;
+
+  cursor: pointer;
 }
 
 .copy-button:hover {
-  color: #2563eb;
+  color: #2864e8;
   background: #edf4ff;
 }
 
-/* ========================================
+/* =========================================================
    TYPING
-======================================== */
+========================================================= */
 
 .typing-bubble {
   display: flex;
   align-items: center;
   gap: 4px;
+
   width: fit-content;
-  padding: 17px 19px;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px 17px 17px 17px;
+
+  padding: 14px 17px;
+
+  border: 1px solid #e4eaf2;
+  border-radius: 5px 14px 14px 14px;
+
   background: #f8fafc;
 }
 
 .typing-bubble span {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
+
   border-radius: 50%;
+
   background: #94a3b8;
+
   animation: typing 1.2s infinite ease-in-out;
 }
 
@@ -646,50 +566,171 @@
   }
 }
 
-/* ========================================
+/* =========================================================
    CHAT INPUT
-======================================== */
+========================================================= */
 
-.chat-input-area {
+.chat-input-section {
   flex-shrink: 0;
-  padding: 17px 25px 20px;
-  border-top: 1px solid #e8edf5;
-  background: white;
+
+  padding: 12px 15px 10px;
+
+  border-top: 1px solid #edf1f6;
+
+  background: #ffffff;
 }
 
-.chat-input-area .file-preview-list {
-  width: 100%;
-  margin: 0 0 10px;
+/* =========================================================
+   SELECTED FILES
+========================================================= */
+
+.chat-selected-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+
+  margin-bottom: 8px;
 }
+
+.chat-selected-file {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  max-width: 260px;
+
+  padding: 5px 7px;
+
+  border: 1px solid #dce5f2;
+  border-radius: 9px;
+
+  background: #f8faff;
+}
+
+.chat-selected-file img,
+.chat-selected-file-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  border-radius: 6px;
+}
+
+.chat-selected-file img {
+  object-fit: cover;
+}
+
+.chat-selected-file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #2864e8;
+  background: #edf4ff;
+}
+
+.chat-selected-file-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-selected-file-info strong {
+  max-width: 150px;
+
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 9px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-selected-file-info span {
+  margin-top: 2px;
+
+  color: #94a3b8;
+
+  font-size: 8px;
+}
+
+.chat-selected-file button {
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 6px;
+
+  background: transparent;
+
+  color: #94a3b8;
+
+  cursor: pointer;
+}
+
+.chat-selected-file button:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+/* =========================================================
+   COMPOSER
+========================================================= */
 
 .chat-composer {
+  min-height: 60px;
+
   display: flex;
   align-items: flex-end;
-  gap: 9px;
-  padding: 9px;
+  gap: 8px;
+
+  padding: 8px 9px;
+
   border: 1px solid #dce5f2;
-  border-radius: 17px;
-  background: #fff;
-  transition: 0.2s;
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  box-shadow: 0 5px 18px rgba(15, 23, 42, 0.035);
+
+  transition: 0.2s ease;
 }
 
 .chat-composer:focus-within {
-  border-color: #9bb8ef;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.06);
+  border-color: #a6bde9;
+
+  box-shadow: 0 0 0 3px rgba(40, 100, 232, 0.055);
 }
 
 .chat-composer textarea {
   flex: 1;
-  min-height: 39px;
-  max-height: 130px;
+
+  min-height: 40px;
+  max-height: 150px;
+
   padding: 10px 3px;
+
   resize: none;
+
   border: none;
   outline: none;
+
   background: transparent;
-  color: #1e293b;
+
+  color: #172033;
+
   font-family: inherit;
-  font-size: 13px;
+
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .chat-composer textarea::placeholder {
@@ -698,30 +739,42 @@
 
 .composer-attach,
 .composer-send {
-  width: 39px;
-  height: 39px;
+  width: 40px;
+  height: 40px;
+
   flex-shrink: 0;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   border: none;
   border-radius: 11px;
+
   cursor: pointer;
+
+  transition: 0.2s ease;
 }
 
 .composer-attach {
   color: #64748b;
-  background: #f5f7fa;
+  background: #f3f6fa;
 }
 
 .composer-attach:hover {
-  color: #2563eb;
+  color: #2864e8;
   background: #edf4ff;
 }
 
 .composer-send {
-  color: white;
+  color: #ffffff;
   background: #2864e8;
+}
+
+.composer-send:hover:not(:disabled) {
+  transform: translateY(-1px);
+
+  box-shadow: 0 7px 16px rgba(40, 100, 232, 0.24);
 }
 
 .composer-send:disabled {
@@ -730,86 +783,603 @@
 }
 
 .chat-disclaimer {
-  margin: 8px 3px 0;
-  color: #a0aec0;
+  margin: 7px 3px 0;
+
+  color: #8e9caf;
+
+  text-align: center;
+
   font-size: 9px;
 }
 
-/* ========================================
+/* =========================================================
+   RIGHT SIDEBAR
+========================================================= */
+
+.ai-sidebar {
+  min-width: 0;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  overflow-y: auto;
+
+  padding-right: 1px;
+
+  scrollbar-width: thin;
+  scrollbar-color: #d3dce9 transparent;
+}
+
+.ai-sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.ai-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ai-sidebar::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #d3dce9;
+}
+
+/* =========================================================
+   SIDEBAR CARD
+========================================================= */
+
+.sidebar-card {
+  padding: 17px;
+
+  border: 1px solid #e1e8f3;
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.025);
+}
+
+.sidebar-card h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.sidebar-description {
+  margin: 7px 0 14px;
+
+  color: #718096;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.sidebar-description button {
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #2864e8;
+
+  font-family: inherit;
+
+  font-size: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   DROP ZONE
+========================================================= */
+
+.sidebar-drop-zone {
+  min-height: 210px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 18px;
+
+  border: 1.5px dashed #c8d7f3;
+  border-radius: 12px;
+
+  background: linear-gradient(180deg, #fbfcff, #f9fbff);
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.sidebar-drop-zone:hover {
+  border-color: #2864e8;
+
+  background: #f7faff;
+
+  box-shadow: 0 8px 25px rgba(40, 100, 232, 0.06);
+}
+
+.sidebar-upload-icon {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 14px;
+
+  border-radius: 15px;
+
+  color: #2864e8;
+  background: #edf4ff;
+}
+
+.sidebar-drop-zone p {
+  margin: 0;
+
+  color: #475569;
+
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sidebar-drop-zone > span {
+  margin-top: 4px;
+
+  color: #8b98aa;
+
+  font-size: 10px;
+}
+
+.supported-types {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  margin-top: 18px;
+}
+
+.supported-types span {
+  padding: 5px 8px;
+
+  border: 1px solid #e1e7f0;
+  border-radius: 6px;
+
+  background: #ffffff;
+
+  color: #64748b;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   UPLOADED FILES
+========================================================= */
+
+.uploaded-files-section {
+  margin-top: 17px;
+}
+
+.uploaded-files-title {
+  margin-bottom: 7px;
+
+  color: #64748b;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.uploaded-files {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.uploaded-file {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 7px 9px;
+
+  border: 1px solid #dfe6ef;
+  border-radius: 9px;
+
+  background: #ffffff;
+}
+
+.uploaded-file img,
+.uploaded-file-icon {
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  border-radius: 7px;
+}
+
+.uploaded-file img {
+  object-fit: cover;
+}
+
+.uploaded-file-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #2864e8;
+  background: #edf4ff;
+}
+
+.uploaded-file-info {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.uploaded-file-info strong {
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uploaded-file-info span {
+  margin-top: 3px;
+
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.uploaded-file > button {
+  width: 25px;
+  height: 25px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 6px;
+
+  background: transparent;
+
+  color: #94a3b8;
+
+  cursor: pointer;
+}
+
+.uploaded-file > button:hover {
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.quick-actions-card {
+  padding-bottom: 16px;
+}
+
+.quick-actions-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 10px;
+
+  margin-top: 12px;
+}
+
+.quick-action {
+  min-width: 0;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+
+  min-height: 88px;
+
+  padding: 11px;
+
+  border: 1px solid #e1e7f0;
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  text-align: left;
+
+  font-family: inherit;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.quick-action:hover {
+  border-color: #b8cdf5;
+
+  background: #fbfdff;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 7px 20px rgba(15, 23, 42, 0.045);
+}
+
+.quick-action-icon {
+  width: 29px;
+  height: 29px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  border-radius: 8px;
+
+  color: #2864e8;
+  background: #edf4ff;
+}
+
+/* AI icon inside Explain card */
+
+.quick-action-icon .jigyasa-ai-icon {
+  width: 24px;
+  height: 24px;
+
+  object-fit: contain;
+}
+
+.quick-action-content {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.quick-action-content strong {
+  color: #172033;
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.quick-action-content span {
+  margin-top: 6px;
+
+  color: #718096;
+
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+/* =========================================================
    RESPONSIVE
-======================================== */
+========================================================= */
 
-@media (max-width: 850px) {
-  .multimodal-main {
-    padding: 35px 20px;
+@media (max-width: 1150px) {
+  .ai-workspace {
+    grid-template-columns:
+      minmax(0, 1.7fr)
+      minmax(320px, 0.95fr);
   }
 
-  .chat-welcome h1 {
-    font-size: 52px;
-    letter-spacing: -2.5px;
+  .sidebar-drop-zone {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 900px) {
+  .multimodal-page {
+    height: auto;
+    min-height: calc(100vh - 82px);
+
+    overflow: auto;
   }
 
-  .suggestion-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .ai-workspace {
+    height: auto;
+    min-height: calc(100vh - 82px);
+
+    grid-template-columns: 1fr;
+
+    padding: 12px;
   }
 
-  .messages-container {
-    padding: 25px 20px;
+  .chat-panel {
+    min-height: 650px;
+  }
+
+  .ai-sidebar {
+    overflow: visible;
+  }
+
+  .sidebar-drop-zone {
+    min-height: 190px;
   }
 }
 
 @media (max-width: 600px) {
-  .multimodal-main {
-    padding: 20px 12px;
+  .ai-workspace {
+    padding: 8px;
+    gap: 10px;
   }
 
-  .chat-welcome {
-    padding-top: 30px;
+  .chat-panel {
+    min-height: 620px;
+
+    border-radius: 12px;
   }
 
-  .chat-welcome h1 {
-    font-size: 42px;
+  .chat-panel-header {
+    height: 62px;
+
+    padding: 0 13px;
   }
 
-  .chat-description {
-    font-size: 15px;
+  .chat-brand-icon {
+    width: 34px;
+    height: 34px;
   }
 
-  .upload-zone {
-    min-height: 230px;
-    padding: 35px 20px;
+  .chat-brand h1 {
+    font-size: 13px;
   }
 
-  .suggestion-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .chat-workspace {
-    border-radius: 18px;
-  }
-
-  .chat-header {
-    padding: 0 15px;
+  .chat-brand p {
+    font-size: 9px;
   }
 
   .new-chat-button {
-    font-size: 0;
+    padding: 7px;
   }
 
-  .new-chat-button svg {
-    margin: 0;
+  .new-chat-button span {
+    display: none;
+  }
+
+  .empty-state {
+    padding: 30px 15px;
+  }
+
+  .empty-state-icon {
+    width: 54px;
+    height: 54px;
+  }
+
+  .empty-state-icon .jigyasa-ai-icon {
+    width: 43px;
+    height: 43px;
+  }
+
+  .empty-state h2 {
+    font-size: 22px;
+  }
+
+  .empty-state > p {
+    font-size: 12px;
+  }
+
+  .empty-hint {
+    text-align: left;
   }
 
   .messages-container {
-    max-height: calc(100vh - 300px);
-    padding: 20px 14px;
-  }
-
-  .chat-input-area {
-    padding: 12px;
+    padding: 20px 12px 30px;
   }
 
   .message-content {
-    max-width: calc(100% - 45px);
+    max-width: 78%;
   }
+
+  .message-avatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .message-avatar .jigyasa-ai-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .chat-input-section {
+    padding: 9px;
+  }
+
+  .chat-composer {
+    min-height: 56px;
+  }
+
+  .composer-attach,
+  .composer-send {
+    width: 37px;
+    height: 37px;
+  }
+
+  .chat-disclaimer {
+    font-size: 8px;
+  }
+
+  .sidebar-card {
+    padding: 14px;
+  }
+
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-action {
+    min-height: 70px;
+  }
+}
+
+@media (max-width: 400px) {
+  .message-content {
+    max-width: 75%;
+  }
+
+  .empty-state-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .empty-state-icon .jigyasa-ai-icon {
+    width: 41px;
+    height: 41px;
+  }
+
+  .supported-types {
+    gap: 5px;
+  }
+
+  .supported-types span {
+    padding: 4px 6px;
+  }
+}
+
+/* =========================================================
+   GLOBAL SAFETY
+========================================================= */
+
+.multimodal-page,
+.multimodal-page * {
+  box-sizing: border-box;
+}
+
+.multimodal-page button,
+.multimodal-page textarea,
+.multimodal-page input {
+  font: inherit;
+}
+
+.multimodal-page button {
+  -webkit-tap-highlight-color: transparent;
 }

@@ -144,8 +144,8 @@ function AIChatBox() {
 
         {messages.length === 0 ? (
           <div className="ai-empty-state">
-            <div className="ai-empty-icon">
-              <span>✦</span>
+            <div className="empty-state-icon">
+              <img src="/icon2.png" alt="Jigyasa AI" />
             </div>
 
             <span className="ai-empty-label">YOUR AI LEARNING COMPANION</span>
@@ -196,7 +196,7 @@ function AIChatBox() {
 
                 {message.role === "assistant" && (
                   <div className="message-avatar">
-                    <span>✦</span>
+                    <img src="/icon.png" alt="Jigyasa AI" />
                   </div>
                 )}
 
