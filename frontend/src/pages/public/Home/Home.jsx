@@ -13,7 +13,9 @@ function Home() {
 
       <section className="home-hero">
         <div className="home-container home-hero-grid">
-          {/* LEFT */}
+          {/* =================================================
+              LEFT — HERO CONTENT
+          ================================================= */}
 
           <div className="home-hero-content">
             <span className="home-eyebrow">AI-POWERED LEARNING</span>
@@ -37,6 +39,7 @@ function Home() {
 
               <Link to="/explore" className="home-secondary-button">
                 Explore Topics
+                <span>→</span>
               </Link>
             </div>
 
@@ -46,59 +49,60 @@ function Home() {
             </div>
           </div>
 
-          {/* RIGHT — AI PREVIEW */}
+          {/* =================================================
+              RIGHT — ABSTRACT AI VISUAL
+          ================================================= */}
 
-          <div className="home-ai-preview">
-            <div className="ai-preview-card">
-              {/* HEADER */}
+          <div className="home-abstract-visual">
+            <div className="abstract-glow"></div>
 
-              <div className="ai-preview-header">
-                <div className="ai-preview-brand">
-                  <div className="ai-preview-icon">✦</div>
+            <div className="abstract-orbit orbit-one"></div>
 
-                  <div>
-                    <strong>Jigyasa AI</strong>
+            <div className="abstract-orbit orbit-two"></div>
 
-                    <span>Learning Assistant</span>
-                  </div>
-                </div>
+            <div className="abstract-orbit orbit-three"></div>
 
-                <div className="ai-preview-status">
-                  <span></span>
-                  Online
-                </div>
-              </div>
-
-              {/* CHAT */}
-
-              <div className="ai-preview-chat">
-                <div className="preview-user-message">
-                  Explain machine learning simply.
-                </div>
-
-                <div className="preview-ai-message">
-                  <div className="preview-ai-avatar">✦</div>
-
-                  <div>
-                    <strong>Jigyasa AI</strong>
-
-                    <p>
-                      Machine learning is a way for computers to learn patterns
-                      from data and improve their predictions without being
-                      explicitly programmed for every task.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* INPUT */}
-
-              <div className="ai-preview-input">
-                <span>Ask Jigyasa anything...</span>
-
-                <button type="button">→</button>
+            <div className="abstract-core">
+              <div className="core-inner">
+                <img src="/icon.png" alt="Jigyasa" className="core-logo" />
               </div>
             </div>
+
+            {/* FLOATING ELEMENTS */}
+
+            <div className="floating-element floating-one">
+              <span className="floating-icon">✦</span>
+
+              <div>
+                <strong>Learn</strong>
+                <small>Understand</small>
+              </div>
+            </div>
+
+            <div className="floating-element floating-two">
+              <span className="floating-icon">◇</span>
+
+              <div>
+                <strong>Explore</strong>
+                <small>Discover</small>
+              </div>
+            </div>
+
+            <div className="floating-element floating-three">
+              <span className="floating-icon">?</span>
+
+              <div>
+                <strong>Ask</strong>
+                <small>Anything</small>
+              </div>
+            </div>
+
+            {/* DECORATIVE DOTS */}
+
+            <span className="visual-dot dot-one"></span>
+            <span className="visual-dot dot-two"></span>
+            <span className="visual-dot dot-three"></span>
+            <span className="visual-dot dot-four"></span>
           </div>
         </div>
       </section>
@@ -208,6 +212,8 @@ function Home() {
           </div>
 
           <div className="topics-grid">
+            {/* AI */}
+
             <Link to="/explore" className="topic-card topic-card-large">
               <span className="topic-number">01</span>
 
@@ -224,6 +230,8 @@ function Home() {
               <span className="topic-arrow">→</span>
             </Link>
 
+            {/* ML */}
+
             <Link to="/explore" className="topic-card">
               <span className="topic-number">02</span>
 
@@ -235,6 +243,8 @@ function Home() {
 
               <span className="topic-arrow">→</span>
             </Link>
+
+            {/* PROGRAMMING */}
 
             <Link to="/explore" className="topic-card">
               <span className="topic-number">03</span>
@@ -248,6 +258,8 @@ function Home() {
               <span className="topic-arrow">→</span>
             </Link>
 
+            {/* DATA SCIENCE */}
+
             <Link to="/explore" className="topic-card">
               <span className="topic-number">04</span>
 
@@ -259,6 +271,8 @@ function Home() {
 
               <span className="topic-arrow">→</span>
             </Link>
+
+            {/* MATHEMATICS */}
 
             <Link to="/explore" className="topic-card">
               <span className="topic-number">05</span>

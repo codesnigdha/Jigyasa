@@ -8,10 +8,6 @@ function AIChatBox() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // =====================================================
-  // MESSAGE ID
-  // =====================================================
-
   const messageId = useRef(0);
 
   const createMessageId = () => {
@@ -19,9 +15,9 @@ function AIChatBox() {
     return messageId.current;
   };
 
-  // =====================================================
-  // SUGGESTED QUESTIONS
-  // =====================================================
+  /* =====================================================
+     SUGGESTED QUESTIONS
+  ===================================================== */
 
   const suggestedQuestions = [
     "Explain artificial intelligence",
@@ -29,9 +25,9 @@ function AIChatBox() {
     "Explain neural networks",
   ];
 
-  // =====================================================
-  // SEND MESSAGE
-  // =====================================================
+  /* =====================================================
+     SEND MESSAGE
+  ===================================================== */
 
   const sendMessage = async (messageText = input) => {
     const message = messageText.trim();
@@ -39,10 +35,6 @@ function AIChatBox() {
     if (!message || loading) {
       return;
     }
-
-    // ===================================================
-    // USER MESSAGE
-    // ===================================================
 
     const userMessage = {
       id: createMessageId(),
@@ -55,16 +47,8 @@ function AIChatBox() {
     setInput("");
     setLoading(true);
 
-    // ===================================================
-    // SEND MESSAGE TO FASTAPI
-    // ===================================================
-
     try {
       const response = await sendMessageToAI(message);
-
-      // =================================================
-      // AI RESPONSE
-      // =================================================
 
       const aiMessage = {
         id: createMessageId(),
@@ -83,7 +67,10 @@ function AIChatBox() {
       const aiErrorMessage = {
         id: createMessageId(),
         role: "assistant",
-        content: error?.message || "Sorry, I couldn't connect to Jigyasa AI.",
+        content:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Sorry, I couldn't connect to Jigyasa AI.",
       };
 
       setMessages((previousMessages) => [...previousMessages, aiErrorMessage]);
@@ -92,83 +79,88 @@ function AIChatBox() {
     }
   };
 
-  // =====================================================
-  // FORM SUBMIT
-  // =====================================================
+  /* =====================================================
+     FORM SUBMIT
+  ===================================================== */
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     sendMessage();
   };
 
-  // =====================================================
-  // SUGGESTED QUESTION
-  // =====================================================
+  /* =====================================================
+     SUGGESTION
+  ===================================================== */
 
   const handleSuggestion = (question) => {
     sendMessage(question);
   };
 
-  // =====================================================
-  // CLEAR CHAT
-  // =====================================================
+  /* =====================================================
+     CLEAR CONVERSATION
+  ===================================================== */
 
   const clearConversation = () => {
     setMessages([]);
     setInput("");
   };
 
-  // =====================================================
-  // RENDER
-  // =====================================================
+  /* =====================================================
+     RENDER
+  ===================================================== */
 
   return (
     <div className="ai-chatbox">
-      {/* =================================================
-          HEADER
-      ================================================= */}
-
-      <div className="ai-chat-header">
-        <div className="ai-brand">
-          <div className="ai-logo">✦</div>
-
-          <div>
-            <h3>Jigyasa AI</h3>
-
-            <div className="ai-online">
-              <span></span>
-              Online
-            </div>
-          </div>
-        </div>
-
-        {messages.length > 0 && (
-          <button
-            type="button"
-            className="clear-chat-button"
-            onClick={clearConversation}
-          >
-            Clear
-          </button>
-        )}
-      </div>
-
       {/* =================================================
           CHAT BODY
       ================================================= */}
 
       <div className="ai-chat-body">
+        {/* =================================================
+            CHAT TOOLBAR
+        ================================================= */}
+
+        {messages.length > 0 && (
+          <div className="chat-toolbar">
+            <div className="chat-toolbar-status">
+              <span className="chat-toolbar-dot"></span>
+              Conversation
+            </div>
+
+            <button
+              type="button"
+              className="clear-chat-button"
+              onClick={clearConversation}
+            >
+              <span>↻</span>
+              New chat
+            </button>
+          </div>
+        )}
+
+        {/* =================================================
+            EMPTY STATE
+        ================================================= */}
+
         {messages.length === 0 ? (
           <div className="ai-empty-state">
-            <div className="ai-empty-icon">✦</div>
+            <div className="ai-empty-icon">
+              <span>✦</span>
+            </div>
 
-            <h2>Ask Jigyasa anything</h2>
+            <span className="ai-empty-label">YOUR AI LEARNING COMPANION</span>
+
+            <h2>
+              What would you like
+              <span> to learn?</span>
+            </h2>
 
             <p>
-              I'm here to help you understand concepts, explore topics and learn
-              at your own pace.
+              Ask questions, break down difficult concepts, or explore something
+              completely new. Jigyasa is here to help.
             </p>
+
+            <div className="suggestions-label">TRY ASKING</div>
 
             <div className="suggested-questions">
               {suggestedQuestions.map((question) => (
@@ -176,15 +168,22 @@ function AIChatBox() {
                   key={question}
                   type="button"
                   onClick={() => handleSuggestion(question)}
+                  disabled={loading}
                 >
-                  <span>→</span>
+                  <span className="suggestion-icon">✦</span>
 
-                  {question}
+                  <span className="suggestion-text">{question}</span>
+
+                  <span className="suggestion-arrow">→</span>
                 </button>
               ))}
             </div>
           </div>
         ) : (
+          /* =================================================
+             MESSAGES
+          ================================================= */
+
           <div className="messages-container">
             {messages.map((message) => (
               <div
@@ -193,17 +192,15 @@ function AIChatBox() {
                   message.role === "user" ? "user-message" : "assistant-message"
                 }`}
               >
-                {/* =====================================
-                    AI AVATAR
-                ===================================== */}
+                {/* AI AVATAR */}
 
                 {message.role === "assistant" && (
-                  <div className="message-avatar">✦</div>
+                  <div className="message-avatar">
+                    <span>✦</span>
+                  </div>
                 )}
 
-                {/* =====================================
-                    MESSAGE
-                ===================================== */}
+                {/* MESSAGE */}
 
                 <div className="message-content">
                   <span className="message-role">
@@ -215,13 +212,15 @@ function AIChatBox() {
               </div>
             ))}
 
-            {/* =========================================
-                AI THINKING
-            ========================================= */}
+            {/* =================================================
+                THINKING
+            ================================================= */}
 
             {loading && (
               <div className="chat-message assistant-message">
-                <div className="message-avatar">✦</div>
+                <div className="message-avatar">
+                  <span>✦</span>
+                </div>
 
                 <div className="message-content">
                   <span className="message-role">Jigyasa AI</span>
@@ -244,6 +243,10 @@ function AIChatBox() {
 
       <form className="ai-chat-input-area" onSubmit={handleSubmit}>
         <div className="ai-input-wrapper">
+          <div className="ai-input-icon">
+            <span>✦</span>
+          </div>
+
           <input
             type="text"
             value={input}
@@ -259,14 +262,17 @@ function AIChatBox() {
             disabled={!input.trim() || loading}
             aria-label="Send message"
           >
-            →
+            <span>→</span>
           </button>
         </div>
 
-        <p className="ai-input-note">
-          Jigyasa AI can help explain concepts, answer questions and guide your
-          learning.
-        </p>
+        <div className="ai-input-footer">
+          <p className="ai-input-note">
+            Jigyasa AI may make mistakes. Verify important information.
+          </p>
+
+          <span className="keyboard-hint">↵ Send</span>
+        </div>
       </form>
     </div>
   );

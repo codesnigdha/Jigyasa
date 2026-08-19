@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../../context/AuthContext";
 
-import AIChatBox from "../../../components/AI/AIChatBox/AIChatBox";
 import QuickActions from "../../../components/AI/QuickActions/QuickActions";
 
 import "./Dashboard.css";
@@ -15,14 +14,11 @@ function Dashboard() {
   const firstName = userName.split(" ")[0];
 
   /* =====================================================
-     SCROLL TO AI
+     OPEN AI ASSISTANT
   ===================================================== */
 
-  const scrollToAI = () => {
-    document.getElementById("ai-learning")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+  const openAIAssistant = () => {
+    navigate("/ai-assistant");
   };
 
   /* =====================================================
@@ -81,10 +77,14 @@ function Dashboard() {
             </p>
 
             <div className="hero-actions">
+              {/* =================================================
+                  ASK JIGYASA
+              ================================================= */}
+
               <button
                 type="button"
                 className="hero-primary-button"
-                onClick={scrollToAI}
+                onClick={openAIAssistant}
               >
                 <span>✦</span>
 
@@ -92,6 +92,10 @@ function Dashboard() {
 
                 <span className="button-arrow">→</span>
               </button>
+
+              {/* =================================================
+                  EXPLORE
+              ================================================= */}
 
               <button
                 type="button"
@@ -157,7 +161,7 @@ function Dashboard() {
         </section>
 
         {/* =================================================
-            AI LEARNING
+            AI LEARNING ASSISTANT
         ================================================= */}
 
         <section className="ai-section" id="ai-learning">
@@ -165,11 +169,11 @@ function Dashboard() {
             <div>
               <span className="section-label">AI LEARNING ASSISTANT</span>
 
-              <h2>What would you like to learn?</h2>
+              <h2>Meet Jigyasa AI</h2>
 
               <p>
-                Ask questions, understand difficult concepts, or simply explore
-                something new.
+                Ask questions, upload documents or images, and get intelligent
+                answers based on your content.
               </p>
             </div>
 
@@ -179,8 +183,57 @@ function Dashboard() {
             </div>
           </div>
 
-          <div className="ai-chat-wrapper">
-            <AIChatBox />
+          {/* =================================================
+              MULTIMODAL AI PREVIEW
+          ================================================= */}
+
+          <div className="ai-assistant-card">
+            <div className="ai-assistant-card-content">
+              <div className="ai-assistant-icon">✦</div>
+
+              <div className="ai-assistant-text">
+                <span className="ai-assistant-label">MULTIMODAL LEARNING</span>
+
+                <h3>Ask Jigyasa about anything</h3>
+
+                <p>
+                  Upload an image, PDF, document or text. Jigyasa can analyze
+                  your content and answer questions based on it.
+                </p>
+
+                <div className="ai-capabilities">
+                  <span>
+                    <span>🖼️</span>
+                    Images
+                  </span>
+
+                  <span>
+                    <span>📄</span>
+                    Documents
+                  </span>
+
+                  <span>
+                    <span>📝</span>
+                    Text
+                  </span>
+
+                  <span>
+                    <span>✦</span>
+                    AI Analysis
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="ai-assistant-button"
+              onClick={openAIAssistant}
+            >
+              <span>Open Jigyasa AI</span>
+
+              <span>→</span>
+            </button>
           </div>
         </section>
 
@@ -222,7 +275,7 @@ function Dashboard() {
               <button
                 type="button"
                 className="conversation-item"
-                onClick={scrollToAI}
+                onClick={openAIAssistant}
               >
                 <div className="conversation-icon">✦</div>
 
@@ -358,7 +411,11 @@ function Dashboard() {
             </p>
           </div>
 
-          <button type="button" onClick={scrollToAI} className="cta-button">
+          <button
+            type="button"
+            onClick={openAIAssistant}
+            className="cta-button"
+          >
             <span>Ask Jigyasa</span>
 
             <span>→</span>

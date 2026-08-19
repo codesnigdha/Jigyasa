@@ -44,8 +44,14 @@ function About() {
               <div className="orbit-ring orbit-ring-one"></div>
               <div className="orbit-ring orbit-ring-two"></div>
 
-              <div className="about-ai-core">
-                <span>✦</span>
+              <div className="abstract-core">
+                <div className="core-inner">
+                  <img
+                    src="/icon2.png"
+                    alt="Jigyasa"
+                    className="ai-core-logo"
+                  />
+                </div>
               </div>
 
               <div className="orbit-dot orbit-dot-one"></div>

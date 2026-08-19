@@ -44,7 +44,7 @@
 ===================================================== */
 
 .about-hero {
-  padding: 105px 0 120px;
+  padding: 70px 0 55px;
 
   background: radial-gradient(
     circle at 80% 35%,
@@ -210,28 +210,17 @@
   height: 365px;
 }
 
-.about-ai-core {
-  position: relative;
+.core-logo {
+  width: 400px;
+  height: 400px;
 
-  width: 110px;
-  height: 110px;
+  object-fit: contain;
+  display: block;
 
-  display: flex;
+  filter: drop-shadow(0 20px 25px rgba(37, 99, 235, 0.16))
+    drop-shadow(0 6px 12px rgba(15, 23, 42, 0.08));
 
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 32px;
-
-  background: #2563eb;
-
-  color: #ffffff;
-
-  box-shadow: 0 25px 60px rgba(37, 99, 235, 0.25);
-}
-
-.about-ai-core span {
-  font-size: 40px;
+  animation: logoFloat 5s ease-in-out infinite;
 }
 
 .orbit-dot {
@@ -248,7 +237,7 @@
 }
 
 .orbit-dot-one {
-  top: 70px;
+  top: 55px;
   right: 65px;
 }
 
@@ -258,8 +247,10 @@
 }
 
 .orbit-dot-three {
-  top: 180px;
+  top: 120px;
   left: 20px;
+  width: 16px;
+  height: 16px;
 }
 
 /* =====================================================

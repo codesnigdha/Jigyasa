@@ -4,11 +4,9 @@
 
 .dashboard-page {
   min-height: calc(100vh - 68px);
-
   padding: 42px 0 90px;
 
   background: var(--bg-primary, #f7f9fc);
-
   color: var(--text-primary, #101828);
 }
 
@@ -18,7 +16,6 @@
 
 .dashboard-wrapper {
   width: min(1400px, calc(100% - 72px));
-
   margin: 0 auto;
 }
 
@@ -39,7 +36,6 @@
   padding: 60px 68px;
 
   border: 1px solid #dfe6f0;
-
   border-radius: 30px;
 
   background:
@@ -58,7 +54,9 @@
   box-shadow: 0 20px 55px rgba(15, 23, 42, 0.055);
 }
 
-/* TOP GRADIENT LINE */
+/* =====================================================
+   TOP GRADIENT LINE
+===================================================== */
 
 .dashboard-hero::before {
   content: "";
@@ -97,12 +95,11 @@
 }
 
 /* =====================================================
-   EYEBROW
+   HERO EYEBROW
 ===================================================== */
 
 .hero-eyebrow {
   display: flex;
-
   align-items: center;
 
   gap: 9px;
@@ -112,7 +109,6 @@
   color: #2563eb;
 
   font-size: 11px;
-
   font-weight: 800;
 
   letter-spacing: 2.2px;
@@ -162,6 +158,7 @@
 
   -webkit-background-clip: text;
   background-clip: text;
+
   -webkit-text-fill-color: transparent;
 }
 
@@ -228,7 +225,9 @@
     background-color 0.2s ease;
 }
 
-/* PRIMARY */
+/* =====================================================
+   PRIMARY HERO BUTTON
+===================================================== */
 
 .hero-primary-button {
   border: 1px solid #2563eb;
@@ -250,7 +249,9 @@
   transform: translateY(0);
 }
 
-/* SECONDARY */
+/* =====================================================
+   SECONDARY HERO BUTTON
+===================================================== */
 
 .hero-secondary-button {
   border: 1px solid #d8e0eb;
@@ -273,7 +274,7 @@
 }
 
 /* =====================================================
-   STATS
+   QUICK STATS
 ===================================================== */
 
 .dashboard-stats {
@@ -336,25 +337,21 @@
 
 .stat-icon.blue {
   background: #eff6ff;
-
   color: #2563eb;
 }
 
 .stat-icon.purple {
   background: #f3efff;
-
   color: #7c3aed;
 }
 
 .stat-icon.cyan {
   background: #ecfeff;
-
   color: #0891b2;
 }
 
 .stat-icon.green {
   background: #ecfdf3;
-
   color: #16a34a;
 }
 
@@ -501,13 +498,23 @@
 }
 
 /* =====================================================
-   AI CHAT
+   MULTIMODAL AI ASSISTANT CARD
 ===================================================== */
 
-.ai-chat-wrapper {
+.ai-assistant-card {
+  position: relative;
+
   width: 100%;
 
-  min-height: 430px;
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 30px;
+
+  padding: 34px;
 
   overflow: hidden;
 
@@ -515,9 +522,221 @@
 
   border-radius: 24px;
 
-  background: #ffffff;
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(37, 99, 235, 0.12),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 10% 100%,
+      rgba(124, 58, 237, 0.07),
+      transparent 32%
+    ),
+    #ffffff;
 
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.055);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.ai-assistant-card:hover {
+  transform: translateY(-3px);
+
+  border-color: #bfd0e8;
+
+  box-shadow: 0 22px 50px rgba(15, 23, 42, 0.08);
+}
+
+/* =====================================================
+   AI ASSISTANT CONTENT
+===================================================== */
+
+.ai-assistant-card-content {
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 22px;
+
+  min-width: 0;
+}
+
+/* =====================================================
+   AI ASSISTANT ICON
+===================================================== */
+
+.ai-assistant-icon {
+  width: 58px;
+  height: 58px;
+
+  flex: 0 0 58px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 16px;
+
+  background: linear-gradient(135deg, #eff6ff, #f3efff);
+
+  color: #2563eb;
+
+  font-size: 25px;
+
+  font-weight: 800;
+
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
+}
+
+/* =====================================================
+   AI ASSISTANT TEXT
+===================================================== */
+
+.ai-assistant-text {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+.ai-assistant-label {
+  margin-bottom: 7px;
+
+  color: #2563eb;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  letter-spacing: 2px;
+}
+
+.ai-assistant-text h3 {
+  margin: 0;
+
+  color: #101828;
+
+  font-size: 23px;
+
+  font-weight: 800;
+
+  letter-spacing: -0.7px;
+}
+
+.ai-assistant-text p {
+  max-width: 700px;
+
+  margin: 8px 0 0;
+
+  color: #667085;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+/* =====================================================
+   AI CAPABILITIES
+===================================================== */
+
+.ai-capabilities {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 18px;
+}
+
+.ai-capabilities > span {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 7px 10px;
+
+  border: 1px solid #e1e8f0;
+
+  border-radius: 8px;
+
+  background: #f8fafc;
+
+  color: #475467;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+.ai-capabilities > span > span {
+  font-size: 12px;
+}
+
+/* =====================================================
+   OPEN AI ASSISTANT BUTTON
+===================================================== */
+
+.ai-assistant-button {
+  height: 45px;
+
+  flex: 0 0 auto;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 0 17px;
+
+  border: 1px solid #2563eb;
+
+  border-radius: 10px;
+
+  background: #2563eb;
+
+  color: #ffffff;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.ai-assistant-button:hover {
+  transform: translateY(-2px);
+
+  background: #1d4ed8;
+
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.25);
+}
+
+.ai-assistant-button:active {
+  transform: translateY(0);
+}
+
+.ai-assistant-button span:last-child {
+  font-size: 16px;
 }
 
 /* =====================================================
@@ -543,7 +762,7 @@
 }
 
 /* =====================================================
-   CARD
+   DASHBOARD CARD
 ===================================================== */
 
 .dashboard-card {
@@ -607,7 +826,10 @@
 
   display: grid;
 
-  grid-template-columns: 42px minmax(0, 1fr) auto;
+  grid-template-columns:
+    42px
+    minmax(0, 1fr)
+    auto;
 
   align-items: center;
 
@@ -1018,6 +1240,7 @@
   position: absolute;
 
   right: 20px;
+
   bottom: 18px;
 
   color: #2563eb;
@@ -1180,7 +1403,8 @@
 [data-theme="dark"] .progress-stat strong,
 [data-theme="dark"] .progress-circle-inner strong,
 [data-theme="dark"] .topic-content strong,
-[data-theme="dark"] .dashboard-cta h2 {
+[data-theme="dark"] .dashboard-cta h2,
+[data-theme="dark"] .ai-assistant-text h3 {
   color: #f8fafc;
 }
 
@@ -1191,18 +1415,23 @@
 [data-theme="dark"] .progress-stat span,
 [data-theme="dark"] .progress-circle-inner span,
 [data-theme="dark"] .topic-content small,
-[data-theme="dark"] .dashboard-cta p {
+[data-theme="dark"] .dashboard-cta p,
+[data-theme="dark"] .ai-assistant-text p {
   color: #94a3b8;
 }
 
+/* =====================================================
+   DARK MODE CARDS
+===================================================== */
+
 [data-theme="dark"] .hero-secondary-button,
 [data-theme="dark"] .stat-card,
-[data-theme="dark"] .ai-chat-wrapper,
 [data-theme="dark"] .dashboard-card,
 [data-theme="dark"] .conversation-item,
 [data-theme="dark"] .topic-card,
 [data-theme="dark"] .outline-button,
-[data-theme="dark"] .ai-status {
+[data-theme="dark"] .ai-status,
+[data-theme="dark"] .ai-assistant-card {
   border-color: #263752;
 
   background: #0f1a2d;
@@ -1227,6 +1456,10 @@
 
   border-color: #263752;
 }
+
+/* =====================================================
+   DARK MODE ICONS
+===================================================== */
 
 [data-theme="dark"] .stat-icon.blue,
 [data-theme="dark"] .topic-icon,
@@ -1263,6 +1496,55 @@
 [data-theme="dark"] .progress-circle-inner {
   background: #0f1a2d;
 }
+
+/* =====================================================
+   DARK MODE AI ASSISTANT
+===================================================== */
+
+[data-theme="dark"] .ai-assistant-card {
+  background:
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(37, 99, 235, 0.16),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 10% 100%,
+      rgba(124, 58, 237, 0.1),
+      transparent 32%
+    ),
+    #0f1a2d;
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="dark"] .ai-assistant-card:hover {
+  border-color: #3b5274;
+}
+
+[data-theme="dark"] .ai-assistant-icon {
+  background: #142b4f;
+
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .ai-capabilities > span {
+  border-color: #263752;
+
+  background: #14223a;
+
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .ai-assistant-button {
+  background: #2563eb;
+
+  color: #ffffff;
+}
+
+/* =====================================================
+   DARK MODE CTA
+===================================================== */
 
 [data-theme="dark"] .dashboard-cta {
   border-color: #263752;
@@ -1305,6 +1587,24 @@
 
   .topic-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ai-assistant-card {
+    align-items: flex-start;
+  }
+}
+
+/* =====================================================
+   TABLET / SMALL LAPTOP AI
+===================================================== */
+
+@media (max-width: 950px) {
+  .ai-assistant-card {
+    flex-direction: column;
+  }
+
+  .ai-assistant-button {
+    width: 100%;
   }
 }
 
@@ -1357,6 +1657,18 @@
     align-self: flex-start;
   }
 
+  .ai-assistant-card {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    padding: 28px;
+  }
+
+  .ai-assistant-button {
+    width: 100%;
+  }
+
   .dashboard-cta {
     align-items: flex-start;
 
@@ -1389,6 +1701,12 @@
     font-size: 40px;
 
     letter-spacing: -2px;
+  }
+
+  .hero-content h1 span {
+    margin-left: 0;
+
+    display: block;
   }
 
   .hero-content p {
@@ -1424,11 +1742,66 @@
     font-size: 24px;
   }
 
-  .ai-chat-wrapper {
-    min-height: 400px;
+  /* =================================================
+     AI ASSISTANT MOBILE
+  ================================================= */
+
+  .ai-assistant-card {
+    padding: 22px;
 
     border-radius: 20px;
   }
+
+  .ai-assistant-card-content {
+    width: 100%;
+
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+  .ai-assistant-icon {
+    width: 50px;
+    height: 50px;
+
+    flex-basis: 50px;
+
+    border-radius: 14px;
+
+    font-size: 21px;
+  }
+
+  .ai-assistant-text h3 {
+    font-size: 20px;
+  }
+
+  .ai-assistant-text p {
+    font-size: 12px;
+  }
+
+  .ai-capabilities {
+    gap: 6px;
+  }
+
+  .ai-capabilities > span {
+    padding: 6px 8px;
+
+    font-size: 9px;
+  }
+
+  .ai-capabilities > span > span {
+    font-size: 11px;
+  }
+
+  .ai-assistant-button {
+    width: 100%;
+
+    height: 44px;
+  }
+
+  /* =================================================
+     OTHER MOBILE SECTIONS
+  ================================================= */
 
   .dashboard-card {
     padding: 20px;
@@ -1472,5 +1845,57 @@
 
   .dashboard-cta h2 {
     font-size: 21px;
+  }
+}
+
+/* =====================================================
+   EXTRA SMALL DEVICES
+===================================================== */
+
+@media (max-width: 380px) {
+  .dashboard-wrapper {
+    width: calc(100% - 16px);
+  }
+
+  .dashboard-hero {
+    padding: 26px 18px;
+  }
+
+  .hero-content h1 {
+    font-size: 35px;
+  }
+
+  .hero-content h1 span {
+    font-size: 42px;
+  }
+
+  .ai-assistant-card {
+    padding: 18px;
+  }
+
+  .ai-assistant-text h3 {
+    font-size: 18px;
+  }
+
+  .ai-capabilities {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ai-capabilities > span {
+    width: fit-content;
+  }
+
+  .conversation-item {
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+
+    gap: 9px;
+
+    padding: 10px;
+  }
+
+  .conversation-icon {
+    width: 38px;
+    height: 38px;
   }
 }

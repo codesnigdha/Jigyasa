@@ -127,10 +127,10 @@
   transition: width 0.18s ease;
 }
 
-.navbar-link:hover::after,
+/* .navbar-link:hover::after,
 .navbar-link.active::after {
   width: 100%;
-}
+} */
 
 /* =====================================================
    HOVER

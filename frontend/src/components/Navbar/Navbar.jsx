@@ -9,11 +9,13 @@ import "./Navbar.css";
 function Navbar() {
   const navigate = useNavigate();
 
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, deleteAccount } = useAuth();
+
   const { isDark, toggleTheme } = useTheme();
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   /* =====================================================
      LOGO
@@ -52,8 +54,62 @@ function Navbar() {
 
     try {
       await logout();
+    } catch (error) {
+      console.error("Logout Error:", error);
     } finally {
       navigate("/login", { replace: true });
+    }
+  };
+
+  /* =====================================================
+     EDIT PROFILE
+  ===================================================== */
+
+  const handleEditProfile = () => {
+    closeMenus();
+    navigate("/profile/edit");
+  };
+
+  /* =====================================================
+     DELETE ACCOUNT
+  ===================================================== */
+
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete your account?\n\n" +
+        "This action cannot be undone.",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    if (typeof deleteAccount !== "function") {
+      console.error("deleteAccount() is not available in AuthContext.");
+
+      window.alert("Delete account service is not configured yet.");
+
+      return;
+    }
+
+    try {
+      setDeletingAccount(true);
+
+      await deleteAccount();
+
+      closeMenus();
+
+      window.alert("Your account has been deleted successfully.");
+
+      navigate("/signup", { replace: true });
+    } catch (error) {
+      console.error("Delete Account Error:", error);
+
+      window.alert(
+        error?.message || "Unable to delete your account. Please try again.",
+      );
+    } finally {
+      setDeletingAccount(false);
     }
   };
 
@@ -103,6 +159,10 @@ function Navbar() {
 
           <NavLink to="/explore" className={navLinkClass}>
             Explore
+          </NavLink>
+
+          <NavLink to="/ai-assistant" className={navLinkClass}>
+            AI Assistant
           </NavLink>
 
           <NavLink to="/about" className={navLinkClass}>
@@ -168,6 +228,8 @@ function Navbar() {
             ================================================= */
 
             <div className="navbar-profile">
+              {/* PROFILE BUTTON */}
+
               <button
                 type="button"
                 className="profile-button"
@@ -206,29 +268,44 @@ function Navbar() {
 
                   <div className="profile-menu-divider" />
 
-                  {/* DASHBOARD */}
+                  {/* =================================================
+                      EDIT PROFILE
+                  ================================================= */}
 
                   <button
                     type="button"
                     role="menuitem"
-                    onClick={() => handleNavigation("/dashboard")}
+                    className="profile-menu-item"
+                    onClick={handleEditProfile}
                   >
-                    <span>Dashboard</span>
+                    <span className="profile-menu-item-icon">✎</span>
+
+                    <span>Edit Profile</span>
                   </button>
 
-                  {/* ABOUT */}
+                  {/* =================================================
+                      DELETE ACCOUNT
+                  ================================================= */}
 
                   <button
                     type="button"
                     role="menuitem"
-                    onClick={() => handleNavigation("/about")}
+                    className="profile-menu-item delete-account-button"
+                    onClick={handleDeleteAccount}
+                    disabled={deletingAccount}
                   >
-                    <span>About Jigyasa</span>
+                    <span className="profile-menu-item-icon">🗑</span>
+
+                    <span>
+                      {deletingAccount ? "Deleting..." : "Delete Account"}
+                    </span>
                   </button>
 
                   <div className="profile-menu-divider" />
 
-                  {/* LOGOUT */}
+                  {/* =================================================
+                      LOGOUT
+                  ================================================= */}
 
                   <button
                     type="button"
@@ -236,6 +313,8 @@ function Navbar() {
                     className="logout-button"
                     onClick={handleLogout}
                   >
+                    <span className="profile-menu-item-icon">↪</span>
+
                     <span>Logout</span>
                   </button>
                 </div>
@@ -290,6 +369,16 @@ function Navbar() {
             onClick={closeMobileMenu}
           >
             Explore
+          </NavLink>
+
+          {/* AI ASSISTANT */}
+
+          <NavLink
+            to="/ai-assistant"
+            className={navLinkClass}
+            onClick={closeMobileMenu}
+          >
+            AI Assistant
           </NavLink>
 
           {/* ABOUT */}
@@ -379,12 +468,41 @@ function Navbar() {
                 </div>
               </div>
 
+              {/* EDIT PROFILE */}
+
+              <button
+                type="button"
+                className="mobile-profile-action"
+                onClick={handleEditProfile}
+              >
+                <span>✎</span>
+                <span>Edit Profile</span>
+              </button>
+
+              {/* DELETE ACCOUNT */}
+
+              <button
+                type="button"
+                className="mobile-profile-action mobile-delete-account"
+                onClick={handleDeleteAccount}
+                disabled={deletingAccount}
+              >
+                <span>🗑</span>
+
+                <span>
+                  {deletingAccount ? "Deleting..." : "Delete Account"}
+                </span>
+              </button>
+
+              {/* LOGOUT */}
+
               <button
                 type="button"
                 className="mobile-logout"
                 onClick={handleLogout}
               >
-                Logout
+                <span>↪</span>
+                <span>Logout</span>
               </button>
             </>
           )}
