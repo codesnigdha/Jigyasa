@@ -13,6 +13,13 @@ import {
   X,
 } from "lucide-react";
 
+import {
+  sendMessageToAI,
+  createVectorStore,
+  uploadDocument,
+  sendDocumentMessage,
+} from "../../services/aiService";
+
 import "./MultimodalChat.css";
 
 /* =====================================================
@@ -43,18 +50,21 @@ const QUICK_ACTIONS = [
     description: "Get a summary of your content",
     prompt: "Summarize the content and give me the most important points.",
   },
+
   {
     icon: "ai",
     title: "Explain",
     description: "Explain in simple terms",
     prompt: "Explain this in simple language.",
   },
+
   {
     icon: ImageIcon,
     title: "Analyze image",
     description: "Analyze the uploaded image",
     prompt: "Analyze the uploaded image and explain what it contains.",
   },
+
   {
     icon: Check,
     title: "Key points",
@@ -82,21 +92,49 @@ function AIIcon({ className = "" }) {
 ===================================================== */
 
 function MultimodalChat() {
+  /* ===================================================
+     CHAT STATE
+  =================================================== */
+
   const [messages, setMessages] = useState([]);
+
   const [input, setInput] = useState("");
+
   const [files, setFiles] = useState([]);
+
   const [isTyping, setIsTyping] = useState(false);
+
   const [copiedId, setCopiedId] = useState(null);
 
+  /* ===================================================
+     LAB 4 STATE
+  =================================================== */
+
+  const [vectorStoreId, setVectorStoreId] = useState(null);
+
+  const [previousResponseId, setPreviousResponseId] = useState(null);
+
+  const [isUploading, setIsUploading] = useState(false);
+
+  /* ===================================================
+     REFS
+  =================================================== */
+
   const fileInputRef = useRef(null);
+
   const messagesEndRef = useRef(null);
+
   const textareaRef = useRef(null);
+
+  /* ===================================================
+     CONVERSATION STATE
+  =================================================== */
 
   const hasConversation = messages.length > 0;
 
-  /* =====================================================
+  /* ===================================================
      AUTO SCROLL
-  ===================================================== */
+  =================================================== */
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
@@ -104,9 +142,23 @@ function MultimodalChat() {
     });
   }, [messages, isTyping]);
 
-  /* =====================================================
+  /* ===================================================
+     CLEANUP IMAGE PREVIEWS
+  =================================================== */
+
+  useEffect(() => {
+    return () => {
+      files.forEach((file) => {
+        if (file.preview) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
+    };
+  }, [files]);
+
+  /* ===================================================
      FILE SIZE
-  ===================================================== */
+  =================================================== */
 
   const formatFileSize = (bytes) => {
     if (bytes < 1024) {
@@ -120,28 +172,36 @@ function MultimodalChat() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  /* =====================================================
+  /* ===================================================
      FILE ICON
-  ===================================================== */
+  =================================================== */
 
   const getFileIcon = (file) => {
-    if (file.type.startsWith("image/")) {
+    if (file.type?.startsWith("image/")) {
       return <ImageIcon size={18} />;
     }
 
     return <FileText size={18} />;
   };
 
-  /* =====================================================
+  /* ===================================================
      ADD FILES
-  ===================================================== */
+  =================================================== */
 
   const addFiles = (selectedFiles) => {
     const incomingFiles = Array.from(selectedFiles);
 
+    /* -------------------------------------------------
+       VALID FILES
+    ------------------------------------------------- */
+
     const validFiles = incomingFiles.filter((file) =>
       ACCEPTED_TYPES.includes(file.type),
     );
+
+    /* -------------------------------------------------
+       INVALID FILES
+    ------------------------------------------------- */
 
     const invalidFiles = incomingFiles.filter(
       (file) => !ACCEPTED_TYPES.includes(file.type),
@@ -153,12 +213,21 @@ function MultimodalChat() {
       );
     }
 
+    /* -------------------------------------------------
+       PREPARE FILES
+    ------------------------------------------------- */
+
     const preparedFiles = validFiles.map((file) => ({
       id: `${file.name}-${file.lastModified}-${Math.random()}`,
+
       file,
+
       name: file.name,
+
       size: file.size,
+
       type: file.type,
+
       preview: file.type.startsWith("image/")
         ? URL.createObjectURL(file)
         : null,
@@ -167,9 +236,9 @@ function MultimodalChat() {
     setFiles((previous) => [...previous, ...preparedFiles]);
   };
 
-  /* =====================================================
+  /* ===================================================
      FILE CHANGE
-  ===================================================== */
+  =================================================== */
 
   const handleFileChange = (event) => {
     if (event.target.files?.length) {
@@ -179,9 +248,9 @@ function MultimodalChat() {
     event.target.value = "";
   };
 
-  /* =====================================================
+  /* ===================================================
      REMOVE FILE
-  ===================================================== */
+  =================================================== */
 
   const removeFile = (id) => {
     setFiles((previous) => {
@@ -195,9 +264,9 @@ function MultimodalChat() {
     });
   };
 
-  /* =====================================================
+  /* ===================================================
      CLEAR FILES
-  ===================================================== */
+  =================================================== */
 
   const clearFiles = () => {
     files.forEach((file) => {
@@ -209,9 +278,9 @@ function MultimodalChat() {
     setFiles([]);
   };
 
-  /* =====================================================
+  /* ===================================================
      DRAG & DROP
-  ===================================================== */
+  =================================================== */
 
   const handleDrop = (event) => {
     event.preventDefault();
@@ -225,118 +294,198 @@ function MultimodalChat() {
     event.preventDefault();
   };
 
-  /* =====================================================
-     AZURE AI API
-  ===================================================== */
+  /* ===================================================
+     LAB 3
+     NORMAL TEXT AI RESPONSE
+  =================================================== */
 
   const getAIResponse = async (message) => {
-    const response = await fetch("http://127.0.0.1:8000/api/ai/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message,
-      }),
-    });
+    const response = await sendMessageToAI(message);
 
-    let data;
-
-    try {
-      data = await response.json();
-    } catch {
-      throw new Error("The server returned an invalid response.");
-    }
-
-    if (!response.ok) {
-      throw new Error(
-        data?.detail ||
-          data?.message ||
-          `AI request failed with status ${response.status}.`,
-      );
-    }
-
-    if (!data?.success) {
-      throw new Error(data?.message || "Unable to get AI response.");
-    }
-
-    return data.message;
+    return response.message;
   };
 
-  /* =====================================================
+  /* ===================================================
+     LAB 4
+     CREATE VECTOR STORE + UPLOAD FILES
+  =================================================== */
+
+  const uploadFilesToAI = async (selectedFiles) => {
+    if (!selectedFiles || selectedFiles.length === 0) {
+      return null;
+    }
+
+    setIsUploading(true);
+
+    try {
+      let currentVectorStoreId = vectorStoreId;
+
+      /* -----------------------------------------------
+         CREATE VECTOR STORE
+      ------------------------------------------------ */
+
+      if (!currentVectorStoreId) {
+        const storeResponse = await createVectorStore();
+
+        if (!storeResponse?.success || !storeResponse?.vector_store_id) {
+          throw new Error("Unable to create document storage.");
+        }
+
+        currentVectorStoreId = storeResponse.vector_store_id;
+
+        setVectorStoreId(currentVectorStoreId);
+      }
+
+      /* -----------------------------------------------
+         UPLOAD EACH FILE
+      ------------------------------------------------ */
+
+      for (const item of selectedFiles) {
+        const actualFile = item?.file || item;
+
+        if (!actualFile) {
+          continue;
+        }
+
+        await uploadDocument({
+          vectorStoreId: currentVectorStoreId,
+
+          file: actualFile,
+        });
+      }
+
+      return currentVectorStoreId;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  /* ===================================================
      SEND MESSAGE
-  ===================================================== */
+  =================================================== */
 
   const sendMessage = async (customPrompt = null) => {
     const messageText = (customPrompt !== null ? customPrompt : input).trim();
 
-    /*
-     * Don't send an empty message unless files are selected.
-     */
+    /* -------------------------------------------------
+       EMPTY MESSAGE
+    ------------------------------------------------- */
+
     if (!messageText && files.length === 0) {
       return;
     }
 
+    /* -------------------------------------------------
+       SAVE CURRENT FILES
+    ------------------------------------------------- */
+
     const currentFiles = [...files];
 
-    /*
-     * Lab 3 currently supports text chat.
-     *
-     * If only a file is selected, we send a simple instruction.
-     * The file itself will be handled by the later multimodal labs.
-     */
+    /* -------------------------------------------------
+       DEFAULT FILE REQUEST
+    ------------------------------------------------- */
+
     const requestMessage =
       messageText ||
-      `I have uploaded ${currentFiles.length} ${
-        currentFiles.length === 1 ? "file" : "files"
-      }. Please tell me what I can do with this content.`;
+      "Analyze the uploaded document and explain the important information.";
 
-    /* ===================================================
+    /* -------------------------------------------------
        USER MESSAGE
-    =================================================== */
+    ------------------------------------------------- */
 
     const userMessage = {
       id: Date.now(),
+
       role: "user",
+
       content: requestMessage,
+
       files: currentFiles,
     };
 
     setMessages((previous) => [...previous, userMessage]);
 
-    /*
-     * Clear composer.
-     */
+    /* -------------------------------------------------
+       CLEAR COMPOSER
+    ------------------------------------------------- */
+
     setInput("");
+
     setFiles([]);
+
     setIsTyping(true);
 
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
 
-    /* ===================================================
-       CALL AZURE AI THROUGH FASTAPI
-    =================================================== */
-
     try {
-      const aiResponse = await getAIResponse(requestMessage);
+      let aiResponse;
+
+      /* =================================================
+         LAB 4
+         FILE / DOCUMENT REQUEST
+      ================================================= */
+
+      if (currentFiles.length > 0) {
+        const currentVectorStoreId = await uploadFilesToAI(currentFiles);
+
+        if (!currentVectorStoreId) {
+          throw new Error("Unable to prepare the uploaded document.");
+        }
+
+        const response = await sendDocumentMessage({
+          message: requestMessage,
+
+          vectorStoreId: currentVectorStoreId,
+
+          previousResponseId: previousResponseId,
+        });
+
+        if (!response?.success) {
+          throw new Error(
+            response?.message || "Unable to analyze the document.",
+          );
+        }
+
+        aiResponse = response.message;
+
+        /* ---------------------------------------------
+           CONTINUE DOCUMENT CONVERSATION
+        --------------------------------------------- */
+
+        setPreviousResponseId(response.response_id);
+      } else {
+        /* =================================================
+         LAB 3
+         NORMAL TEXT REQUEST
+      ================================================= */
+        aiResponse = await getAIResponse(requestMessage);
+      }
+
+      /* -------------------------------------------------
+         ASSISTANT MESSAGE
+      ------------------------------------------------- */
 
       const assistantMessage = {
         id: Date.now() + 1,
+
         role: "assistant",
-        content: aiResponse,
+
+        content: aiResponse || "I couldn't generate a response.",
       };
 
       setMessages((previous) => [...previous, assistantMessage]);
     } catch (error) {
-      console.error("Azure AI request failed:", error);
+      console.error("Jigyasa AI request failed:", error);
 
       const errorMessage = {
         id: Date.now() + 1,
+
         role: "assistant",
+
         content:
-          "I'm sorry, I couldn't connect to Jigyasa AI right now.\n\n" +
+          "I'm sorry, I couldn't process your request.\n\n" +
           `${error.message}\n\n` +
           "Please make sure the Jigyasa backend is running and Azure AI is available.",
       };
@@ -347,9 +496,9 @@ function MultimodalChat() {
     }
   };
 
-  /* =====================================================
-     TEXTAREA
-  ===================================================== */
+  /* ===================================================
+     TEXTAREA INPUT
+  =================================================== */
 
   const handleInput = (event) => {
     setInput(event.target.value);
@@ -363,39 +512,54 @@ function MultimodalChat() {
     }
   };
 
-  /* =====================================================
+  /* ===================================================
      ENTER KEY
-  ===================================================== */
+  =================================================== */
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
 
-      if (!isTyping) {
+      if (!isTyping && !isUploading) {
         sendMessage();
       }
     }
   };
 
-  /* =====================================================
+  /* ===================================================
      NEW CHAT
-  ===================================================== */
+  =================================================== */
 
   const clearConversation = () => {
     clearFiles();
 
     setMessages([]);
+
     setInput("");
+
     setIsTyping(false);
+
+    setIsUploading(false);
+
+    /*
+     * Reset Lab 4 document context.
+     *
+     * A new vector store will be created
+     * when the next document is uploaded.
+     */
+
+    setVectorStoreId(null);
+
+    setPreviousResponseId(null);
 
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
   };
 
-  /* =====================================================
+  /* ===================================================
      COPY MESSAGE
-  ===================================================== */
+  =================================================== */
 
   const copyMessage = async (message) => {
     try {
@@ -411,9 +575,9 @@ function MultimodalChat() {
     }
   };
 
-  /* =====================================================
+  /* ===================================================
      RENDER
-  ===================================================== */
+  =================================================== */
 
   return (
     <div className="multimodal-page">
@@ -423,7 +587,9 @@ function MultimodalChat() {
         ================================================= */}
 
         <section className="chat-panel">
-          {/* CHAT HEADER */}
+          {/* =================================================
+              CHAT HEADER
+          ================================================= */}
 
           <header className="chat-panel-header">
             <div className="chat-brand">
@@ -433,6 +599,7 @@ function MultimodalChat() {
 
               <div>
                 <h1>Jigyasa AI</h1>
+
                 <p>Multimodal learning assistant</p>
               </div>
             </div>
@@ -441,13 +608,17 @@ function MultimodalChat() {
               type="button"
               className="new-chat-button"
               onClick={clearConversation}
+              disabled={isTyping || isUploading}
             >
               <Plus size={17} />
+
               <span>New chat</span>
             </button>
           </header>
 
-          {/* CHAT BODY */}
+          {/* =================================================
+              CHAT BODY
+          ================================================= */}
 
           <div
             className="chat-body"
@@ -505,6 +676,8 @@ function MultimodalChat() {
                     </div>
 
                     <div className="message-content">
+                      {/* AUTHOR */}
+
                       <div className="message-author">
                         {message.role === "assistant" ? "Jigyasa AI" : "You"}
                       </div>
@@ -566,9 +739,11 @@ function MultimodalChat() {
                   </div>
                 ))}
 
-                {/* TYPING INDICATOR */}
+                {/* =================================================
+                   TYPING INDICATOR
+                ================================================= */}
 
-                {isTyping && (
+                {(isTyping || isUploading) && (
                   <div className="message-row assistant">
                     <div className="message-avatar">
                       <AIIcon />
@@ -596,7 +771,9 @@ function MultimodalChat() {
           ================================================= */}
 
           <div className="chat-input-section">
-            {/* SELECTED FILES */}
+            {/* =================================================
+                SELECTED FILES
+            ================================================= */}
 
             {files.length > 0 && (
               <div className="chat-selected-files">
@@ -616,7 +793,11 @@ function MultimodalChat() {
                       <span>{formatFileSize(file.size)}</span>
                     </div>
 
-                    <button type="button" onClick={() => removeFile(file.id)}>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(file.id)}
+                      disabled={isTyping || isUploading}
+                    >
                       <X size={15} />
                     </button>
                   </div>
@@ -624,13 +805,16 @@ function MultimodalChat() {
               </div>
             )}
 
-            {/* COMPOSER */}
+            {/* =================================================
+                COMPOSER
+            ================================================= */}
 
             <div className="chat-composer">
               <button
                 type="button"
                 className="composer-attach"
                 onClick={() => fileInputRef.current?.click()}
+                disabled={isTyping || isUploading}
                 aria-label="Attach file"
               >
                 <Paperclip size={20} />
@@ -641,15 +825,23 @@ function MultimodalChat() {
                 value={input}
                 onChange={handleInput}
                 onKeyDown={handleKeyDown}
-                placeholder="Type your message or ask Jigyasa anything..."
+                placeholder={
+                  isUploading
+                    ? "Uploading your document..."
+                    : "Type your message or ask Jigyasa anything..."
+                }
                 rows={1}
-                disabled={isTyping}
+                disabled={isTyping || isUploading}
               />
 
               <button
                 type="button"
                 className="composer-send"
-                disabled={isTyping || (!input.trim() && files.length === 0)}
+                disabled={
+                  isTyping ||
+                  isUploading ||
+                  (!input.trim() && files.length === 0)
+                }
                 onClick={() => sendMessage()}
                 aria-label="Send message"
               >
@@ -668,7 +860,9 @@ function MultimodalChat() {
         ================================================= */}
 
         <aside className="ai-sidebar">
-          {/* UPLOAD CARD */}
+          {/* =================================================
+              UPLOAD CARD
+          ================================================= */}
 
           <section className="sidebar-card upload-card">
             <h2>Upload your content</h2>
@@ -678,6 +872,7 @@ function MultimodalChat() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
+                disabled={isTyping || isUploading}
               >
                 browse from your device
               </button>
@@ -699,14 +894,20 @@ function MultimodalChat() {
 
               <div className="supported-types">
                 <span>PDF</span>
+
                 <span>DOCX</span>
+
                 <span>TXT</span>
+
                 <span>JPG</span>
+
                 <span>PNG</span>
               </div>
             </div>
 
-            {/* UPLOADED FILES */}
+            {/* =================================================
+                UPLOADED FILES
+            ================================================= */}
 
             {files.length > 0 && (
               <div className="uploaded-files-section">
@@ -731,7 +932,11 @@ function MultimodalChat() {
                         <span>{formatFileSize(file.size)}</span>
                       </div>
 
-                      <button type="button" onClick={() => removeFile(file.id)}>
+                      <button
+                        type="button"
+                        onClick={() => removeFile(file.id)}
+                        disabled={isTyping || isUploading}
+                      >
                         <X size={16} />
                       </button>
                     </div>
@@ -741,7 +946,9 @@ function MultimodalChat() {
             )}
           </section>
 
-          {/* QUICK ACTIONS */}
+          {/* =================================================
+              QUICK ACTIONS
+          ================================================= */}
 
           <section className="sidebar-card quick-actions-card">
             <h2>Quick actions</h2>
@@ -756,7 +963,7 @@ function MultimodalChat() {
                     type="button"
                     className="quick-action"
                     onClick={() => sendMessage(action.prompt)}
-                    disabled={isTyping}
+                    disabled={isTyping || isUploading}
                   >
                     <div className="quick-action-icon">
                       {Icon === "ai" ? <AIIcon /> : <Icon size={17} />}
@@ -790,5 +997,9 @@ function MultimodalChat() {
     </div>
   );
 }
+
+/* =====================================================
+   EXPORT
+===================================================== */
 
 export default MultimodalChat;
