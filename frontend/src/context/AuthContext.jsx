@@ -11,6 +11,12 @@ import {
 import { getCurrentUser, loginUser, logoutUser } from "../services/authService";
 
 /* =====================================================
+   STORAGE KEY
+===================================================== */
+
+const AUTH_USER_KEY = "jigyasa_user";
+
+/* =====================================================
    AUTH CONTEXT
 ===================================================== */
 
@@ -25,29 +31,113 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   /* =====================================================
-     CHECK CURRENT SESSION
-     
-     Backend:
-     GET /api/users/session
+     SAVE USER
+  ===================================================== */
+
+  const saveUser = useCallback((userData) => {
+    if (!userData) {
+      return;
+    }
+
+    setUser(userData);
+
+    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData));
+  }, []);
+
+  /* =====================================================
+     CLEAR USER
+  ===================================================== */
+
+  const clearUser = useCallback(() => {
+    setUser(null);
+
+    localStorage.removeItem(AUTH_USER_KEY);
+  }, []);
+
+  /* =====================================================
+     GET STORED USER
+  ===================================================== */
+
+  const getStoredUser = useCallback(() => {
+    try {
+      const storedUser = localStorage.getItem(AUTH_USER_KEY);
+
+      if (!storedUser) {
+        return null;
+      }
+
+      return JSON.parse(storedUser);
+    } catch (error) {
+      console.error("Unable to read stored user:", error);
+
+      localStorage.removeItem(AUTH_USER_KEY);
+
+      return null;
+    }
+  }, []);
+
+  /* =====================================================
+     CHECK SESSION
   ===================================================== */
 
   const checkSession = useCallback(async () => {
     try {
       const currentUser = await getCurrentUser();
 
-      setUser(currentUser || null);
-
-      return currentUser || null;
-    } catch {
       /*
-       * No active session.
+       * Backend session exists.
+       */
+      if (currentUser) {
+        saveUser(currentUser);
+
+        return currentUser;
+      }
+
+      /*
+       * Backend returned:
+       *
+       * {
+       *   "user": null
+       * }
+       *
+       * Use the frontend-persisted user.
+       */
+      const storedUser = getStoredUser();
+
+      if (storedUser) {
+        setUser(storedUser);
+
+        return storedUser;
+      }
+
+      /*
+       * No backend session
+       * and no stored frontend user.
+       */
+      clearUser();
+
+      return null;
+    } catch (error) {
+      /*
+       * If the session request fails,
+       * still try the stored frontend user.
        */
 
-      setUser(null);
+      console.error("Session check failed:", error);
+
+      const storedUser = getStoredUser();
+
+      if (storedUser) {
+        setUser(storedUser);
+
+        return storedUser;
+      }
+
+      clearUser();
 
       return null;
     }
-  }, []);
+  }, [clearUser, getStoredUser, saveUser]);
 
   /* =====================================================
      INITIAL AUTH CHECK
@@ -58,14 +148,63 @@ export function AuthProvider({ children }) {
 
     const initializeAuth = async () => {
       try {
+        /*
+         * First check localStorage immediately.
+         *
+         * This prevents the dashboard from disappearing
+         * during page refresh.
+         */
+
+        const storedUser = getStoredUser();
+
+        if (storedUser && mounted) {
+          setUser(storedUser);
+        }
+
+        /*
+         * Then verify the backend session.
+         */
+
         const currentUser = await getCurrentUser();
 
-        if (mounted) {
-          setUser(currentUser || null);
+        if (!mounted) {
+          return;
         }
-      } catch {
-        if (mounted) {
-          setUser(null);
+
+        if (currentUser) {
+          /*
+           * Backend session is valid.
+           */
+          saveUser(currentUser);
+        } else if (storedUser) {
+          /*
+           * Backend says user:null,
+           * but we have a valid frontend login state.
+           */
+          setUser(storedUser);
+        } else {
+          /*
+           * Completely logged out.
+           */
+          clearUser();
+        }
+      } catch (error) {
+        if (!mounted) {
+          return;
+        }
+
+        console.error("Authentication initialization failed:", error);
+
+        /*
+         * If backend session cannot be checked,
+         * use stored login state.
+         */
+        const storedUser = getStoredUser();
+
+        if (storedUser) {
+          setUser(storedUser);
+        } else {
+          clearUser();
         }
       } finally {
         if (mounted) {
@@ -79,7 +218,7 @@ export function AuthProvider({ children }) {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [clearUser, getStoredUser, saveUser]);
 
   /* =====================================================
      LOGIN
@@ -95,33 +234,48 @@ export function AuthProvider({ children }) {
       });
 
       /*
-       * Expected backend response:
-       *
-       * {
-       *   user: {
-       *     id,
-       *     name,
-       *     email
-       *   }
-       * }
+       * Support multiple possible response structures.
        */
 
-      const loggedInUser = response?.user || response?.data?.user || null;
+      const loggedInUser =
+        response?.user || response?.data?.user || response?.data || null;
 
-      if (loggedInUser) {
-        setUser(loggedInUser);
-      } else {
-        /*
-         * If login doesn't return the user,
-         * get it from the active session.
-         */
+      /*
+       * If login response contains the user,
+       * save it immediately.
+       */
 
-        await checkSession();
+      if (
+        loggedInUser &&
+        typeof loggedInUser === "object" &&
+        !Array.isArray(loggedInUser)
+      ) {
+        saveUser(loggedInUser);
+
+        return response;
       }
 
-      return response;
+      /*
+       * If login does not return user data,
+       * try the backend session.
+       */
+
+      const sessionUser = await getCurrentUser();
+
+      if (sessionUser) {
+        saveUser(sessionUser);
+
+        return response;
+      }
+
+      /*
+       * If backend session is also null,
+       * don't pretend login succeeded without user data.
+       */
+
+      throw new Error("Login succeeded, but no user information was returned.");
     } catch (error) {
-      setUser(null);
+      clearUser();
 
       throw error;
     } finally {
@@ -138,13 +292,13 @@ export function AuthProvider({ children }) {
       await logoutUser();
     } catch (error) {
       /*
-       * Backend logout can fail, but we still
-       * clear the frontend authentication state.
+       * Backend logout failure should not prevent
+       * frontend logout.
        */
 
       console.error("Logout error:", error);
     } finally {
-      setUser(null);
+      clearUser();
     }
   };
 
@@ -176,7 +330,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         user,
-        setUser,
+        setUser: saveUser,
         loading,
         isAuthenticated,
         login,
@@ -204,7 +358,7 @@ export function useAuth() {
 }
 
 /* =====================================================
-   EXPORT CONTEXT
+   CONTEXT EXPORT
 ===================================================== */
 
 export { AuthContext };

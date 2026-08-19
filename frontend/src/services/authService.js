@@ -39,7 +39,7 @@ export const loginUser = async (credentials) => {
 };
 
 /* =====================================================
-   CURRENT USER / SESSION
+   CURRENT USER
 ===================================================== */
 
 export const getCurrentUser = async () => {
@@ -59,7 +59,7 @@ export const logoutUser = async () => {
 };
 
 /* =====================================================
-   DEFAULT API EXPORT
+   DEFAULT API
 ===================================================== */
 
 export default api;
