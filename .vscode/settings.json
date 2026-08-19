@@ -1,5 +1,5 @@
 {
-  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "python-envs.defaultEnvManager": "ms-python.python:venv",
   "python.defaultInterpreterPath": "/Users/sniggy/Desktop/Projects/Jigyasa/venv/bin/python",
   "python.terminal.activateEnvironment": true,
   "python.analysis.extraPaths": ["${workspaceFolder}"]
