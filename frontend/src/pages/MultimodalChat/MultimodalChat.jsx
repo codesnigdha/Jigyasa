@@ -50,21 +50,18 @@ const QUICK_ACTIONS = [
     description: "Get a summary of your content",
     prompt: "Summarize the content and give me the most important points.",
   },
-
   {
     icon: "ai",
     title: "Explain",
     description: "Explain in simple terms",
     prompt: "Explain this in simple language.",
   },
-
   {
     icon: ImageIcon,
     title: "Analyze image",
     description: "Analyze the uploaded image",
     prompt: "Analyze the uploaded image and explain what it contains.",
   },
-
   {
     icon: Check,
     title: "Key points",
@@ -97,13 +94,9 @@ function MultimodalChat() {
   =================================================== */
 
   const [messages, setMessages] = useState([]);
-
   const [input, setInput] = useState("");
-
   const [files, setFiles] = useState([]);
-
   const [isTyping, setIsTyping] = useState(false);
-
   const [copiedId, setCopiedId] = useState(null);
 
   /* ===================================================
@@ -111,9 +104,7 @@ function MultimodalChat() {
   =================================================== */
 
   const [vectorStoreId, setVectorStoreId] = useState(null);
-
   const [previousResponseId, setPreviousResponseId] = useState(null);
-
   const [isUploading, setIsUploading] = useState(false);
 
   /* ===================================================
@@ -121,9 +112,7 @@ function MultimodalChat() {
   =================================================== */
 
   const fileInputRef = useRef(null);
-
   const messagesEndRef = useRef(null);
-
   const textareaRef = useRef(null);
 
   /* ===================================================
@@ -141,20 +130,6 @@ function MultimodalChat() {
       behavior: "smooth",
     });
   }, [messages, isTyping]);
-
-  /* ===================================================
-     CLEANUP IMAGE PREVIEWS
-  =================================================== */
-
-  useEffect(() => {
-    return () => {
-      files.forEach((file) => {
-        if (file.preview) {
-          URL.revokeObjectURL(file.preview);
-        }
-      });
-    };
-  }, [files]);
 
   /* ===================================================
      FILE SIZE
@@ -191,17 +166,9 @@ function MultimodalChat() {
   const addFiles = (selectedFiles) => {
     const incomingFiles = Array.from(selectedFiles);
 
-    /* -------------------------------------------------
-       VALID FILES
-    ------------------------------------------------- */
-
     const validFiles = incomingFiles.filter((file) =>
       ACCEPTED_TYPES.includes(file.type),
     );
-
-    /* -------------------------------------------------
-       INVALID FILES
-    ------------------------------------------------- */
 
     const invalidFiles = incomingFiles.filter(
       (file) => !ACCEPTED_TYPES.includes(file.type),
@@ -213,21 +180,12 @@ function MultimodalChat() {
       );
     }
 
-    /* -------------------------------------------------
-       PREPARE FILES
-    ------------------------------------------------- */
-
     const preparedFiles = validFiles.map((file) => ({
       id: `${file.name}-${file.lastModified}-${Math.random()}`,
-
       file,
-
       name: file.name,
-
       size: file.size,
-
       type: file.type,
-
       preview: file.type.startsWith("image/")
         ? URL.createObjectURL(file)
         : null,
@@ -337,7 +295,7 @@ function MultimodalChat() {
       }
 
       /* -----------------------------------------------
-         UPLOAD EACH FILE
+         UPLOAD FILES
       ------------------------------------------------ */
 
       for (const item of selectedFiles) {
@@ -349,7 +307,6 @@ function MultimodalChat() {
 
         await uploadDocument({
           vectorStoreId: currentVectorStoreId,
-
           file: actualFile,
         });
       }
@@ -395,11 +352,8 @@ function MultimodalChat() {
 
     const userMessage = {
       id: Date.now(),
-
       role: "user",
-
       content: requestMessage,
-
       files: currentFiles,
     };
 
@@ -410,9 +364,7 @@ function MultimodalChat() {
     ------------------------------------------------- */
 
     setInput("");
-
     setFiles([]);
-
     setIsTyping(true);
 
     if (textareaRef.current) {
@@ -436,9 +388,7 @@ function MultimodalChat() {
 
         const response = await sendDocumentMessage({
           message: requestMessage,
-
           vectorStoreId: currentVectorStoreId,
-
           previousResponseId: previousResponseId,
         });
 
@@ -457,9 +407,10 @@ function MultimodalChat() {
         setPreviousResponseId(response.response_id);
       } else {
         /* =================================================
-         LAB 3
-         NORMAL TEXT REQUEST
-      ================================================= */
+           LAB 3
+           NORMAL TEXT REQUEST
+        ================================================= */
+
         aiResponse = await getAIResponse(requestMessage);
       }
 
@@ -469,9 +420,7 @@ function MultimodalChat() {
 
       const assistantMessage = {
         id: Date.now() + 1,
-
         role: "assistant",
-
         content: aiResponse || "I couldn't generate a response.",
       };
 
@@ -481,9 +430,7 @@ function MultimodalChat() {
 
       const errorMessage = {
         id: Date.now() + 1,
-
         role: "assistant",
-
         content:
           "I'm sorry, I couldn't process your request.\n\n" +
           `${error.message}\n\n` +
@@ -534,22 +481,15 @@ function MultimodalChat() {
     clearFiles();
 
     setMessages([]);
-
     setInput("");
-
     setIsTyping(false);
-
     setIsUploading(false);
 
-    /*
-     * Reset Lab 4 document context.
-     *
-     * A new vector store will be created
-     * when the next document is uploaded.
-     */
+    /* -----------------------------------------------
+       RESET LAB 4 CONTEXT
+    ------------------------------------------------ */
 
     setVectorStoreId(null);
-
     setPreviousResponseId(null);
 
     if (textareaRef.current) {
@@ -599,7 +539,6 @@ function MultimodalChat() {
 
               <div>
                 <h1>Jigyasa AI</h1>
-
                 <p>Multimodal learning assistant</p>
               </div>
             </div>
@@ -611,7 +550,6 @@ function MultimodalChat() {
               disabled={isTyping || isUploading}
             >
               <Plus size={17} />
-
               <span>New chat</span>
             </button>
           </header>
@@ -739,9 +677,7 @@ function MultimodalChat() {
                   </div>
                 ))}
 
-                {/* =================================================
-                   TYPING INDICATOR
-                ================================================= */}
+                {/* TYPING INDICATOR */}
 
                 {(isTyping || isUploading) && (
                   <div className="message-row assistant">
@@ -771,9 +707,7 @@ function MultimodalChat() {
           ================================================= */}
 
           <div className="chat-input-section">
-            {/* =================================================
-                SELECTED FILES
-            ================================================= */}
+            {/* SELECTED FILES */}
 
             {files.length > 0 && (
               <div className="chat-selected-files">
@@ -805,9 +739,7 @@ function MultimodalChat() {
               </div>
             )}
 
-            {/* =================================================
-                COMPOSER
-            ================================================= */}
+            {/* COMPOSER */}
 
             <div className="chat-composer">
               <button
@@ -894,20 +826,14 @@ function MultimodalChat() {
 
               <div className="supported-types">
                 <span>PDF</span>
-
                 <span>DOCX</span>
-
                 <span>TXT</span>
-
                 <span>JPG</span>
-
                 <span>PNG</span>
               </div>
             </div>
 
-            {/* =================================================
-                UPLOADED FILES
-            ================================================= */}
+            {/* UPLOADED FILES */}
 
             {files.length > 0 && (
               <div className="uploaded-files-section">

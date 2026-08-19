@@ -1,14 +1,6 @@
 import axios from "axios";
 
-/* =====================================================
-   API CONFIGURATION
-===================================================== */
-
 const API_URL = "http://127.0.0.1:8000/api/ai";
-
-/* =====================================================
-   AXIOS INSTANCE
-===================================================== */
 
 const aiApi = axios.create({
   baseURL: API_URL,
@@ -16,8 +8,21 @@ const aiApi = axios.create({
 });
 
 /* =====================================================
-   SEND TEXT MESSAGE
-   LAB 3
+   ERROR HANDLER
+===================================================== */
+
+const getErrorMessage = (error, fallback) => {
+  return (
+    error.response?.data?.detail ||
+    error.response?.data?.message ||
+    error.response?.data?.error ||
+    error.message ||
+    fallback
+  );
+};
+
+/* =====================================================
+   LAB 3 - TEXT CHAT
 ===================================================== */
 
 export const sendMessageToAI = async (message) => {
@@ -28,118 +33,17 @@ export const sendMessageToAI = async (message) => {
 
     return response.data;
   } catch (error) {
-    console.error("Jigyasa AI Error:", error);
+    console.error("Jigyasa AI Lab 3 Error:", error);
 
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.message ||
-      "Unable to connect to Jigyasa AI.";
-
-    throw new Error(errorMessage, {
-      cause: error,
-    });
+    throw new Error(
+      getErrorMessage(error, "Unable to connect to Jigyasa AI."),
+      { cause: error },
+    );
   }
 };
 
 /* =====================================================
-   SEND MULTIMODAL MESSAGE
-   LAB 4
-===================================================== */
-
-export const sendMultimodalMessage = async ({ message = "", files = [] }) => {
-  try {
-    const formData = new FormData();
-
-    /* -----------------------------------------------
-       TEXT
-    ------------------------------------------------ */
-
-    formData.append("message", message?.trim() || "");
-
-    /* -----------------------------------------------
-       FILES
-    ------------------------------------------------ */
-
-    files.forEach((item) => {
-      const file = item?.file || item;
-
-      if (file instanceof File) {
-        formData.append("files", file);
-      }
-    });
-
-    /* -----------------------------------------------
-       API REQUEST
-    ------------------------------------------------ */
-
-    const response = await aiApi.post("/chat", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error("Jigyasa Multimodal AI Error:", error);
-
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.message ||
-      "Unable to analyze the uploaded content.";
-
-    throw new Error(errorMessage, {
-      cause: error,
-    });
-  }
-};
-
-/* =====================================================
-   ANALYZE SINGLE FILE
-   LAB 4
-===================================================== */
-
-export const analyzeFile = async ({ file, message = "" }) => {
-  try {
-    if (!file) {
-      throw new Error("Please select a file.");
-    }
-
-    const formData = new FormData();
-
-    formData.append("message", message?.trim() || "Analyze this file.");
-
-    formData.append("files", file);
-
-    const response = await aiApi.post("/chat", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
-    return response.data;
-  } catch (error) {
-    console.error("Jigyasa File Analysis Error:", error);
-
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.message ||
-      "Unable to analyze the file.";
-
-    throw new Error(errorMessage, {
-      cause: error,
-    });
-  }
-};
-
-/* =====================================================
-   LAB 4
-   CREATE VECTOR STORE
+   LAB 4 - CREATE VECTOR STORE
 ===================================================== */
 
 export const createVectorStore = async () => {
@@ -148,23 +52,17 @@ export const createVectorStore = async () => {
 
     return response.data;
   } catch (error) {
-    console.error("Create Vector Store Error:", error);
+    console.error("Lab 4 Vector Store Error:", error);
 
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      error.message ||
-      "Unable to create document storage.";
-
-    throw new Error(errorMessage, {
-      cause: error,
-    });
+    throw new Error(
+      getErrorMessage(error, "Unable to create document storage."),
+      { cause: error },
+    );
   }
 };
 
 /* =====================================================
-   LAB 4
-   UPLOAD DOCUMENT
+   LAB 4 - UPLOAD DOCUMENT
 ===================================================== */
 
 export const uploadDocument = async ({ vectorStoreId, file }) => {
@@ -181,33 +79,23 @@ export const uploadDocument = async ({ vectorStoreId, file }) => {
 
     formData.append("vector_store_id", vectorStoreId);
 
-    formData.append("file", file);
+    formData.append("file", file, file.name);
 
-    const response = await aiApi.post("/document/upload", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await aiApi.post("/document/upload", formData);
 
     return response.data;
   } catch (error) {
-    console.error("Document Upload Error:", error);
+    console.error("Lab 4 Document Upload Error:", error);
 
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      error.message ||
-      "Unable to upload the document.";
-
-    throw new Error(errorMessage, {
-      cause: error,
-    });
+    throw new Error(
+      getErrorMessage(error, "Unable to upload and process the document."),
+      { cause: error },
+    );
   }
 };
 
 /* =====================================================
-   LAB 4
-   CHAT WITH DOCUMENT
+   LAB 4 - CHAT WITH DOCUMENT
 ===================================================== */
 
 export const sendDocumentMessage = async ({
@@ -226,25 +114,18 @@ export const sendDocumentMessage = async ({
 
     const response = await aiApi.post("/document/chat", {
       message: message.trim(),
-
       vector_store_id: vectorStoreId,
-
       previous_response_id: previousResponseId,
     });
 
     return response.data;
   } catch (error) {
-    console.error("Document Chat Error:", error);
+    console.error("Lab 4 Document Chat Error:", error);
 
-    const errorMessage =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      error.message ||
-      "Unable to answer using the uploaded document.";
-
-    throw new Error(errorMessage, {
-      cause: error,
-    });
+    throw new Error(
+      getErrorMessage(error, "Unable to answer using the uploaded document."),
+      { cause: error },
+    );
   }
 };
 
@@ -254,8 +135,6 @@ export const sendDocumentMessage = async ({
 
 const aiService = {
   sendMessageToAI,
-  sendMultimodalMessage,
-  analyzeFile,
   createVectorStore,
   uploadDocument,
   sendDocumentMessage,
