@@ -8,6 +8,11 @@ from pydantic import BaseModel
 from openai import OpenAI
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
+# Lab 20 - Azure Content Understanding
+from azure.ai.contentunderstanding import ContentUnderstandingClient
+from azure.ai.contentunderstanding.models import AnalysisInput, AnalysisResult
+from azure.core.exceptions import AzureError
+
 
 # =====================================================
 # ENVIRONMENT
@@ -36,6 +41,24 @@ lab4_model = os.getenv("MODEL_DEPLOYMENT_LAB4")
 
 
 # =====================================================
+# LAB 20 CONFIGURATION
+# =====================================================
+
+content_understanding_endpoint = os.getenv(
+    "CONTENT_UNDERSTANDING_ENDPOINT"
+)
+
+content_understanding_analyzer = os.getenv(
+    "CONTENT_UNDERSTANDING_ANALYZER"
+)
+
+content_understanding_api_version = os.getenv(
+    "CONTENT_UNDERSTANDING_API_VERSION",
+    "2025-11-01",
+)
+
+
+# =====================================================
 # LAB 4 VALIDATION
 # =====================================================
 
@@ -47,6 +70,21 @@ if not lab4_endpoint:
 if not lab4_model:
     raise RuntimeError(
         "MODEL_DEPLOYMENT_LAB4 is not configured."
+    )
+
+
+# =====================================================
+# LAB 20 VALIDATION
+# =====================================================
+
+if not content_understanding_endpoint:
+    raise RuntimeError(
+        "CONTENT_UNDERSTANDING_ENDPOINT is not configured."
+    )
+
+if not content_understanding_analyzer:
+    raise RuntimeError(
+        "CONTENT_UNDERSTANDING_ANALYZER is not configured."
     )
 
 
@@ -84,6 +122,17 @@ lab4_client = OpenAI(
 
 
 # =====================================================
+# LAB 20 CLIENT
+# =====================================================
+
+content_understanding_client = ContentUnderstandingClient(
+    endpoint=content_understanding_endpoint,
+    credential=DefaultAzureCredential(),
+    api_version=content_understanding_api_version,
+)
+
+
+# =====================================================
 # ROUTER
 # =====================================================
 
@@ -103,7 +152,6 @@ class ChatRequest(BaseModel):
 
 @router.post("/chat")
 def chat(request: ChatRequest):
-
     message = request.message.strip()
 
     if not message:
@@ -119,7 +167,6 @@ def chat(request: ChatRequest):
         )
 
     try:
-
         response = lab3_client.responses.create(
             model=lab3_model,
             instructions=(
@@ -136,7 +183,6 @@ def chat(request: ChatRequest):
         }
 
     except Exception as ex:
-
         print(
             "Azure AI Lab 3 Error:",
             repr(ex),
@@ -163,9 +209,7 @@ class VectorStoreResponse(BaseModel):
     response_model=VectorStoreResponse,
 )
 def create_vector_store():
-
     try:
-
         vector_store = lab4_client.vector_stores.create(
             name="jigyasa-document-store",
         )
@@ -182,7 +226,6 @@ def create_vector_store():
         }
 
     except Exception as ex:
-
         print(
             "Azure AI Lab 4 Vector Store Error:",
             repr(ex),
@@ -203,7 +246,6 @@ def upload_document(
     vector_store_id: str = Form(...),
     file: UploadFile = File(...),
 ):
-
     vector_store_id = vector_store_id.strip()
 
     if not vector_store_id:
@@ -225,7 +267,6 @@ def upload_document(
         )
 
     try:
-
         print(
             "LAB 4 UPLOADING FILE:",
             file.filename,
@@ -285,7 +326,6 @@ def upload_document(
         # -------------------------------------------------
 
         if vector_store_file.status != "completed":
-
             last_error = getattr(
                 vector_store_file,
                 "last_error",
@@ -315,7 +355,6 @@ def upload_document(
         raise
 
     except Exception as ex:
-
         print(
             "Azure AI Lab 4 Upload Error:",
             repr(ex),
@@ -330,7 +369,6 @@ def upload_document(
         )
 
     finally:
-
         try:
             file.file.close()
         except Exception:
@@ -351,7 +389,6 @@ class DocumentChatRequest(BaseModel):
 def document_chat(
     request: DocumentChatRequest,
 ):
-
     message = request.message.strip()
     vector_store_id = request.vector_store_id.strip()
 
@@ -374,7 +411,6 @@ def document_chat(
         )
 
     try:
-
         response = lab4_client.responses.create(
             model=lab4_model,
             instructions=(
@@ -405,7 +441,6 @@ def document_chat(
         }
 
     except Exception as ex:
-
         print(
             "Azure AI Lab 4 Document Chat Error:",
             repr(ex),
@@ -418,3 +453,179 @@ def document_chat(
                 "the uploaded document."
             ),
         )
+
+
+# =====================================================
+# LAB 20 - IMAGE ANALYSIS
+# =====================================================
+
+@router.post("/image/analyze")
+def analyze_image(
+    file: UploadFile = File(...),
+):
+    # -------------------------------------------------
+    # VALIDATE FILE
+    # -------------------------------------------------
+
+    if not file.filename:
+        raise HTTPException(
+            status_code=400,
+            detail="Image file is required.",
+        )
+
+    if not file.content_type:
+        raise HTTPException(
+            status_code=400,
+            detail="Image content type is missing.",
+        )
+
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=400,
+            detail="Please upload a valid image file.",
+        )
+
+    try:
+        print(
+            "LAB 20 ANALYZING IMAGE:",
+            file.filename,
+        )
+
+        print(
+            "LAB 20 CONTENT TYPE:",
+            file.content_type,
+        )
+
+        print(
+            "LAB 20 ANALYZER:",
+            content_understanding_analyzer,
+        )
+
+        # -------------------------------------------------
+        # READ IMAGE
+        # -------------------------------------------------
+
+        file_bytes = file.file.read()
+
+        if not file_bytes:
+            raise HTTPException(
+                status_code=400,
+                detail="Uploaded image is empty.",
+            )
+
+        # -------------------------------------------------
+        # ANALYZE IMAGE WITH AZURE CONTENT UNDERSTANDING
+        # -------------------------------------------------
+
+        poller = content_understanding_client.begin_analyze(
+            analyzer_id=content_understanding_analyzer,
+            inputs=[
+                AnalysisInput(
+                    data=file_bytes,
+                )
+            ],
+        )
+
+        result: AnalysisResult = poller.result()
+
+        # -------------------------------------------------
+        # EXTRACT DESCRIPTION AND TAGS
+        # -------------------------------------------------
+
+        if not result.contents:
+            raise HTTPException(
+                status_code=500,
+                detail="Azure returned no analysis content.",
+            )
+
+        fields = result.contents[0].fields
+
+        description = ""
+        tags = []
+
+        # -------------------------------------------------
+        # DESCRIPTION
+        # -------------------------------------------------
+
+        if "Description" in fields:
+            description_field = fields["Description"]
+
+            description = getattr(
+                description_field,
+                "value_string",
+                "",
+            ) or ""
+
+        # -------------------------------------------------
+        # TAGS
+        # -------------------------------------------------
+
+        if "Tags" in fields:
+            tags_field = fields["Tags"]
+
+            tag_values = getattr(
+                tags_field,
+                "value_array",
+                [],
+            ) or []
+
+            for tag in tag_values:
+                tag_value = getattr(
+                    tag,
+                    "value_string",
+                    None,
+                )
+
+                if tag_value:
+                    tags.append(tag_value)
+
+        print(
+            "LAB 20 IMAGE ANALYSIS COMPLETED:",
+            file.filename,
+        )
+
+        return {
+            "success": True,
+            "filename": file.filename,
+            "analyzer": content_understanding_analyzer,
+            "description": description,
+            "tags": tags,
+            "message": "Image analyzed successfully.",
+        }
+
+    except HTTPException:
+        raise
+
+    except AzureError as ex:
+        print(
+            "Azure AI Lab 20 Error:",
+            repr(ex),
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Azure Content Understanding could not "
+                "analyze the image."
+            ),
+        )
+
+    except Exception as ex:
+        print(
+            "Lab 20 Image Analysis Error:",
+            repr(ex),
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Unable to analyze the image. "
+                "Check the Uvicorn terminal for the Azure error."
+            ),
+        )
+
+    finally:
+        try:
+            file.file.close()
+        except Exception:
+            pass

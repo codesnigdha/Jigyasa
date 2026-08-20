@@ -19,3 +19,7 @@ aiohttp
 azure-identity
 
 openai
+
+dotenv
+azure-identity
+azure-ai-contentunderstanding
