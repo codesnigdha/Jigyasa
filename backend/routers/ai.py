@@ -28,7 +28,7 @@ load_dotenv(dotenv_path=ENV_FILE)
 # LAB 3 CONFIGURATION
 # =====================================================
 
-lab3_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT_LAB3")
+lab3_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT_LAB")
 lab3_model = os.getenv("MODEL_DEPLOYMENT_LAB3")
 
 
@@ -36,7 +36,7 @@ lab3_model = os.getenv("MODEL_DEPLOYMENT_LAB3")
 # LAB 4 CONFIGURATION
 # =====================================================
 
-lab4_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT_LAB4")
+lab4_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT_LAB")
 lab4_model = os.getenv("MODEL_DEPLOYMENT_LAB4")
 
 
@@ -64,7 +64,7 @@ content_understanding_api_version = os.getenv(
 
 if not lab4_endpoint:
     raise RuntimeError(
-        "AZURE_OPENAI_ENDPOINT_LAB4 is not configured."
+        "AZURE_OPENAI_ENDPOINT_LAB is not configured."
     )
 
 if not lab4_model:
