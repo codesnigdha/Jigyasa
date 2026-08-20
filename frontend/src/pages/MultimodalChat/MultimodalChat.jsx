@@ -18,6 +18,7 @@ import {
   createVectorStore,
   uploadDocument,
   sendDocumentMessage,
+  analyzeImage,
 } from "../../services/aiService";
 
 import "./MultimodalChat.css";
@@ -160,6 +161,18 @@ function MultimodalChat() {
   };
 
   /* ===================================================
+     CHECK FILE TYPE
+  =================================================== */
+
+  const isImageFile = (file) => {
+    return file?.type?.startsWith("image/");
+  };
+
+  const isDocumentFile = (file) => {
+    return !isImageFile(file);
+  };
+
+  /* ===================================================
      ADD FILES
   =================================================== */
 
@@ -178,6 +191,31 @@ function MultimodalChat() {
       alert(
         "Unsupported file detected. Please upload PDF, DOC, DOCX, TXT, JPG, JPEG, PNG or WEBP files.",
       );
+    }
+
+    if (validFiles.length === 0) {
+      return;
+    }
+
+    /*
+     * Lab 20 image analysis currently works best with
+     * one image at a time.
+     *
+     * Lab 4 documents can still be uploaded together.
+     */
+    const hasImage = validFiles.some(isImageFile);
+    const hasDocument = validFiles.some(isDocumentFile);
+
+    if (hasImage && hasDocument) {
+      alert(
+        "Please upload images and documents separately. Images use Lab 20, while PDF/DOC/DOCX/TXT files use Lab 4.",
+      );
+      return;
+    }
+
+    if (hasImage && validFiles.length > 1) {
+      alert("Please upload one image at a time for Lab 20 image analysis.");
+      return;
     }
 
     const preparedFiles = validFiles.map((file) => ({
@@ -265,10 +303,10 @@ function MultimodalChat() {
 
   /* ===================================================
      LAB 4
-     CREATE VECTOR STORE + UPLOAD FILES
+     CREATE VECTOR STORE + UPLOAD DOCUMENTS
   =================================================== */
 
-  const uploadFilesToAI = async (selectedFiles) => {
+  const uploadDocumentsToAI = async (selectedFiles) => {
     if (!selectedFiles || selectedFiles.length === 0) {
       return null;
     }
@@ -279,7 +317,7 @@ function MultimodalChat() {
       let currentVectorStoreId = vectorStoreId;
 
       /* -----------------------------------------------
-         CREATE VECTOR STORE
+         CREATE VECTOR STORE ONLY FOR DOCUMENTS
       ------------------------------------------------ */
 
       if (!currentVectorStoreId) {
@@ -295,7 +333,7 @@ function MultimodalChat() {
       }
 
       /* -----------------------------------------------
-         UPLOAD FILES
+         UPLOAD DOCUMENTS
       ------------------------------------------------ */
 
       for (const item of selectedFiles) {
@@ -305,6 +343,14 @@ function MultimodalChat() {
           continue;
         }
 
+        /*
+         * Safety check:
+         * Images must NEVER reach Lab 4.
+         */
+        if (isImageFile(actualFile)) {
+          throw new Error("Images must be processed using Lab 20.");
+        }
+
         await uploadDocument({
           vectorStoreId: currentVectorStoreId,
           file: actualFile,
@@ -312,6 +358,63 @@ function MultimodalChat() {
       }
 
       return currentVectorStoreId;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  /* ===================================================
+     LAB 20
+     ANALYZE IMAGE
+  =================================================== */
+
+  const analyzeImageWithLab20 = async (selectedFile) => {
+    if (!selectedFile) {
+      throw new Error("Please select an image.");
+    }
+
+    const actualFile = selectedFile?.file || selectedFile;
+
+    if (!actualFile) {
+      throw new Error("Image file is missing.");
+    }
+
+    if (!isImageFile(actualFile)) {
+      throw new Error("Lab 20 accepts image files only.");
+    }
+
+    setIsUploading(true);
+
+    try {
+      console.log("LAB 20: Analyzing image:", actualFile.name);
+
+      const response = await analyzeImage(actualFile);
+
+      if (!response?.success) {
+        throw new Error(response?.message || "Unable to analyze the image.");
+      }
+
+      /* -----------------------------------------------
+         FORMAT LAB 20 RESPONSE
+      ------------------------------------------------ */
+
+      let result = "";
+
+      if (response.description) {
+        result += `Description:\n${response.description}`;
+      }
+
+      if (Array.isArray(response.tags) && response.tags.length > 0) {
+        result += "\n\nTags:\n";
+
+        result += response.tags.map((tag) => `• ${tag}`).join("\n");
+      }
+
+      if (!result) {
+        result = response.message || "Image analyzed successfully.";
+      }
+
+      return result;
     } finally {
       setIsUploading(false);
     }
@@ -339,12 +442,18 @@ function MultimodalChat() {
     const currentFiles = [...files];
 
     /* -------------------------------------------------
-       DEFAULT FILE REQUEST
+       DEFAULT REQUEST
     ------------------------------------------------- */
 
     const requestMessage =
       messageText ||
-      "Analyze the uploaded document and explain the important information.";
+      (currentFiles.length > 0 &&
+        currentFiles[0]?.file &&
+        isImageFile(currentFiles[0].file))
+        ? messageText ||
+          "Analyze the uploaded image and explain what it contains."
+        : messageText ||
+          "Analyze the uploaded document and explain the important information.";
 
     /* -------------------------------------------------
        USER MESSAGE
@@ -375,41 +484,66 @@ function MultimodalChat() {
       let aiResponse;
 
       /* =================================================
-         LAB 4
-         FILE / DOCUMENT REQUEST
+         FILE REQUEST
       ================================================= */
 
       if (currentFiles.length > 0) {
-        const currentVectorStoreId = await uploadFilesToAI(currentFiles);
+        const actualFile = currentFiles[0]?.file || currentFiles[0];
 
-        if (!currentVectorStoreId) {
-          throw new Error("Unable to prepare the uploaded document.");
-        }
-
-        const response = await sendDocumentMessage({
-          message: requestMessage,
-          vectorStoreId: currentVectorStoreId,
-          previousResponseId: previousResponseId,
-        });
-
-        if (!response?.success) {
-          throw new Error(
-            response?.message || "Unable to analyze the document.",
-          );
-        }
-
-        aiResponse = response.message;
-
-        /* ---------------------------------------------
-           CONTINUE DOCUMENT CONVERSATION
-        --------------------------------------------- */
-
-        setPreviousResponseId(response.response_id);
-      } else {
         /* =================================================
-           LAB 3
-           NORMAL TEXT REQUEST
+           LAB 20 - IMAGE
         ================================================= */
+
+        if (isImageFile(actualFile)) {
+          console.log("Jigyasa: Using LAB 20 for image analysis.");
+
+          aiResponse = await analyzeImageWithLab20(currentFiles[0]);
+
+          /*
+           * IMPORTANT:
+           * Do NOT create a vector store here.
+           * Do NOT call uploadDocument().
+           * Do NOT call sendDocumentMessage().
+           */
+        } else {
+
+        /* =================================================
+           LAB 4 - DOCUMENT
+        ================================================= */
+          console.log("Jigyasa: Using LAB 4 for document analysis.");
+
+          const currentVectorStoreId = await uploadDocumentsToAI(currentFiles);
+
+          if (!currentVectorStoreId) {
+            throw new Error("Unable to prepare the uploaded document.");
+          }
+
+          const response = await sendDocumentMessage({
+            message: requestMessage,
+            vectorStoreId: currentVectorStoreId,
+            previousResponseId: previousResponseId,
+          });
+
+          if (!response?.success) {
+            throw new Error(
+              response?.message || "Unable to analyze the document.",
+            );
+          }
+
+          aiResponse = response.message;
+
+          /* ---------------------------------------------
+             CONTINUE DOCUMENT CONVERSATION
+          --------------------------------------------- */
+
+          setPreviousResponseId(response.response_id);
+        }
+      } else {
+
+      /* =================================================
+         LAB 3 - NORMAL TEXT
+      ================================================= */
+        console.log("Jigyasa: Using LAB 3 text chat.");
 
         aiResponse = await getAIResponse(requestMessage);
       }
@@ -440,6 +574,7 @@ function MultimodalChat() {
       setMessages((previous) => [...previous, errorMessage]);
     } finally {
       setIsTyping(false);
+      setIsUploading(false);
     }
   };
 
@@ -564,10 +699,6 @@ function MultimodalChat() {
             onDragOver={handleDragOver}
           >
             {!hasConversation ? (
-              /* =================================================
-                 EMPTY STATE
-              ================================================= */
-
               <div className="empty-state">
                 <div className="empty-state-icon">
                   <AIIcon />
@@ -593,18 +724,12 @@ function MultimodalChat() {
                 </div>
               </div>
             ) : (
-              /* =================================================
-                 MESSAGES
-              ================================================= */
-
               <div className="messages-container">
                 {messages.map((message) => (
                   <div
                     key={message.id}
                     className={`message-row ${message.role}`}
                   >
-                    {/* MESSAGE AVATAR */}
-
                     <div className="message-avatar">
                       {message.role === "assistant" ? (
                         <AIIcon />
@@ -614,8 +739,6 @@ function MultimodalChat() {
                     </div>
 
                     <div className="message-content">
-                      {/* AUTHOR */}
-
                       <div className="message-author">
                         {message.role === "assistant" ? "Jigyasa AI" : "You"}
                       </div>
@@ -759,7 +882,7 @@ function MultimodalChat() {
                 onKeyDown={handleKeyDown}
                 placeholder={
                   isUploading
-                    ? "Uploading your document..."
+                    ? "Analyzing your content..."
                     : "Type your message or ask Jigyasa anything..."
                 }
                 rows={1}
