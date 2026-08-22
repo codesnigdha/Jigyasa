@@ -46,11 +46,7 @@ function About() {
 
               <div className="abstract-core">
                 <div className="core-inner">
-                  <img
-                    src="/icon2.png"
-                    alt="Jigyasa"
-                    className="ai-core-logo"
-                  />
+                  <img src="/icon2.png" alt="Jigyasa" className="core-logo" />
                 </div>
               </div>
 

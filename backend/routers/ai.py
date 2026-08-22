@@ -34,10 +34,11 @@ lab3_model = os.getenv("MODEL_DEPLOYMENT_LAB3")
 
 # =====================================================
 # LAB 4 CONFIGURATION
+# LAB 3 & LAB 4 USE THE SAME AZURE OPENAI DEPLOYMENT
 # =====================================================
 
 lab4_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT_LAB")
-lab4_model = os.getenv("MODEL_DEPLOYMENT_LAB4")
+lab4_model = os.getenv("MODEL_DEPLOYMENT_LAB3")
 
 
 # =====================================================
@@ -59,17 +60,17 @@ content_understanding_api_version = os.getenv(
 
 
 # =====================================================
-# LAB 4 VALIDATION
+# LAB 3 / LAB 4 VALIDATION
 # =====================================================
 
-if not lab4_endpoint:
+if not lab3_endpoint:
     raise RuntimeError(
         "AZURE_OPENAI_ENDPOINT_LAB is not configured."
     )
 
-if not lab4_model:
+if not lab3_model:
     raise RuntimeError(
-        "MODEL_DEPLOYMENT_LAB4 is not configured."
+        "MODEL_DEPLOYMENT_LAB3 is not configured."
     )
 
 
@@ -92,8 +93,10 @@ if not content_understanding_analyzer:
 # AZURE AUTHENTICATION
 # =====================================================
 
+credential = DefaultAzureCredential()
+
 token_provider = get_bearer_token_provider(
-    DefaultAzureCredential(),
+    credential,
     "https://ai.azure.com/.default",
 )
 
@@ -102,17 +105,15 @@ token_provider = get_bearer_token_provider(
 # LAB 3 CLIENT
 # =====================================================
 
-lab3_client = None
-
-if lab3_endpoint and lab3_model:
-    lab3_client = OpenAI(
-        base_url=lab3_endpoint,
-        api_key=token_provider,
-    )
+lab3_client = OpenAI(
+    base_url=lab3_endpoint,
+    api_key=token_provider,
+)
 
 
 # =====================================================
 # LAB 4 CLIENT
+# SAME AZURE OPENAI RESOURCE AS LAB 3
 # =====================================================
 
 lab4_client = OpenAI(
@@ -127,7 +128,7 @@ lab4_client = OpenAI(
 
 content_understanding_client = ContentUnderstandingClient(
     endpoint=content_understanding_endpoint,
-    credential=DefaultAzureCredential(),
+    credential=credential,
     api_version=content_understanding_api_version,
 )
 
@@ -152,6 +153,7 @@ class ChatRequest(BaseModel):
 
 @router.post("/chat")
 def chat(request: ChatRequest):
+
     message = request.message.strip()
 
     if not message:
@@ -160,13 +162,8 @@ def chat(request: ChatRequest):
             detail="Message cannot be empty.",
         )
 
-    if lab3_client is None:
-        raise HTTPException(
-            status_code=503,
-            detail="Lab 3 Azure resource is not configured.",
-        )
-
     try:
+
         response = lab3_client.responses.create(
             model=lab3_model,
             instructions=(
@@ -183,6 +180,7 @@ def chat(request: ChatRequest):
         }
 
     except Exception as ex:
+
         print(
             "Azure AI Lab 3 Error:",
             repr(ex),
@@ -209,7 +207,9 @@ class VectorStoreResponse(BaseModel):
     response_model=VectorStoreResponse,
 )
 def create_vector_store():
+
     try:
+
         vector_store = lab4_client.vector_stores.create(
             name="jigyasa-document-store",
         )
@@ -226,6 +226,7 @@ def create_vector_store():
         }
 
     except Exception as ex:
+
         print(
             "Azure AI Lab 4 Vector Store Error:",
             repr(ex),
@@ -246,6 +247,7 @@ def upload_document(
     vector_store_id: str = Form(...),
     file: UploadFile = File(...),
 ):
+
     vector_store_id = vector_store_id.strip()
 
     if not vector_store_id:
@@ -267,6 +269,7 @@ def upload_document(
         )
 
     try:
+
         print(
             "LAB 4 UPLOADING FILE:",
             file.filename,
@@ -326,6 +329,7 @@ def upload_document(
         # -------------------------------------------------
 
         if vector_store_file.status != "completed":
+
             last_error = getattr(
                 vector_store_file,
                 "last_error",
@@ -355,6 +359,7 @@ def upload_document(
         raise
 
     except Exception as ex:
+
         print(
             "Azure AI Lab 4 Upload Error:",
             repr(ex),
@@ -369,8 +374,10 @@ def upload_document(
         )
 
     finally:
+
         try:
             file.file.close()
+
         except Exception:
             pass
 
@@ -389,6 +396,7 @@ class DocumentChatRequest(BaseModel):
 def document_chat(
     request: DocumentChatRequest,
 ):
+
     message = request.message.strip()
     vector_store_id = request.vector_store_id.strip()
 
@@ -411,6 +419,7 @@ def document_chat(
         )
 
     try:
+
         response = lab4_client.responses.create(
             model=lab4_model,
             instructions=(
@@ -441,6 +450,7 @@ def document_chat(
         }
 
     except Exception as ex:
+
         print(
             "Azure AI Lab 4 Document Chat Error:",
             repr(ex),
@@ -463,6 +473,7 @@ def document_chat(
 def analyze_image(
     file: UploadFile = File(...),
 ):
+
     # -------------------------------------------------
     # VALIDATE FILE
     # -------------------------------------------------
@@ -486,6 +497,7 @@ def analyze_image(
         )
 
     try:
+
         print(
             "LAB 20 ANALYZING IMAGE:",
             file.filename,
@@ -548,6 +560,7 @@ def analyze_image(
         # -------------------------------------------------
 
         if "Description" in fields:
+
             description_field = fields["Description"]
 
             description = getattr(
@@ -561,6 +574,7 @@ def analyze_image(
         # -------------------------------------------------
 
         if "Tags" in fields:
+
             tags_field = fields["Tags"]
 
             tag_values = getattr(
@@ -570,6 +584,7 @@ def analyze_image(
             ) or []
 
             for tag in tag_values:
+
                 tag_value = getattr(
                     tag,
                     "value_string",
@@ -597,6 +612,7 @@ def analyze_image(
         raise
 
     except AzureError as ex:
+
         print(
             "Azure AI Lab 20 Error:",
             repr(ex),
@@ -611,6 +627,7 @@ def analyze_image(
         )
 
     except Exception as ex:
+
         print(
             "Lab 20 Image Analysis Error:",
             repr(ex),
@@ -625,7 +642,9 @@ def analyze_image(
         )
 
     finally:
+
         try:
             file.file.close()
+
         except Exception:
             pass
