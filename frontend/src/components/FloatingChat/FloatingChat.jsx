@@ -10,43 +10,40 @@ function FloatingChat() {
 
   const { pathname } = useLocation();
 
-  /* =====================================================
-     HIDE ON AUTH + DASHBOARD
-  ===================================================== */
+  // Pages where floating chat should NOT appear
+  const hiddenPages = ["/login", "/signup", "/dashboard", "/ai-assistant"];
 
-  const hiddenPages = ["/login", "/signup", "/dashboard"];
-
+  // Hide FloatingChat on selected pages
   if (hiddenPages.includes(pathname)) {
     return null;
   }
-
-  /* =====================================================
-     TOGGLE CHAT
-  ===================================================== */
 
   const toggleChat = () => {
     setIsOpen((previous) => !previous);
   };
 
-  /* =====================================================
-     RETURN
-  ===================================================== */
-
   return (
     <div className="floating-chat">
-      {/* =================================================
-          CHAT WINDOW
-      ================================================= */}
+      {/* =========================================
+          FLOATING CHAT WINDOW
+      ========================================= */}
 
       {isOpen && (
         <div className="floating-chat-window">
+          {/* TOP BAR */}
+
           <div className="floating-chat-topbar">
             <div className="floating-chat-brand">
-              <div className="floating-chat-icon">✦</div>
+              <div className="floating-chat-icon">
+                <img
+                  src="/icon.png"
+                  alt="Jigyasa AI"
+                  className="floating-chat-ai-icon"
+                />
+              </div>
 
-              <div>
+              <div className="floating-chat-brand-text">
                 <strong>Jigyasa AI</strong>
-
                 <span>Your learning assistant</span>
               </div>
             </div>
@@ -55,11 +52,13 @@ function FloatingChat() {
               type="button"
               className="floating-chat-close"
               onClick={toggleChat}
-              aria-label="Close chat"
+              aria-label="Close Jigyasa AI"
             >
               ×
             </button>
           </div>
+
+          {/* ACTUAL WORKING AI CHAT */}
 
           <div className="floating-chat-content">
             <AIChatBox />
@@ -67,9 +66,9 @@ function FloatingChat() {
         </div>
       )}
 
-      {/* =================================================
+      {/* =========================================
           FLOATING BUTTON
-      ================================================= */}
+      ========================================= */}
 
       <button
         type="button"
@@ -78,7 +77,13 @@ function FloatingChat() {
         aria-label={isOpen ? "Close Jigyasa AI" : "Open Jigyasa AI"}
         aria-expanded={isOpen}
       >
-        <span className="floating-chat-button-icon">{isOpen ? "×" : "✦"}</span>
+        <span className="floating-chat-button-icon">
+          <img
+            src="/icon.png"
+            alt="Jigyasa AI"
+            className="floating-chat-button-image"
+          />
+        </span>
 
         {!isOpen && (
           <span className="floating-chat-button-text">Ask Jigyasa</span>

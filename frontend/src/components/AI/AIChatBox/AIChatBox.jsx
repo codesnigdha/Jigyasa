@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
+
 import { sendMessageToAI } from "../../../services/aiService";
 
 import "./AIChatBox.css";
@@ -14,16 +16,6 @@ function AIChatBox() {
     messageId.current += 1;
     return messageId.current;
   };
-
-  /* =====================================================
-     SUGGESTED QUESTIONS
-  ===================================================== */
-
-  const suggestedQuestions = [
-    "Explain artificial intelligence",
-    "What is machine learning?",
-    "Explain neural networks",
-  ];
 
   /* =====================================================
      SEND MESSAGE
@@ -89,14 +81,6 @@ function AIChatBox() {
   };
 
   /* =====================================================
-     SUGGESTION
-  ===================================================== */
-
-  const handleSuggestion = (question) => {
-    sendMessage(question);
-  };
-
-  /* =====================================================
      CLEAR CONVERSATION
   ===================================================== */
 
@@ -145,7 +129,11 @@ function AIChatBox() {
         {messages.length === 0 ? (
           <div className="ai-empty-state">
             <div className="empty-state-icon">
-              <img src="/icon2.png" alt="Jigyasa AI" />
+              <img
+                src="/icon2.png"
+                alt="Jigyasa AI"
+                className="jigyasa-ai-icon"
+              />
             </div>
 
             <span className="ai-empty-label">YOUR AI LEARNING COMPANION</span>
@@ -159,25 +147,6 @@ function AIChatBox() {
               Ask questions, break down difficult concepts, or explore something
               completely new. Jigyasa is here to help.
             </p>
-
-            <div className="suggestions-label">TRY ASKING</div>
-
-            <div className="suggested-questions">
-              {suggestedQuestions.map((question) => (
-                <button
-                  key={question}
-                  type="button"
-                  onClick={() => handleSuggestion(question)}
-                  disabled={loading}
-                >
-                  <span className="suggestion-icon">✦</span>
-
-                  <span className="suggestion-text">{question}</span>
-
-                  <span className="suggestion-arrow">→</span>
-                </button>
-              ))}
-            </div>
           </div>
         ) : (
           /* =================================================
@@ -192,22 +161,36 @@ function AIChatBox() {
                   message.role === "user" ? "user-message" : "assistant-message"
                 }`}
               >
-                {/* AI AVATAR */}
+                {/* =================================================
+                    AI AVATAR
+                ================================================= */}
 
                 {message.role === "assistant" && (
                   <div className="message-avatar">
-                    <img src="/icon.png" alt="Jigyasa AI" />
+                    <img
+                      src="/icon.png"
+                      alt="Jigyasa AI"
+                      className="jigyasa-ai-icon"
+                    />
                   </div>
                 )}
 
-                {/* MESSAGE */}
+                {/* =================================================
+                    MESSAGE
+                ================================================= */}
 
                 <div className="message-content">
                   <span className="message-role">
                     {message.role === "user" ? "You" : "Jigyasa AI"}
                   </span>
 
-                  <p>{message.content}</p>
+                  {/* =================================================
+                      MARKDOWN MESSAGE
+                  ================================================= */}
+
+                  <div className="message-text">
+                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                  </div>
                 </div>
               </div>
             ))}
@@ -219,7 +202,11 @@ function AIChatBox() {
             {loading && (
               <div className="chat-message assistant-message">
                 <div className="message-avatar">
-                  <span>✦</span>
+                  <img
+                    src="/icon.png"
+                    alt="Jigyasa AI"
+                    className="jigyasa-ai-icon"
+                  />
                 </div>
 
                 <div className="message-content">

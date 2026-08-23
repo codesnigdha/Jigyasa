@@ -244,7 +244,7 @@
 }
 
 .help-category-name {
-  font-size: 13px;
+  font-size: 16px;
 
   font-weight: 700;
 }
@@ -848,5 +848,118 @@
 
   .contact-heading h2 {
     font-size: 31px;
+  }
+}
+
+/* =====================================================
+   CATEGORY SELECTION MESSAGE
+===================================================== */
+
+.help-selection-message {
+  max-width: 900px;
+  margin: 0 auto 90px;
+
+  padding: 70px 30px;
+
+  text-align: center;
+
+  border: 1px dashed var(--border-color, #cbd5e1);
+
+  border-radius: 18px;
+
+  background: var(--card-bg, #ffffff);
+}
+
+.help-selection-icon {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 0 auto 18px;
+
+  border-radius: 50%;
+
+  background: #eff6ff;
+
+  color: #2563eb;
+
+  font-size: 22px;
+}
+
+.help-selection-message h2 {
+  margin: 0;
+
+  font-size: 25px;
+
+  letter-spacing: -0.8px;
+}
+
+.help-selection-message p {
+  margin: 10px 0 0;
+
+  color: var(--text-secondary, #64748b);
+
+  font-size: 14px;
+}
+
+/* =====================================================
+   CLICKABLE CONTACT CARD
+===================================================== */
+
+.contact-card-link {
+  color: inherit;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.contact-card-link:hover {
+  transform: translateY(-3px);
+
+  border-color: #93b4ec;
+
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.07);
+}
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+[data-theme="dark"] .help-selection-message {
+  background: #101d33;
+
+  border-color: #263650;
+}
+
+[data-theme="dark"] .help-selection-icon {
+  background: rgba(37, 99, 235, 0.12);
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 650px) {
+  .help-selection-message {
+    margin-bottom: 60px;
+
+    padding: 55px 20px;
+  }
+
+  .help-selection-message h2 {
+    font-size: 22px;
+  }
+
+  .help-selection-message p {
+    font-size: 13px;
   }
 }

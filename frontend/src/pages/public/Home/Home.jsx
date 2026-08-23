@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
-
-import Features from "../../../components/Features/Features";
-
+import { useAuth } from "../../../context/AuthContext";
 import "./Home.css";
 
 function Home() {
+  const { isAuthenticated } = useAuth();
   return (
     <main className="home-page">
       {/* =====================================================
@@ -13,9 +12,7 @@ function Home() {
 
       <section className="home-hero">
         <div className="home-container home-hero-grid">
-          {/* =================================================
-              LEFT — HERO CONTENT
-          ================================================= */}
+          {/* LEFT — HERO CONTENT */}
 
           <div className="home-hero-content">
             <span className="home-eyebrow">AI-POWERED LEARNING</span>
@@ -32,13 +29,13 @@ function Home() {
             </p>
 
             <div className="home-hero-actions">
-              <Link to="/signup" className="home-primary-button">
+              <Link to="/explore" className="home-primary-button">
                 Start Learning
                 <span>→</span>
               </Link>
 
-              <Link to="/explore" className="home-secondary-button">
-                Explore Topics
+              <Link to="/ai-assistant" className="home-secondary-button">
+                AI Assistant
                 <span>→</span>
               </Link>
             </div>
@@ -49,17 +46,13 @@ function Home() {
             </div>
           </div>
 
-          {/* =================================================
-              RIGHT — ABSTRACT AI VISUAL
-          ================================================= */}
+          {/* RIGHT — ABSTRACT AI VISUAL */}
 
           <div className="home-abstract-visual">
             <div className="abstract-glow"></div>
 
             <div className="abstract-orbit orbit-one"></div>
-
             <div className="abstract-orbit orbit-two"></div>
-
             <div className="abstract-orbit orbit-three"></div>
 
             <div className="abstract-core">
@@ -108,84 +101,202 @@ function Home() {
       </section>
 
       {/* =====================================================
-          FEATURES
+          WHY JIGYASA
       ===================================================== */}
 
-      <Features />
-
-      {/* =====================================================
-          HOW IT WORKS
-      ===================================================== */}
-
-      <section className="how-section">
+      <section className="features-section">
         <div className="home-container">
-          <div className="home-section-heading">
-            <span className="home-eyebrow">HOW IT WORKS</span>
+          <div className="features-heading">
+            <span className="home-eyebrow">WHY JIGYASA</span>
 
             <h2>
-              Ask.
-              <span> Understand.</span>
+              Everything you need to
               <br />
-              Explore.
+              <span>learn with confidence.</span>
             </h2>
 
             <p>
-              Jigyasa keeps learning simple. Start with a question and let your
-              curiosity guide the rest.
+              Jigyasa brings intelligent assistance and simple learning tools
+              together in one place.
             </p>
           </div>
 
-          <div className="steps">
-            {/* STEP 1 */}
+          {/* FEATURE CARDS */}
 
-            <div className="step">
+          <div className="features-grid">
+            {/* =================================================
+                CARD 1 — AI ASSISTANT
+            ================================================= */}
+
+            <Link
+              to="/ai-assistant"
+              className="feature-card"
+              aria-label="Open AI Learning Assistant"
+            >
+              <span className="feature-number">01</span>
+
+              <div className="feature-card-content">
+                <h3>AI Learning Assistant</h3>
+
+                <p>
+                  Ask questions and get clear, easy-to-understand explanations
+                  with Jigyasa AI.
+                </p>
+              </div>
+
+              <span className="feature-arrow">→</span>
+            </Link>
+
+            {/* =================================================
+                CARD 2 — EXPLORE
+            ================================================= */}
+
+            <Link
+              to="/explore"
+              className="feature-card"
+              aria-label="Explore Topics"
+            >
+              <span className="feature-number">02</span>
+
+              <div className="feature-card-content">
+                <h3>Explore Topics</h3>
+
+                <p>
+                  Discover different subjects and explore concepts that match
+                  your learning interests.
+                </p>
+              </div>
+
+              <span className="feature-arrow">→</span>
+            </Link>
+
+            {/* =================================================
+                CARD 3 — DASHBOARD
+            ================================================= */}
+
+            <Link
+              to="/dashboard"
+              className="feature-card"
+              aria-label="Open Personalized Learning"
+            >
+              <span className="feature-number">03</span>
+
+              <div className="feature-card-content">
+                <h3>Personalized Learning</h3>
+
+                <p>
+                  Learn at your own pace with guidance designed around your
+                  questions and learning needs.
+                </p>
+              </div>
+
+              <span className="feature-arrow">→</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================================
+    HOW IT WORKS
+===================================================== */}
+
+      <section className="how-section">
+        <div className="home-container">
+          {/* SECTION HEADER */}
+
+          <div className="how-header">
+            <div>
+              <span className="home-eyebrow">HOW IT WORKS</span>
+
+              <h2>
+                Learn with
+                <span> curiosity.</span>
+              </h2>
+            </div>
+
+            <p>
+              Start with a question, understand the answer, and keep exploring
+              with Jigyasa.
+            </p>
+          </div>
+
+          {/* STEPS */}
+
+          <div className="steps">
+            {/* =================================================
+          STEP 1
+      ================================================= */}
+
+            <Link to="/ai-assistant" className="step">
               <div className="step-top">
                 <span className="step-number">01</span>
 
                 <span className="step-icon">?</span>
               </div>
 
-              <h3>Ask</h3>
+              <div className="step-content">
+                <span className="step-label">ASK JIGYASA</span>
 
-              <p>
-                Ask Jigyasa anything you want to understand, from simple
-                concepts to complex topics.
-              </p>
-            </div>
+                <h3>Ask</h3>
 
-            {/* STEP 2 */}
+                <p>
+                  Ask questions about concepts, subjects, programming,
+                  technology and more.
+                </p>
+              </div>
 
-            <div className="step">
+              <span className="step-arrow">→</span>
+            </Link>
+
+            {/* =================================================
+          STEP 2
+      ================================================= */}
+
+            <Link to="/ai-assistant" className="step">
               <div className="step-top">
                 <span className="step-number">02</span>
 
                 <span className="step-icon">✦</span>
               </div>
 
-              <h3>Understand</h3>
+              <div className="step-content">
+                <span className="step-label">GET CLARITY</span>
 
-              <p>
-                Get clear explanations that make difficult concepts easier to
-                understand.
-              </p>
-            </div>
+                <h3>Understand</h3>
 
-            {/* STEP 3 */}
+                <p>
+                  Get simple, structured explanations that make difficult
+                  concepts easier to learn.
+                </p>
+              </div>
 
-            <div className="step">
+              <span className="step-arrow">→</span>
+            </Link>
+
+            {/* =================================================
+          STEP 3
+      ================================================= */}
+
+            <Link to="/explore" className="step">
               <div className="step-top">
                 <span className="step-number">03</span>
 
                 <span className="step-icon">↗</span>
               </div>
 
-              <h3>Explore</h3>
+              <div className="step-content">
+                <span className="step-label">KEEP LEARNING</span>
 
-              <p>
-                Go deeper, ask follow-up questions and discover new ideas as you
-                continue learning.
-              </p>
-            </div>
+                <h3>Explore</h3>
+
+                <p>
+                  Discover new topics, go deeper and continue learning at your
+                  own pace.
+                </p>
+              </div>
+
+              <span className="step-arrow">→</span>
+            </Link>
           </div>
         </div>
       </section>
@@ -230,7 +341,7 @@ function Home() {
               <span className="topic-arrow">→</span>
             </Link>
 
-            {/* ML */}
+            {/* MACHINE LEARNING */}
 
             <Link to="/explore" className="topic-card">
               <span className="topic-number">02</span>
@@ -304,12 +415,17 @@ function Home() {
             </h2>
 
             <p>
-              Create your Jigyasa account and start exploring with your AI
-              learning companion.
+              {isAuthenticated
+                ? "Continue learning with Jigyasa, your AI-powered learning companion."
+                : "Create your Jigyasa account and start exploring with your AI learning companion."}
             </p>
 
-            <Link to="/signup" className="home-cta-button">
-              Get Started
+            <Link
+              to={isAuthenticated ? "/ai-assistant" : "/signup"}
+              className="home-cta-button"
+            >
+              {isAuthenticated ? "Ask Jigyasa" : "Get Started"}
+
               <span>→</span>
             </Link>
           </div>

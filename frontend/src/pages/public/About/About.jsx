@@ -151,8 +151,6 @@ function About() {
             <article className="about-value-card">
               <div className="value-icon">✦</div>
 
-              <span className="value-number">01</span>
-
               <h3>Intelligent Assistance</h3>
 
               <p>
@@ -163,8 +161,6 @@ function About() {
 
             <article className="about-value-card">
               <div className="value-icon">◇</div>
-
-              <span className="value-number">02</span>
 
               <h3>Simple Exploration</h3>
 
@@ -177,8 +173,6 @@ function About() {
             <article className="about-value-card">
               <div className="value-icon">◎</div>
 
-              <span className="value-number">03</span>
-
               <h3>Learn at Your Pace</h3>
 
               <p>
@@ -189,8 +183,6 @@ function About() {
 
             <article className="about-value-card">
               <div className="value-icon">↗</div>
-
-              <span className="value-number">04</span>
 
               <h3>Continuous Growth</h3>
 
@@ -210,13 +202,11 @@ function About() {
       <section className="about-vision">
         <div className="about-container">
           <div className="vision-grid">
-            <div className="vision-number">01</div>
-
             <div className="vision-content">
               <span className="about-eyebrow">OUR VISION</span>
 
               <h2>
-                Make learning more
+                Make learning more <br />
                 <span> curious, clear and accessible.</span>
               </h2>
 

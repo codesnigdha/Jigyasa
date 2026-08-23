@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import "./Help.css";
 
 function Help() {
-  const [activeCategory, setActiveCategory] = useState("General");
+  // No category selected initially
+  const [activeCategory, setActiveCategory] = useState(null);
   const [openFaq, setOpenFaq] = useState(null);
   const [search, setSearch] = useState("");
 
@@ -40,6 +41,7 @@ function Help() {
       answer:
         "Jigyasa is designed to provide accessible learning assistance. Some features may depend on the version or configuration of the platform.",
     },
+
     {
       category: "Account",
       question: "How do I create an account?",
@@ -52,6 +54,7 @@ function Help() {
       answer:
         "Use the password recovery option on the login page if it is available for your account. You should always use a strong and unique password.",
     },
+
     {
       category: "Learning",
       question: "How can I start learning?",
@@ -64,6 +67,7 @@ function Help() {
       answer:
         "Yes. You can ask questions across a wide range of learning topics. For the best results, describe your question clearly and provide relevant context.",
     },
+
     {
       category: "AI Assistant",
       question: "How does Jigyasa AI help me?",
@@ -78,10 +82,35 @@ function Help() {
     },
   ];
 
-  const filteredFaqs = faqs.filter((faq) => {
-    const matchesCategory = faq.category === activeCategory;
+  const handleCategoryClick = (categoryName) => {
+    // If clicking the currently active category, deactivate it
+    if (activeCategory === categoryName) {
+      setActiveCategory(null);
+      setOpenFaq(null);
+      return;
+    }
 
+    // Activate selected category
+    setActiveCategory(categoryName);
+    setOpenFaq(null);
+  };
+
+  const handleSearch = (event) => {
+    const value = event.target.value;
+
+    setSearch(value);
+
+    // If searching, automatically show General category
+    if (value.trim() && !activeCategory) {
+      setActiveCategory("General");
+    }
+  };
+
+  const filteredFaqs = faqs.filter((faq) => {
     const searchValue = search.trim().toLowerCase();
+
+    const matchesCategory =
+      activeCategory === null || faq.category === activeCategory;
 
     const matchesSearch =
       !searchValue ||
@@ -93,6 +122,12 @@ function Help() {
 
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
+  };
+
+  const clearSearch = () => {
+    setSearch("");
+    setActiveCategory(null);
+    setOpenFaq(null);
   };
 
   return (
@@ -125,7 +160,7 @@ function Help() {
             <input
               type="text"
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={handleSearch}
               placeholder="Search for answers..."
               aria-label="Search help"
             />
@@ -134,7 +169,7 @@ function Help() {
               <button
                 type="button"
                 className="help-search-clear"
-                onClick={() => setSearch("")}
+                onClick={clearSearch}
                 aria-label="Clear search"
               >
                 ×
@@ -155,95 +190,118 @@ function Help() {
           ================================================= */}
 
           <div className="help-category-grid">
-            {categories.map((category) => (
-              <button
-                key={category.name}
-                type="button"
-                className={`help-category-card ${
-                  activeCategory === category.name ? "active" : ""
-                }`}
-                onClick={() => {
-                  setActiveCategory(category.name);
-                  setOpenFaq(null);
-                }}
-              >
-                <span className="help-category-icon">{category.icon}</span>
+            {categories.map((category) => {
+              const isActive = activeCategory === category.name;
 
-                <span className="help-category-name">{category.name}</span>
+              return (
+                <button
+                  key={category.name}
+                  type="button"
+                  className={`help-category-card ${isActive ? "active" : ""}`}
+                  onClick={() => handleCategoryClick(category.name)}
+                >
+                  <span className="help-category-icon">{category.icon}</span>
 
-                <span className="help-category-arrow">→</span>
-              </button>
-            ))}
+                  <span className="help-category-name">{category.name}</span>
+
+                  <span className="help-category-arrow">
+                    {isActive ? "−" : "→"}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           {/* =================================================
               FAQ SECTION
           ================================================= */}
 
-          <div className="faq-section">
-            <div className="faq-heading">
-              <div>
-                <span className="help-section-label">
-                  FREQUENTLY ASKED QUESTIONS
+          {activeCategory && (
+            <div className="faq-section">
+              <div className="faq-heading">
+                <div>
+                  <span className="help-section-label">
+                    FREQUENTLY ASKED QUESTIONS
+                  </span>
+
+                  <h2>
+                    {search ? "Search results" : `${activeCategory} questions`}
+                  </h2>
+                </div>
+
+                <span className="faq-count">
+                  {filteredFaqs.length}{" "}
+                  {filteredFaqs.length === 1 ? "question" : "questions"}
                 </span>
-
-                <h2>
-                  {search ? `Search results` : `${activeCategory} questions`}
-                </h2>
               </div>
 
-              <span className="faq-count">
-                {filteredFaqs.length}{" "}
-                {filteredFaqs.length === 1 ? "question" : "questions"}
-              </span>
-            </div>
+              {/* FAQ LIST */}
 
-            {/* FAQ LIST */}
+              {filteredFaqs.length > 0 ? (
+                <div className="faq-list">
+                  {filteredFaqs.map((faq, index) => {
+                    const isOpen = openFaq === index;
 
-            {filteredFaqs.length > 0 ? (
-              <div className="faq-list">
-                {filteredFaqs.map((faq, index) => {
-                  const isOpen = openFaq === index;
-
-                  return (
-                    <div
-                      key={faq.question}
-                      className={`faq-item ${isOpen ? "open" : ""}`}
-                    >
-                      <button
-                        type="button"
-                        className="faq-question"
-                        onClick={() => toggleFaq(index)}
-                        aria-expanded={isOpen}
+                    return (
+                      <div
+                        key={faq.question}
+                        className={`faq-item ${isOpen ? "open" : ""}`}
                       >
-                        <span className="faq-question-text">
-                          {faq.question}
-                        </span>
+                        <button
+                          type="button"
+                          className="faq-question"
+                          onClick={() => toggleFaq(index)}
+                          aria-expanded={isOpen}
+                        >
+                          <span className="faq-question-text">
+                            {faq.question}
+                          </span>
 
-                        <span className="faq-toggle">{isOpen ? "−" : "+"}</span>
-                      </button>
+                          <span className="faq-toggle">
+                            {isOpen ? "−" : "+"}
+                          </span>
+                        </button>
 
-                      <div className={`faq-answer ${isOpen ? "show" : ""}`}>
-                        <p>{faq.answer}</p>
+                        <div className={`faq-answer ${isOpen ? "show" : ""}`}>
+                          <p>{faq.answer}</p>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="help-empty">
-                <div className="help-empty-icon">?</div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="help-empty">
+                  <div className="help-empty-icon">?</div>
 
-                <h3>No answers found</h3>
+                  <h3>No answers found</h3>
 
-                <p>Try using different keywords or ask Jigyasa AI directly.</p>
+                  <p>
+                    Try using different keywords or ask Jigyasa AI directly.
+                  </p>
 
-                <button type="button" onClick={() => setSearch("")}>
-                  Clear search
-                </button>
-              </div>
-            )}
-          </div>
+                  <button type="button" onClick={clearSearch}>
+                    Clear search
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* =================================================
+              INITIAL STATE
+          ================================================= */}
+
+          {!activeCategory && !search && (
+            <div className="help-selection-message">
+              <div className="help-selection-icon">✦</div>
+
+              <h2>Choose a category</h2>
+
+              <p>
+                Select a category above to find the answers you're looking for.
+              </p>
+            </div>
+          )}
 
           {/* =================================================
               AI HELP CARD
@@ -260,7 +318,7 @@ function Help() {
                 directly and let Jigyasa help you understand it.
               </p>
 
-              <Link to="/dashboard" className="help-ai-button">
+              <Link to="/ai-assistant" className="help-ai-button">
                 Ask Jigyasa
                 <span>→</span>
               </Link>
@@ -292,7 +350,7 @@ function Help() {
             </div>
 
             <div className="contact-grid">
-              <div className="contact-card">
+              <div className="contact-card contact-card-link">
                 <div className="contact-icon">@</div>
 
                 <div>
@@ -304,7 +362,10 @@ function Help() {
                 </div>
               </div>
 
-              <div className="contact-card">
+              <Link
+                to="/ai-assistant"
+                className="contact-card contact-card-link"
+              >
                 <div className="contact-icon">?</div>
 
                 <div>
@@ -314,7 +375,7 @@ function Help() {
 
                   <p>Get immediate assistance with learning.</p>
                 </div>
-              </div>
+              </Link>
             </div>
           </section>
         </div>

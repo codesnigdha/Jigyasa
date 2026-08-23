@@ -51,8 +51,6 @@
     rgba(37, 99, 235, 0.08),
     transparent 32%
   );
-
-  border-bottom: 1px solid var(--border-color, #e2e8f0);
 }
 
 .about-hero-grid {
@@ -426,11 +424,11 @@
    VALUES
 ===================================================== */
 
-.about-values {
+/* .about-values {
   padding: 110px 0;
 
   background: var(--bg-secondary, #f8fafc);
-}
+} */
 
 .about-values-grid {
   display: grid;
@@ -445,7 +443,7 @@
 .about-value-card {
   position: relative;
 
-  min-height: 300px;
+  min-height: 200px;
 
   padding: 28px;
 
@@ -503,7 +501,7 @@
 }
 
 .about-value-card h3 {
-  margin: 65px 0 12px;
+  margin: 28px 0 12px;
 
   font-size: 19px;
 
@@ -531,36 +529,17 @@
 }
 
 .vision-grid {
-  display: grid;
-
-  grid-template-columns: 100px 1fr;
-
   gap: 55px;
-
   padding-top: 40px;
-
-  border-top: 1px solid var(--border-color, #e2e8f0);
-}
-
-.vision-number {
-  font-size: 13px;
-
-  font-weight: 700;
-
-  letter-spacing: 1px;
-
-  color: #2563eb;
 }
 
 .vision-content {
-  max-width: 850px;
+  margin-right: 40px;
 }
 
 .vision-content h2 {
   margin: 0;
-
   font-size: clamp(38px, 5vw, 60px);
-
   line-height: 1.05;
 
   letter-spacing: -2px;
@@ -573,8 +552,6 @@
 }
 
 .vision-content p {
-  max-width: 650px;
-
   margin: 25px 0 0;
 
   font-size: 17px;

@@ -15,6 +15,7 @@ import Login from "./pages/auth/Login/Login";
 import Signup from "./pages/auth/Signup/Signup";
 
 import Dashboard from "./pages/user/Dashboard/Dashboard";
+
 import MultimodalChat from "./pages/MultimodalChat/MultimodalChat";
 
 import "./App.css";
@@ -26,9 +27,10 @@ import "./App.css";
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
 
-  /*
-   * Wait until authentication state is loaded.
-   */
+  /* ---------------------------------------------------
+     Wait for authentication state
+  --------------------------------------------------- */
+
   if (loading) {
     return (
       <div className="auth-loading">
@@ -37,16 +39,18 @@ function ProtectedRoute({ children }) {
     );
   }
 
-  /*
-   * User is not logged in.
-   */
+  /* ---------------------------------------------------
+     Not authenticated
+  --------------------------------------------------- */
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  /*
-   * User is authenticated.
-   */
+  /* ---------------------------------------------------
+     Authenticated
+  --------------------------------------------------- */
+
   return children;
 }
 
@@ -75,34 +79,51 @@ function NotFound() {
 function App() {
   const { pathname } = useLocation();
 
-  /*
-   * Authentication pages are standalone.
-   *
-   * Therefore:
-   * - Navbar hidden
-   * - Footer hidden
-   * - Floating Chat hidden
-   */
+  /* ===================================================
+     AUTH PAGES
+  =================================================== */
+
   const isAuthPage = pathname === "/login" || pathname === "/signup";
 
-  /*
-   * AI Assistant has its own complete chat interface.
-   *
-   * Therefore:
-   * - Floating Chat hidden
-   * - Navbar remains visible
-   * - Footer hidden
-   */
+  /* ===================================================
+     AI ASSISTANT PAGE
+     
+     This page already has its own complete UI,
+     therefore FloatingChat and Footer are hidden.
+  =================================================== */
+
   const isAIAssistantPage = pathname === "/ai-assistant";
 
-  /*
-   * Floating Chat should only appear on normal pages.
-   */
+  /* ===================================================
+     NAVBAR
+     
+     Hide Navbar on:
+     - Login
+     - Signup
+  =================================================== */
+
+  const showNavbar = !isAuthPage;
+
+  /* ===================================================
+     FLOATING CHAT
+     
+     Hide FloatingChat on:
+     - Login
+     - Signup
+     - AI Assistant
+  =================================================== */
+
   const showFloatingChat = !isAuthPage && !isAIAssistantPage;
 
-  /*
-   * Footer should not appear on the full-screen AI page.
-   */
+  /* ===================================================
+     FOOTER
+     
+     Hide Footer on:
+     - Login
+     - Signup
+     - AI Assistant
+  =================================================== */
+
   const showFooter = !isAuthPage && !isAIAssistantPage;
 
   return (
@@ -111,7 +132,7 @@ function App() {
           GLOBAL NAVBAR
       ================================================= */}
 
-      {!isAuthPage && <Navbar />}
+      {showNavbar && <Navbar />}
 
       {/* =================================================
           MAIN CONTENT
@@ -141,6 +162,13 @@ function App() {
 
           {/* =================================================
               PROTECTED DASHBOARD
+              
+              /dashboard
+              ↓
+              ProtectedRoute
+              ↓
+              Logged in → Dashboard
+              Not logged in → Login
           ================================================= */}
 
           <Route
@@ -153,7 +181,14 @@ function App() {
           />
 
           {/* =================================================
-              MULTIMODAL AI ASSISTANT
+              PROTECTED AI ASSISTANT
+              
+              /ai-assistant
+              ↓
+              ProtectedRoute
+              ↓
+              Logged in → AI Assistant
+              Not logged in → Login
           ================================================= */}
 
           <Route
@@ -174,7 +209,14 @@ function App() {
       </main>
 
       {/* =================================================
-          FLOATING AI BUTTON
+          FLOATING JIGYASA AI
+          
+          Appears on:
+          - Home
+          - Explore
+          - About
+          - Help
+          - Dashboard
           
           Hidden on:
           - Login
@@ -186,11 +228,6 @@ function App() {
 
       {/* =================================================
           GLOBAL FOOTER
-          
-          Hidden on:
-          - Login
-          - Signup
-          - AI Assistant
       ================================================= */}
 
       {showFooter && <Footer />}

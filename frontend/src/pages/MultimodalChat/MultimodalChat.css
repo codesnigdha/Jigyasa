@@ -221,9 +221,20 @@
 
 /* Main AI icon */
 
+.empty-state-icon {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  overflow: hidden;
+}
+
 .empty-state-icon .jigyasa-ai-icon {
-  height: 80px;
-  margin-bottom: 17px;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 20px;
   object-fit: contain;
 }
 
@@ -733,6 +744,16 @@
   line-height: 1.5;
 }
 
+.chat-composer textarea {
+  outline: none;
+  box-shadow: none;
+}
+
+.chat-composer textarea:focus {
+  outline: none;
+  box-shadow: none;
+  border: none;
+}
 .chat-composer textarea::placeholder {
   color: #9aa7ba;
 }
@@ -1383,3 +1404,418 @@
 .multimodal-page button {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* =========================================================
+   DARK MODE
+   Add this at the END of the existing CSS
+========================================================= */
+
+[data-theme="dark"] .multimodal-page {
+  background: #08111f;
+  color: #f8fafc;
+}
+
+/* =========================================================
+   CHAT PANEL
+========================================================= */
+
+[data-theme="dark"] .chat-panel {
+  border-color: #263752;
+  background: #0d192d;
+
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================================================
+   CHAT HEADER
+========================================================= */
+
+[data-theme="dark"] .chat-panel-header {
+  border-bottom-color: #263752;
+  background: #0d192d;
+}
+
+[data-theme="dark"] .chat-brand h1 {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .chat-brand p {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   NEW CHAT BUTTON
+========================================================= */
+
+[data-theme="dark"] .new-chat-button {
+  border-color: #334155;
+  background: #111f35;
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .new-chat-button:hover {
+  border-color: #475569;
+  background: #17253b;
+}
+
+/* =========================================================
+   CHAT BODY
+========================================================= */
+
+[data-theme="dark"] .chat-body {
+  background:
+    radial-gradient(
+      circle at 50% 25%,
+      rgba(40, 100, 232, 0.06),
+      transparent 38%
+    ),
+    #0b1424;
+
+  scrollbar-color: #334155 transparent;
+}
+
+[data-theme="dark"] .chat-body::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+[data-theme="dark"] .empty-state h2 {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .empty-state h2 span {
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .empty-state > p {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   EMPTY HINT
+========================================================= */
+
+[data-theme="dark"] .empty-hint {
+  border-color: #263752;
+  background: #101d32;
+  color: #94a3b8;
+}
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+[data-theme="dark"] .message-avatar {
+  background: #172b4d;
+}
+
+[data-theme="dark"] .message-row.user .message-avatar {
+  background: #2864e8;
+}
+
+[data-theme="dark"] .message-author {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   MESSAGE BUBBLE
+========================================================= */
+
+[data-theme="dark"] .message-bubble {
+  border-color: #263752;
+  background: #111f35;
+  color: #dbe4f0;
+}
+
+[data-theme="dark"] .message-row.user .message-bubble {
+  background: #2864e8;
+  color: #ffffff;
+}
+
+/* =========================================================
+   MESSAGE FILE
+========================================================= */
+
+[data-theme="dark"] .message-file {
+  border-color: #334155;
+  background: #17253b;
+}
+
+[data-theme="dark"] .message-file-icon {
+  color: #60a5fa;
+  background: #172b4d;
+}
+
+[data-theme="dark"] .message-file-info strong {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .message-file-info span {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   COPY BUTTON
+========================================================= */
+
+[data-theme="dark"] .copy-button {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .copy-button:hover {
+  color: #60a5fa;
+  background: #172b4d;
+}
+
+/* =========================================================
+   TYPING
+========================================================= */
+
+[data-theme="dark"] .typing-bubble {
+  border-color: #263752;
+  background: #111f35;
+}
+
+[data-theme="dark"] .typing-bubble span {
+  background: #94a3b8;
+}
+
+/* =========================================================
+   CHAT INPUT SECTION
+========================================================= */
+
+[data-theme="dark"] .chat-input-section {
+  border-top-color: #263752;
+  background: #0d192d;
+}
+
+/* =========================================================
+   SELECTED FILES
+========================================================= */
+
+[data-theme="dark"] .chat-selected-file {
+  border-color: #334155;
+  background: #111f35;
+}
+
+[data-theme="dark"] .chat-selected-file-icon {
+  color: #60a5fa;
+  background: #172b4d;
+}
+
+[data-theme="dark"] .chat-selected-file-info strong {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .chat-selected-file-info span {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .chat-selected-file button {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .chat-selected-file button:hover {
+  color: #f87171;
+  background: #3a1d24;
+}
+
+/* =========================================================
+   CHAT COMPOSER
+========================================================= */
+
+[data-theme="dark"] .chat-composer {
+  border-color: #334155;
+  background: #101d32;
+
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="dark"] .chat-composer:focus-within {
+  border-color: #4f76bd;
+
+  box-shadow: 0 0 0 3px rgba(40, 100, 232, 0.12);
+}
+
+[data-theme="dark"] .chat-composer textarea {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .chat-composer textarea::placeholder {
+  color: #64748b;
+}
+
+/* =========================================================
+   COMPOSER BUTTONS
+========================================================= */
+
+[data-theme="dark"] .composer-attach {
+  color: #94a3b8;
+  background: #1a293f;
+}
+
+[data-theme="dark"] .composer-attach:hover {
+  color: #60a5fa;
+  background: #172b4d;
+}
+
+[data-theme="dark"] .composer-send {
+  color: #ffffff;
+  background: #2864e8;
+}
+
+/* =========================================================
+   DISCLAIMER
+========================================================= */
+
+[data-theme="dark"] .chat-disclaimer {
+  color: #64748b;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+[data-theme="dark"] .ai-sidebar {
+  scrollbar-color: #334155 transparent;
+}
+
+[data-theme="dark"] .ai-sidebar::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* =========================================================
+   SIDEBAR CARD
+========================================================= */
+
+[data-theme="dark"] .sidebar-card {
+  border-color: #263752;
+  background: #0d192d;
+
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="dark"] .sidebar-card h2 {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .sidebar-description {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .sidebar-description button {
+  color: #60a5fa;
+}
+
+/* =========================================================
+   DROP ZONE
+========================================================= */
+
+[data-theme="dark"] .sidebar-drop-zone {
+  border-color: #38527b;
+
+  background: linear-gradient(180deg, #101d32, #0d192d);
+}
+
+[data-theme="dark"] .sidebar-drop-zone:hover {
+  border-color: #4f8cff;
+  background: #111f35;
+
+  box-shadow: 0 8px 25px rgba(40, 100, 232, 0.12);
+}
+
+[data-theme="dark"] .sidebar-upload-icon {
+  color: #60a5fa;
+  background: #172b4d;
+}
+
+[data-theme="dark"] .sidebar-drop-zone p {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .sidebar-drop-zone > span {
+  color: #64748b;
+}
+
+/* =========================================================
+   SUPPORTED TYPES
+========================================================= */
+
+[data-theme="dark"] .supported-types span {
+  border-color: #334155;
+  background: #111f35;
+  color: #94a3b8;
+}
+
+/* =========================================================
+   UPLOADED FILES
+========================================================= */
+
+[data-theme="dark"] .uploaded-file {
+  border-color: #334155;
+  background: #111f35;
+}
+
+[data-theme="dark"] .uploaded-file-icon {
+  color: #60a5fa;
+  background: #172b4d;
+}
+
+[data-theme="dark"] .uploaded-file-info strong {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .uploaded-file-info span {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .uploaded-file > button {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .uploaded-file > button:hover {
+  color: #f87171;
+  background: #3a1d24;
+}
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+[data-theme="dark"] .quick-action {
+  border-color: #334155;
+  background: #111f35;
+}
+
+[data-theme="dark"] .quick-action:hover {
+  border-color: #45618d;
+  background: #142238;
+
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="dark"] .quick-action-icon {
+  color: #60a5fa;
+  background: #172b4d;
+}
+
+[data-theme="dark"] .quick-action-content strong {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .quick-action-content span {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   DARK MODE — MOBILE PRESERVED
+========================================================= */
+
+/*
+   No responsive values are changed here.
+   Your existing @media rules continue to control
+   dimensions, spacing and layout.
+*/
