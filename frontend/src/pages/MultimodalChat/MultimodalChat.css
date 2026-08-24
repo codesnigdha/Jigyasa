@@ -503,8 +503,6 @@
   display: flex;
   align-items: center;
   gap: 4px;
-
-  margin-top: 5px;
   padding: 4px 6px;
 
   border: none;
@@ -520,9 +518,52 @@
   cursor: pointer;
 }
 
+.copy-button span {
+  font-size: 10px;
+}
 .copy-button:hover {
   color: #2864e8;
-  background: #edf4ff;
+  font-weight: 600;
+}
+
+/* =====================================================
+   GENERATED AI IMAGE
+===================================================== */
+
+.generated-image-container {
+  width: 100%;
+  margin-top: 14px;
+}
+
+.generated-ai-image {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid #e1e8f3;
+  object-fit: contain;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+}
+
+.image-message-bubble {
+  max-width: 560px;
+}
+
+[data-theme="dark"] .generated-ai-image {
+  border-color: #334155;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 600px) {
+  .generated-ai-image {
+    max-width: 100%;
+    border-radius: 10px;
+  }
+
+  .image-message-bubble {
+    max-width: 100%;
+  }
 }
 
 /* =========================================================
@@ -1819,3 +1860,229 @@
    Your existing @media rules continue to control
    dimensions, spacing and layout.
 */
+
+/* =========================================================
+   MARKDOWN / AI RESPONSE FORMATTING
+   Supports **bold**, lists, headings, code and links
+========================================================= */
+
+.message-bubble strong {
+  font-weight: 800;
+  color: inherit;
+}
+
+.message-bubble em {
+  font-style: italic;
+}
+
+.message-bubble p {
+  margin: 0;
+}
+
+.message-bubble p + p {
+  margin-top: 10px;
+}
+
+.message-bubble ul,
+.message-bubble ol {
+  margin: 8px 0 12px;
+  padding-left: 22px;
+}
+
+.message-bubble ul {
+  list-style-type: disc;
+}
+
+.message-bubble ol {
+  list-style-type: decimal;
+}
+
+.message-bubble li {
+  margin: 5px 0;
+  padding-left: 2px;
+}
+
+.message-bubble li > p {
+  margin: 0;
+}
+
+.message-bubble h1,
+.message-bubble h2,
+.message-bubble h3,
+.message-bubble h4,
+.message-bubble h5,
+.message-bubble h6 {
+  margin: 14px 0 8px;
+  color: inherit;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.message-bubble h1 {
+  font-size: 18px;
+}
+
+.message-bubble h2 {
+  font-size: 16px;
+}
+
+.message-bubble h3 {
+  font-size: 14px;
+}
+
+.message-bubble h4,
+.message-bubble h5,
+.message-bubble h6 {
+  font-size: 13px;
+}
+
+.message-bubble h1:first-child,
+.message-bubble h2:first-child,
+.message-bubble h3:first-child,
+.message-bubble h4:first-child {
+  margin-top: 0;
+}
+
+.message-bubble blockquote {
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-left: 3px solid #2864e8;
+  border-radius: 0 7px 7px 0;
+  background: #f1f5f9;
+  color: inherit;
+}
+
+.message-bubble code {
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: #eef2f7;
+  color: inherit;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.9em;
+}
+
+.message-bubble pre {
+  margin: 10px 0;
+  padding: 12px;
+  overflow-x: auto;
+  border-radius: 8px;
+  background: #eef2f7;
+}
+
+.message-bubble pre code {
+  padding: 0;
+  background: transparent;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.message-bubble a {
+  color: #2864e8;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.message-bubble hr {
+  margin: 12px 0;
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.message-bubble table {
+  width: 100%;
+  margin: 10px 0;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.message-bubble th,
+.message-bubble td {
+  padding: 7px 8px;
+  border: 1px solid #dbe3ed;
+  text-align: left;
+}
+
+.message-bubble th {
+  font-weight: 800;
+  background: #f1f5f9;
+}
+
+/* User message markdown */
+.message-row.user .message-bubble strong {
+  color: #ffffff;
+}
+
+.message-row.user .message-bubble a {
+  color: #ffffff;
+}
+
+.message-row.user .message-bubble blockquote {
+  background: rgba(255, 255, 255, 0.12);
+  border-left-color: rgba(255, 255, 255, 0.65);
+}
+
+.message-row.user .message-bubble code,
+.message-row.user .message-bubble pre {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.message-row.user .message-bubble th,
+.message-row.user .message-bubble td {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.message-row.user .message-bubble th {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* =========================================================
+   DARK MODE — MARKDOWN
+========================================================= */
+
+[data-theme="dark"] .message-bubble blockquote {
+  background: #17253b;
+  border-left-color: #60a5fa;
+}
+
+[data-theme="dark"] .message-bubble code,
+[data-theme="dark"] .message-bubble pre {
+  background: #0b1424;
+}
+
+[data-theme="dark"] .message-bubble a {
+  color: #60a5fa;
+}
+
+[data-theme="dark"] .message-bubble hr {
+  border-top-color: #334155;
+}
+
+[data-theme="dark"] .message-bubble th,
+[data-theme="dark"] .message-bubble td {
+  border-color: #334155;
+}
+
+[data-theme="dark"] .message-bubble th {
+  background: #17253b;
+}
+
+/* =========================================================
+   MOBILE MARKDOWN
+========================================================= */
+
+@media (max-width: 600px) {
+  .message-bubble ul,
+  .message-bubble ol {
+    padding-left: 19px;
+  }
+
+  .message-bubble table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .message-bubble pre {
+    max-width: 100%;
+  }
+}

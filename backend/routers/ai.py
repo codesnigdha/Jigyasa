@@ -1,4 +1,5 @@
 import os
+import base64
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -57,6 +58,14 @@ content_understanding_api_version = os.getenv(
     "CONTENT_UNDERSTANDING_API_VERSION",
     "2025-11-01",
 )
+
+
+# =====================================================
+# IMAGE GENERATION CONFIGURATION
+# =====================================================
+
+image_endpoint = os.getenv("ENDPOINT")
+image_model = os.getenv("MODEL_DEPLOYMENT")
 
 
 # =====================================================
@@ -134,6 +143,31 @@ content_understanding_client = ContentUnderstandingClient(
 
 
 # =====================================================
+# IMAGE GENERATION CLIENT
+# =====================================================
+
+image_client = None
+image_token_provider = None
+
+if image_endpoint and image_model:
+
+    image_credential = DefaultAzureCredential(
+        exclude_environment_credential=True,
+        exclude_managed_identity_credential=True,
+    )
+
+    image_token_provider = get_bearer_token_provider(
+        image_credential,
+        "https://cognitiveservices.azure.com/.default",
+    )
+
+    image_client = OpenAI(
+        base_url=image_endpoint,
+        api_key=image_token_provider,
+    )
+
+
+# =====================================================
 # ROUTER
 # =====================================================
 
@@ -141,6 +175,151 @@ router = APIRouter(
     prefix="/api/ai",
     tags=["AI"],
 )
+
+
+# =====================================================
+# IMAGE REQUEST DETECTION
+# =====================================================
+
+def is_image_request(message: str) -> bool:
+    """
+    Detect prompts that are asking Jigyasa to create an image.
+
+    Examples:
+        generate an image of a robot
+        create a picture of a futuristic city
+        make a photo of a sunset
+        draw a cartoon cat
+        generate image of a classroom
+    """
+
+    text = message.lower().strip()
+
+    if not text:
+        return False
+
+    # Strong phrases that clearly indicate image generation.
+    strong_phrases = [
+        "generate an image",
+        "generate image",
+        "create an image",
+        "create image",
+        "make an image",
+        "make image",
+        "draw an image",
+        "draw image",
+        "generate a picture",
+        "generate picture",
+        "create a picture",
+        "create picture",
+        "make a picture",
+        "make picture",
+        "generate a photo",
+        "generate photo",
+        "create a photo",
+        "create photo",
+        "make a photo",
+        "make photo",
+        "generate artwork",
+        "generate art",
+        "create artwork",
+        "create art",
+    ]
+
+    if any(phrase in text for phrase in strong_phrases):
+        return True
+
+    # Natural prompts such as:
+    # "image of a beautiful waterfall"
+    # "picture of a futuristic classroom"
+    # "photo of a sunset"
+    image_nouns = [
+        "image of ",
+        "picture of ",
+        "photo of ",
+        "photograph of ",
+        "illustration of ",
+        "artwork of ",
+        "drawing of ",
+    ]
+
+    if any(phrase in text for phrase in image_nouns):
+        return True
+
+    # Commands such as:
+    # "draw a cat"
+    # "create a futuristic city image"
+    # "make a realistic portrait"
+    command_words = (
+        "generate ",
+        "create ",
+        "make ",
+        "draw ",
+    )
+
+    visual_words = (
+        "image",
+        "picture",
+        "photo",
+        "photograph",
+        "portrait",
+        "illustration",
+        "artwork",
+        "drawing",
+        "wallpaper",
+        "poster",
+        "logo",
+        "scene",
+    )
+
+    if text.startswith(command_words):
+        return any(word in text for word in visual_words)
+
+    return False
+
+
+# =====================================================
+# IMAGE GENERATION HELPER
+# =====================================================
+
+def generate_image_from_prompt(prompt: str) -> str:
+    """
+    Generate an image using the Azure OpenAI image deployment
+    and return the image as a Base64 string.
+    """
+
+    if image_client is None:
+        raise RuntimeError(
+            "Image generation Azure resource is not configured. "
+            "Check ENDPOINT and MODEL_DEPLOYMENT in .env."
+        )
+
+    if not image_model:
+        raise RuntimeError(
+            "MODEL_DEPLOYMENT is not configured in .env."
+        )
+
+    print("IMAGE GENERATION PROMPT:", prompt)
+
+    image = image_client.images.generate(
+        model=image_model,
+        prompt=prompt,
+        n=1,
+    )
+
+    image_data = image.data[0].b64_json
+
+    if not image_data:
+        raise RuntimeError(
+            "Azure did not return image data."
+        )
+
+    # Validate the returned Base64 data.
+    base64.b64decode(image_data)
+
+    print("IMAGE GENERATION COMPLETED")
+
+    return image_data
 
 
 # =====================================================
@@ -162,6 +341,50 @@ def chat(request: ChatRequest):
             detail="Message cannot be empty.",
         )
 
+    # -------------------------------------------------
+    # IMAGE GENERATION
+    # -------------------------------------------------
+    #
+    # The existing frontend already sends normal prompts
+    # to /api/ai/chat. Therefore image prompts are detected
+    # here and automatically routed to Azure image generation.
+    #
+    # This keeps normal text chat working exactly as before.
+    # -------------------------------------------------
+
+    if is_image_request(message):
+
+        try:
+            image_data = generate_image_from_prompt(message)
+
+            return {
+                "success": True,
+                "type": "image",
+                "message": "Here is your generated image.",
+                "prompt": message,
+                "image": image_data,
+                "mime_type": "image/png",
+            }
+
+        except Exception as ex:
+
+            print(
+                "Azure Image Generation Error:",
+                repr(ex),
+            )
+
+            raise HTTPException(
+                status_code=500,
+                detail=(
+                    "Unable to generate the image. "
+                    "Check the Uvicorn terminal for the Azure error."
+                ),
+            )
+
+    # -------------------------------------------------
+    # NORMAL LAB 3 TEXT CHAT
+    # -------------------------------------------------
+
     try:
 
         response = lab3_client.responses.create(
@@ -169,13 +392,18 @@ def chat(request: ChatRequest):
             instructions=(
                 "You are Jigyasa AI, a helpful learning assistant "
                 "that answers questions and provides information "
-                "clearly and accurately."
+                "clearly and accurately. "
+                "If the user asks to create, generate, draw, or make "
+                "an image, that request should be handled by the "
+                "image-generation capability rather than answered "
+                "as plain text."
             ),
             input=message,
         )
 
         return {
             "success": True,
+            "type": "text",
             "message": response.output_text,
         }
 
@@ -189,6 +417,66 @@ def chat(request: ChatRequest):
         raise HTTPException(
             status_code=500,
             detail="Unable to generate an AI response.",
+        )
+
+
+# =====================================================
+# IMAGE GENERATION
+# =====================================================
+
+class ImageGenerationRequest(BaseModel):
+    prompt: str
+
+
+@router.post("/image/generate")
+def generate_image(request: ImageGenerationRequest):
+
+    prompt = request.prompt.strip()
+
+    if not prompt:
+        raise HTTPException(
+            status_code=400,
+            detail="Prompt cannot be empty.",
+        )
+
+    if image_client is None:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Image generation Azure resource is not configured. "
+                "Check ENDPOINT and MODEL_DEPLOYMENT in .env."
+            ),
+        )
+
+    try:
+
+        image_data = generate_image_from_prompt(prompt)
+
+        return {
+            "success": True,
+            "type": "image",
+            "prompt": prompt,
+            "image": image_data,
+            "mime_type": "image/png",
+            "message": "Image generated successfully.",
+        }
+
+    except HTTPException:
+        raise
+
+    except Exception as ex:
+
+        print(
+            "Azure Image Generation Error:",
+            repr(ex),
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Unable to generate image. "
+                "Check the Uvicorn terminal for the Azure error."
+            ),
         )
 
 

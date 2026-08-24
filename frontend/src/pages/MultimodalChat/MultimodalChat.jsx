@@ -13,6 +13,9 @@ import {
   X,
 } from "lucide-react";
 
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 import {
   sendMessageToAI,
   createVectorStore,
@@ -203,6 +206,7 @@ function MultimodalChat() {
      *
      * Lab 4 documents can still be uploaded together.
      */
+
     const hasImage = validFiles.some(isImageFile);
     const hasDocument = validFiles.some(isDocumentFile);
 
@@ -298,7 +302,32 @@ function MultimodalChat() {
   const getAIResponse = async (message) => {
     const response = await sendMessageToAI(message);
 
-    return response.message;
+    // Keep the complete response because image generation
+    // returns { type: "image", image: "..." } in addition
+    // to the normal message field.
+    return response;
+  };
+
+  /* ===================================================
+     IMAGE RESPONSE HELPERS
+  =================================================== */
+
+  const getGeneratedImageSrc = (image) => {
+    if (!image) {
+      return null;
+    }
+
+    // Already a complete data URL or normal URL.
+    if (
+      image.startsWith("data:") ||
+      image.startsWith("http://") ||
+      image.startsWith("https://")
+    ) {
+      return image;
+    }
+
+    // Backend returns raw Base64 PNG data.
+    return `data:image/png;base64,${image}`;
   };
 
   /* ===================================================
@@ -347,6 +376,7 @@ function MultimodalChat() {
          * Safety check:
          * Images must NEVER reach Lab 4.
          */
+
         if (isImageFile(actualFile)) {
           throw new Error("Images must be processed using Lab 20.");
         }
@@ -448,12 +478,10 @@ function MultimodalChat() {
     const requestMessage =
       messageText ||
       (currentFiles.length > 0 &&
-        currentFiles[0]?.file &&
-        isImageFile(currentFiles[0].file))
-        ? messageText ||
-          "Analyze the uploaded image and explain what it contains."
-        : messageText ||
-          "Analyze the uploaded document and explain the important information.";
+      currentFiles[0]?.file &&
+      isImageFile(currentFiles[0].file)
+        ? "Analyze the uploaded image and explain what it contains."
+        : "Analyze the uploaded document and explain the important information.");
 
     /* -------------------------------------------------
        USER MESSAGE
@@ -462,7 +490,9 @@ function MultimodalChat() {
     const userMessage = {
       id: Date.now(),
       role: "user",
+      type: "text",
       content: requestMessage,
+      image: null,
       files: currentFiles,
     };
 
@@ -481,7 +511,7 @@ function MultimodalChat() {
     }
 
     try {
-      let aiResponse;
+      let assistantMessage;
 
       /* =================================================
          FILE REQUEST
@@ -491,24 +521,26 @@ function MultimodalChat() {
         const actualFile = currentFiles[0]?.file || currentFiles[0];
 
         /* =================================================
-           LAB 20 - IMAGE
+           LAB 20 - IMAGE ANALYSIS
         ================================================= */
 
         if (isImageFile(actualFile)) {
           console.log("Jigyasa: Using LAB 20 for image analysis.");
 
-          aiResponse = await analyzeImageWithLab20(currentFiles[0]);
+          const aiResponse = await analyzeImageWithLab20(currentFiles[0]);
 
-          /*
-           * IMPORTANT:
-           * Do NOT create a vector store here.
-           * Do NOT call uploadDocument().
-           * Do NOT call sendDocumentMessage().
-           */
+          assistantMessage = {
+            id: Date.now() + 1,
+            role: "assistant",
+            type: "text",
+            content: aiResponse || "Image analyzed successfully.",
+            image: null,
+          };
         } else {
           /* =================================================
-           LAB 4 - DOCUMENT
-        ================================================= */
+             LAB 4 - DOCUMENT
+          ================================================= */
+
           console.log("Jigyasa: Using LAB 4 for document analysis.");
 
           const currentVectorStoreId = await uploadDocumentsToAI(currentFiles);
@@ -529,32 +561,57 @@ function MultimodalChat() {
             );
           }
 
-          aiResponse = response.message;
-
-          /* ---------------------------------------------
-             CONTINUE DOCUMENT CONVERSATION
-          --------------------------------------------- */
-
           setPreviousResponseId(response.response_id);
+
+          assistantMessage = {
+            id: Date.now() + 1,
+            role: "assistant",
+            type: "text",
+            content: response.message || "Unable to generate a response.",
+            image: null,
+          };
         }
       } else {
         /* =================================================
-         LAB 3 - NORMAL TEXT
-      ================================================= */
-        console.log("Jigyasa: Using LAB 3 text chat.");
+           LAB 3 TEXT CHAT / IMAGE GENERATION
+        ================================================= */
 
-        aiResponse = await getAIResponse(requestMessage);
+        console.log("Jigyasa: Sending request to Lab 3 / Image Generation.");
+
+        const response = await getAIResponse(requestMessage);
+
+        console.log("Jigyasa AI RESPONSE:", response);
+
+        /* ---------------------------------------------
+           IMAGE RESPONSE
+        --------------------------------------------- */
+
+        if (response?.type === "image" && response?.image) {
+          assistantMessage = {
+            id: Date.now() + 1,
+            role: "assistant",
+            type: "image",
+            content: response.message || "Here is your generated image.",
+            image: getGeneratedImageSrc(response.image),
+          };
+        } else {
+
+        /* ---------------------------------------------
+           NORMAL TEXT RESPONSE
+        --------------------------------------------- */
+          assistantMessage = {
+            id: Date.now() + 1,
+            role: "assistant",
+            type: "text",
+            content: response?.message || "I couldn't generate a response.",
+            image: null,
+          };
+        }
       }
 
-      /* -------------------------------------------------
-         ASSISTANT MESSAGE
-      ------------------------------------------------- */
-
-      const assistantMessage = {
-        id: Date.now() + 1,
-        role: "assistant",
-        content: aiResponse || "I couldn't generate a response.",
-      };
+      /* =================================================
+         ADD ASSISTANT MESSAGE
+      ================================================= */
 
       setMessages((previous) => [...previous, assistantMessage]);
     } catch (error) {
@@ -563,10 +620,12 @@ function MultimodalChat() {
       const errorMessage = {
         id: Date.now() + 1,
         role: "assistant",
+        type: "text",
         content:
           "I'm sorry, I couldn't process your request.\n\n" +
           `${error.message}\n\n` +
           "Please make sure the Jigyasa backend is running and Azure AI is available.",
+        image: null,
       };
 
       setMessages((previous) => [...previous, errorMessage]);
@@ -765,12 +824,31 @@ function MultimodalChat() {
                         </div>
                       )}
 
-                      {/* MESSAGE */}
+                      {/* =================================================
+                          MESSAGE
+                          MARKDOWN SUPPORT
+                      ================================================= */}
 
-                      <div className="message-bubble">
-                        {message.content.split("\n").map((line, index) => (
-                          <p key={index}>{line || "\u00A0"}</p>
-                        ))}
+                      <div
+                        className={`message-bubble ${
+                          message.type === "image" ? "image-message-bubble" : ""
+                        }`}
+                      >
+                        {message.content && (
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {message.content}
+                          </ReactMarkdown>
+                        )}
+
+                        {message.type === "image" && message.image && (
+                          <div className="generated-image-container">
+                            <img
+                              src={message.image}
+                              alt="AI generated"
+                              className="generated-ai-image"
+                            />
+                          </div>
+                        )}
                       </div>
 
                       {/* COPY */}
@@ -784,12 +862,12 @@ function MultimodalChat() {
                           {copiedId === message.id ? (
                             <>
                               <Check size={13} />
-                              Copied
+                              <span>Copied</span>
                             </>
                           ) : (
                             <>
                               <Copy size={13} />
-                              Copy
+                              <span>Copy</span>
                             </>
                           )}
                         </button>
