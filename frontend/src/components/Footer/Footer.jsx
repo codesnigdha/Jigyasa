@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-
 import { useAuth } from "../../context/AuthContext";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,6 +18,10 @@ function Footer() {
   const currentYear = new Date().getFullYear();
 
   const { isAuthenticated } = useAuth();
+
+  /* =====================================================
+     SCROLL TO TOP
+  ===================================================== */
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -47,6 +50,8 @@ function Footer() {
             An AI-powered learning platform designed to make academic and
             technology-related learning simpler, clearer and more accessible.
           </p>
+
+          {/* SOCIAL LINKS */}
 
           <div className="footer-socials">
             <a
@@ -170,14 +175,7 @@ function Footer() {
       <div className="footer-bottom">
         <div className="footer-bottom-container">
           <p>© {currentYear} Jigyasa. All rights reserved.</p>
-
-          <div className="footer-bottom-links">
-            <Link to="/privacy">Privacy</Link>
-
-            <Link to="/terms">Terms</Link>
-
-            <Link to="/help">Help</Link>
-          </div>
+          {/* BACK TO TOP */}
 
           <button
             type="button"

@@ -82,8 +82,7 @@
 
   overflow: hidden;
 
-  background: linear-gradient(145deg, #2563eb 0%, #3b82f6 48%, #0ea5e9 100%);
-
+  background: linear-gradient(145deg, #2563eb 0%, #172c4e 48%, #0ea5e9 100%);
   color: #ffffff;
 }
 
@@ -102,6 +101,12 @@
 
 :root[data-theme="dark"] .login-brand-section::after {
   background: linear-gradient(to right, rgba(14, 165, 233, 0.28), #0f172a);
+}
+
+/* DARK MODE */
+[data-theme="dark"] .login-brand-section {
+  background: linear-gradient(145deg, #1b39b7 0%, #0b1730 48%, #134475 100%);
+  color: #ffffff;
 }
 
 /* =========================================================
@@ -257,7 +262,7 @@
 
   font-size: clamp(52px, 5vw, 78px);
   font-weight: 850;
-  letter-spacing: -3px;
+  letter-spacing: -1px;
   line-height: 0.95;
 }
 

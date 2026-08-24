@@ -103,7 +103,7 @@
 
   line-height: 0.98;
 
-  letter-spacing: -4px;
+  letter-spacing: -1px;
 
   font-weight: 800;
 
@@ -662,7 +662,7 @@
 
   line-height: 1.03;
 
-  letter-spacing: -3px;
+  letter-spacing: -1px;
 
   font-weight: 800;
 }
@@ -1180,7 +1180,7 @@
   .how-header h2 {
     font-size: 42px;
 
-    letter-spacing: -2px;
+    letter-spacing: -1px;
   }
 
   .how-header p {
@@ -1315,7 +1315,7 @@
 
   line-height: 1.05;
 
-  letter-spacing: -2px;
+  letter-spacing: -1px;
 
   color: var(--text-primary, #0f172a);
 }
@@ -1513,7 +1513,7 @@
 
   line-height: 1.05;
 
-  letter-spacing: -2px;
+  letter-spacing: -1px;
 
   color: #ffffff;
 }
@@ -1726,7 +1726,7 @@
   .home-hero-content h1 {
     font-size: clamp(46px, 10vw, 64px);
 
-    letter-spacing: -3px;
+    letter-spacing: -1px;
   }
 
   .home-abstract-visual {
@@ -1792,7 +1792,7 @@
   .home-hero-content h1 {
     font-size: 48px;
 
-    letter-spacing: -2.5px;
+    letter-spacing: -1px;
   }
 
   .home-hero-content > p {
@@ -1897,7 +1897,7 @@
 
     line-height: 1.05;
 
-    letter-spacing: -2px;
+    letter-spacing: -1px;
   }
 
   .features-heading p {
@@ -2055,7 +2055,7 @@
   .home-hero-content h1 {
     font-size: 42px;
 
-    letter-spacing: -2px;
+    letter-spacing: -1px;
   }
 
   .features-section .home-container {

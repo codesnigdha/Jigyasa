@@ -276,7 +276,7 @@
 
   line-height: 1.08;
 
-  letter-spacing: -2px;
+  letter-spacing: -0.2px;
 
   font-weight: 800;
 }
@@ -642,6 +642,9 @@
 
 .user-message .message-text {
   padding: 10px 14px;
+
+  max-width: 200px;
+  min-width: 100px;
 
   border-radius: 14px;
 
@@ -1202,7 +1205,7 @@
   .ai-empty-state h2 {
     font-size: 32px;
 
-    letter-spacing: -1.2px;
+    letter-spacing: -0.2px;
   }
 
   .ai-empty-state > p {

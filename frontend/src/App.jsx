@@ -10,6 +10,8 @@ import Home from "./pages/public/Home/Home";
 import Explore from "./pages/public/Explore/Explore";
 import About from "./pages/public/About/About";
 import Help from "./pages/public/Help/Help";
+import Terms from "./pages/public/Terms/Terms";
+import Privacy from "./pages/public/Privacy/Privacy";
 
 import Login from "./pages/auth/Login/Login";
 import Signup from "./pages/auth/Signup/Signup";
@@ -151,6 +153,10 @@ function App() {
           <Route path="/about" element={<About />} />
 
           <Route path="/help" element={<Help />} />
+
+          <Route path="/terms" element={<Terms />} />
+
+          <Route path="/privacy" element={<Privacy />} />
 
           {/* =================================================
               AUTH ROUTES

@@ -62,7 +62,7 @@
 
   line-height: 0.98;
 
-  letter-spacing: -4px;
+  letter-spacing: -2px;
 
   font-weight: 800;
 }
@@ -331,7 +331,7 @@
 
   line-height: 0.98;
 
-  letter-spacing: -2.5px;
+  letter-spacing: -1.5px;
 }
 
 .featured-left p {
@@ -518,7 +518,7 @@
 
   font-size: 40px;
 
-  letter-spacing: -1.8px;
+  letter-spacing: -0.8px;
 }
 
 .topic-count {
@@ -809,7 +809,7 @@
 
   line-height: 1;
 
-  letter-spacing: -2px;
+  letter-spacing: -1px;
 }
 
 .explore-ai-content p {
@@ -960,7 +960,7 @@
   .explore-hero-content h1 {
     font-size: 49px;
 
-    letter-spacing: -2.5px;
+    letter-spacing: -0.5px;
   }
 
   .explore-hero-content p {

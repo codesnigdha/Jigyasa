@@ -506,8 +506,7 @@ function MultimodalChat() {
            * Do NOT call sendDocumentMessage().
            */
         } else {
-
-        /* =================================================
+          /* =================================================
            LAB 4 - DOCUMENT
         ================================================= */
           console.log("Jigyasa: Using LAB 4 for document analysis.");
@@ -539,8 +538,7 @@ function MultimodalChat() {
           setPreviousResponseId(response.response_id);
         }
       } else {
-
-      /* =================================================
+        /* =================================================
          LAB 3 - NORMAL TEXT
       ================================================= */
         console.log("Jigyasa: Using LAB 3 text chat.");

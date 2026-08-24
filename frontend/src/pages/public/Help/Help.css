@@ -58,7 +58,7 @@
 
   line-height: 0.95;
 
-  letter-spacing: -4px;
+  letter-spacing: -1px;
 
   font-weight: 800;
 }
@@ -123,6 +123,15 @@
   color: var(--text-primary, #0f172a);
 
   font-size: 14px;
+
+  outline: none;
+  box-shadow: none;
+}
+
+.help-search input:focus {
+  outline: none;
+  box-shadow: none;
+  border: none;
 }
 
 .help-search input::placeholder {
@@ -286,7 +295,7 @@
 
   font-size: 38px;
 
-  letter-spacing: -1.5px;
+  letter-spacing: -0.5px;
 }
 
 .faq-count {
@@ -506,7 +515,7 @@
 
   line-height: 1;
 
-  letter-spacing: -2px;
+  letter-spacing: -1px;
 }
 
 .help-ai-content p {
@@ -626,7 +635,7 @@
 
   font-size: 38px;
 
-  letter-spacing: -1.5px;
+  letter-spacing: -0.5px;
 }
 
 .contact-heading p {
@@ -768,7 +777,7 @@
   .help-hero-content h1 {
     font-size: 50px;
 
-    letter-spacing: -2.5px;
+    letter-spacing: -1.5px;
   }
 
   .help-hero-content p {

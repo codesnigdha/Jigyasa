@@ -74,7 +74,7 @@
 
   line-height: 0.98;
 
-  letter-spacing: -3px;
+  letter-spacing: -1px;
 
   font-weight: 800;
 
@@ -285,7 +285,7 @@
 
   line-height: 1.08;
 
-  letter-spacing: -2px;
+  letter-spacing: -1px;
 
   color: var(--text-primary, #0f172a);
 }
@@ -696,7 +696,7 @@
   .about-hero-content h1 {
     font-size: 48px;
 
-    letter-spacing: -2px;
+    letter-spacing: -1px;
   }
 
   .about-hero-content p {

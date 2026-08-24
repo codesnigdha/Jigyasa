@@ -4,9 +4,7 @@
 
 .footer {
   position: relative;
-
   width: 100%;
-
   margin-top: 0;
 
   background: linear-gradient(180deg, #0b1528 0%, #08111f 100%);
@@ -14,6 +12,9 @@
   color: #ffffff;
 
   overflow: hidden;
+
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
 }
 
 /* =====================================================
@@ -62,7 +63,6 @@
 
 .footer-container {
   position: relative;
-
   z-index: 2;
 
   width: min(1180px, calc(100% - 48px));
@@ -92,7 +92,6 @@
 
 .footer-logo {
   display: inline-flex;
-
   align-items: center;
 
   text-decoration: none;
@@ -101,7 +100,7 @@
 .footer-logo-image {
   display: block;
 
-  width: 145px;
+  width: 200px;
   height: auto;
 
   object-fit: contain;
@@ -115,7 +114,6 @@
   color: #94a3b8;
 
   font-size: 13px;
-
   line-height: 1.75;
 }
 
@@ -125,32 +123,29 @@
 
 .footer-socials {
   display: flex;
-
   align-items: center;
 
   gap: 9px;
 }
 
 .footer-socials a {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
 
   display: flex;
-
   align-items: center;
   justify-content: center;
 
   box-sizing: border-box;
 
   border: 1px solid #263650;
-
   border-radius: 10px;
 
   background: rgba(255, 255, 255, 0.025);
 
   color: #94a3b8;
 
-  font-size: 15px;
+  font-size: 16px;
 
   text-decoration: none;
 
@@ -175,16 +170,22 @@
   transform: translateY(-1px);
 }
 
+.footer-socials svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* =====================================================
    FOOTER COLUMNS
 ===================================================== */
 
 .footer-column {
   display: flex;
-
   flex-direction: column;
-
   align-items: flex-start;
+
+  margin-top: 55px;
+  margin-left: 20px;
 }
 
 .footer-column h3 {
@@ -193,7 +194,6 @@
   color: #ffffff;
 
   font-size: 11px;
-
   font-weight: 800;
 
   letter-spacing: 1.4px;
@@ -209,7 +209,6 @@
   color: #94a3b8;
 
   font-size: 13px;
-
   line-height: 1.4;
 
   text-decoration: none;
@@ -297,7 +296,6 @@
 
 .footer-cta-label {
   position: relative;
-
   z-index: 1;
 
   display: block;
@@ -307,7 +305,6 @@
   color: #60a5fa;
 
   font-size: 10px;
-
   font-weight: 800;
 
   letter-spacing: 1.8px;
@@ -315,7 +312,6 @@
 
 .footer-cta h3 {
   position: relative;
-
   z-index: 1;
 
   margin: 0;
@@ -323,7 +319,6 @@
   color: #ffffff;
 
   font-size: 22px;
-
   line-height: 1.2;
 
   font-weight: 800;
@@ -333,7 +328,6 @@
 
 .footer-cta p {
   position: relative;
-
   z-index: 1;
 
   max-width: 260px;
@@ -343,7 +337,6 @@
   color: #94a3b8;
 
   font-size: 12px;
-
   line-height: 1.65;
 }
 
@@ -353,7 +346,6 @@
 
 .footer-cta-button {
   position: relative;
-
   z-index: 1;
 
   display: inline-flex;
@@ -376,7 +368,6 @@
   color: #ffffff;
 
   font-size: 12px;
-
   font-weight: 800;
 
   text-decoration: none;
@@ -402,7 +393,6 @@
   justify-content: center;
 
   font-size: 11px;
-
   line-height: 1;
 
   transition: transform 0.2s ease;
@@ -418,7 +408,6 @@
 
 .footer-bottom {
   position: relative;
-
   z-index: 2;
 
   border-top: 1px solid #1d2b42;
@@ -449,7 +438,6 @@
   color: #64748b;
 
   font-size: 11px;
-
   line-height: 1.5;
 }
 
@@ -461,7 +449,6 @@
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   gap: 22px;
@@ -523,10 +510,6 @@
 
 .footer-top-button:hover {
   color: #ffffff;
-
-  border-color: #3b82f6;
-
-  background: rgba(37, 99, 235, 0.1);
 
   transform: translateY(-3px);
 }
@@ -648,6 +631,11 @@
     line-height: 1.7;
   }
 
+  .footer-column {
+    margin-top: 0;
+    margin-left: 0;
+  }
+
   .footer-column h3 {
     margin-bottom: 16px;
   }
@@ -747,6 +735,11 @@
     font-size: 14px;
   }
 
+  .footer-socials svg {
+    width: 14px;
+    height: 14px;
+  }
+
   .footer-cta {
     border-radius: 16px;
   }
@@ -790,19 +783,14 @@
   .footer-cta h3 {
     font-size: 19px;
   }
+
   .footer-socials {
-    display: flex;
-    align-items: center;
     gap: 9px;
   }
 
   .footer-socials a {
     width: 38px;
     height: 38px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
     border: 1px solid #263650;
     border-radius: 10px;
@@ -812,28 +800,6 @@
     color: #94a3b8;
 
     font-size: 16px;
-
-    text-decoration: none;
-
-    transition:
-      color 0.2s ease,
-      background 0.2s ease,
-      border-color 0.2s ease,
-      transform 0.2s ease;
-  }
-
-  .footer-socials a:hover {
-    color: #ffffff;
-
-    background: rgba(37, 99, 235, 0.12);
-
-    border-color: #3b82f6;
-
-    transform: translateY(-3px);
-  }
-
-  .footer-socials a:active {
-    transform: translateY(-1px);
   }
 
   .footer-socials svg {
